@@ -25,24 +25,26 @@ export default function Navbar() {
   }, []);
 
   const menuItems = [
-    { href: "/", label: "Home" },
-    { href: "/products", label: "Products" },
-    { href: "/services", label: "Services" },
-    { href: "/about-us", label: "About" },
+    { href: "/", label: "Books" ,idon:"" },
+    { href: "/search-book", label: "Search Book" },
+    { href: "/how-it-work", label: "How It Works" },
+    { href: "/create-book", label: "Create Book" },
     { href: "/contact-us", label: "Contact Us" },
+    { href: "/my-order", label: "My Orders" },
+    { href: "/profile", label: "Profile" },
   ];
 
   return (
     <nav
       className={`sticky top-0 z-50 transition-all duration-300 backdrop-blur-md ${
         scrolled
-          ? "bg-primary/80 backdrop-opacity-90 shadow-md"
+          ? "bg-[#EFEFFD] backdrop-opacity-90 shadow-md"
           : "bg-transparent backdrop-grayscale"
       }`}
     >
-      <div className="container mx-auto px-8 flex justify-between items-center py-4">
+      <div className="container mx-auto px-8 flex flex-col justify-between items-center py-4">
         {/* Logo */}
-        <div className="flex items-center">
+        <div className="flex  items-center">
           <Link href="/">
             <Image
               src="/images/logo.png"
@@ -56,8 +58,8 @@ export default function Navbar() {
 
         {/* Desktop Menu Items */}
         <div
-          className={`hidden md:flex space-x-8 font-medium transition-colors duration-300 ${
-            scrolled ? "text-white" : "text-primary"
+          className={`hidden md:flex md:flex-col space-y-8 h-screen font-medium transition-colors duration-300 ${
+            scrolled ? "text-[#6C757D]" : "text-primary"
           }`}
         >
           {menuItems.map((item) => (

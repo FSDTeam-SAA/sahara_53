@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import "../globals.css";
-import Navbar from "@/components/website/Common/Navbar";
+import Navbar from "@/components/website/Common/sidebar";
 import Footer from "@/components/website/Common/Footer";
 
 export const metadata: Metadata = {
@@ -16,9 +16,18 @@ export default function RootLayout({
 }>) {
   return (
     <>
-      <Navbar />
-      {children}
-      <Footer />
+      <div className="grid grid-cols-12">
+        {/* Sidebar / Navbar */}
+        <div className="col-span-2">
+          <Navbar />
+        </div>
+
+        {/* Main Content */}
+        <div className="col-span-10">
+          {children}
+          <Footer />
+        </div>
+      </div>
     </>
   );
 }
