@@ -17,14 +17,14 @@ export default function RootLayout({
 }>) {
   return (
     <>
-      <div className="grid grid-cols-12">
+      <div className="grid grid-cols-12 relative">
         {/* Sidebar / Navbar */}
-        <div className=" absolute md:static top-5 right-5 md:col-span-2 z-50">
+        <div className=" absolute md:fixed top-5 left-5 md:top-0 md:left-0 md:col-span-2 z-50 w-[312px]">
            <SideBar />
         </div>
 
         {/* Main Content */}
-        <div className="col-span-12 md:col-span-10">
+        <div className="col-span-12 md:col-span-10 md:ml-[312px] w-full">
           {children}
           <Footer />
         </div>
