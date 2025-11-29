@@ -5,15 +5,17 @@ import { HowItWorksSection } from '@/components/website/how-to-work/how-it-works
 export default function page() {
   return (
     <>
-     <div className="mt-8">
+     <div className="m-8 ">
         <CreateBookHeader
-          title="Design Your"
-          highlightedWord="Story"
-          subtitle="Customize every detail to make it uniquely yours"
+          title="How It "
+          highlightedWord="Works"
+          subtitle="Turn your memories into magical storybooks in just 6 easy steps"
         />
       </div>
     <HowItWorksSection/>
-    <CTA/>
+      <div className="m-8">
+      <CTA/>
+    </div>
     </>
   )
 }

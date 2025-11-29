@@ -15,7 +15,7 @@ export function CreateBookHeader({
 }: CreateBookHeaderProps) {
   return (
     <section
-      className={cn("relative w-full overflow-hidden px-4 py-12 md:py-16", className)}
+      className={cn("relative w-full overflow-hidden px-4 py-12 md:py-16 rounded-2xl", className)}
       style={{
         background: "linear-gradient(90deg, #f5e6f0 0%, #f0e8f2 25%, #eaebf4 50%, #e8ecf5 75%, #e5eef6 100%)",
       }}
