@@ -2,8 +2,8 @@
 
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-const baseUrl =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001/api/v1";
+
+const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 
 declare module "next-auth" {
   interface Session {
@@ -42,7 +42,7 @@ const handler = NextAuth({
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
-          throw new Error("Email and password are required");
+          return null;
         }
 
         try {
@@ -56,22 +56,27 @@ const handler = NextAuth({
           });
 
           const data = await res.json();
-          // console.log("API Login Response:", data);
+          console.log('auth login data :', data);
 
           if (!res.ok) {
+            console.error('API Error:', data);
             throw new Error(data.message || "Login failed");
           }
 
-          const user = data.data?.user;
-          const token = data.data?.accessToken;
+          // Since your API returns token directly in data.data.token
+          const token = data.data?.token;
 
-          // console.log("API Login Response:", );
+          if (!token) {
+            throw new Error("No token received");
+          }
 
+          // For NextAuth, we need to return a user object with id
+          // Using email as id since your API doesn't return user ID
           return {
-            id: user?.id || user?._id || "unknown",
-            email: user?.email || credentials.email,
-            role: user?.role || "",
-            token, // accessToken from backend
+            id: credentials.email, 
+            email: credentials.email,
+            role: "user", // Default role
+            token: token,
           };
         } catch (error) {
           console.error("Authorize error:", error);
@@ -83,32 +88,40 @@ const handler = NextAuth({
 
   session: {
     strategy: "jwt",
+    maxAge: 30 * 24 * 60 * 60, // 30 days
   },
 
   callbacks: {
     async jwt({ token, user }) {
+      // Pass user data to token on initial sign in
       if (user) {
         token.id = user.id;
         token.email = user.email;
-        token.role = user?.role as string;
-        token.accessToken = user?.token as string;
+        token.role = user.role;
+        token.accessToken = user.token;
       }
       return token;
     },
 
     async session({ session, token }) {
+      // Send properties to the client
       if (token) {
-        session.user = {
-          id: token.id as string,
-          email: token.email as string,
-          role: token.role as string,
-        };
+        session.user.id = token.id as string;
+        session.user.email = token.email as string;
+        session.user.role = token.role as string;
         session.accessToken = token.accessToken as string;
       }
       return session;
     },
   },
 
+  pages: {
+    signIn: "/login",
+    signOut: "/",
+    error: "/auth/error",
+  },
+
+  debug: process.env.NODE_ENV === "development",
   secret: process.env.NEXTAUTH_SECRET,
 });
 

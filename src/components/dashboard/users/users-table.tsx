@@ -1,21 +1,27 @@
-"use client"
+"use client";
 
-import { useState, useMemo } from "react"
-import { useReactTable, getCoreRowModel, flexRender, type ColumnDef } from "@tanstack/react-table"
-import { Card, CardContent } from "@/components/ui/card"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { StatusBadge } from "@/components/ui/status-badge"
-import { SearchInput } from "@/components/ui/search-input"
-import { FilterDropdown } from "@/components/ui/filter-dropdown"
-import { DataTablePagination } from "@/components/ui/data-table-pagination"
-import { Eye, MoreHorizontal } from "lucide-react"
-import { useUsers } from "@/hooks/use-users"
-import type { User } from "@/lib/types"
-import { Skeleton } from "@/components/ui/skeleton"
+import { useState, useMemo } from "react";
+import { ColumnDef } from "@tanstack/react-table";
+import {
+  useReactTable,
+  getCoreRowModel,
+  flexRender,
+} from "@tanstack/react-table";
+
+import { Card, CardContent } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { StatusBadge } from "@/components/ui/status-badge";
+import { SearchInput } from "@/components/ui/search-input";
+import { FilterDropdown } from "@/components/ui/filter-dropdown";
+import { DataTablePagination } from "@/components/ui/data-table-pagination";
+import { Eye, MoreHorizontal } from "lucide-react";
+import { useUsers } from "@/hooks/use-users";
+import type { User } from "@/lib/types";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface UsersTableProps {
-  onViewUser: (userId: string) => void
+  onViewUser: (userId: string) => void;
 }
 
 const statusOptions = [
@@ -23,22 +29,22 @@ const statusOptions = [
   { value: "active", label: "Active" },
   { value: "inactive", label: "Inactive" },
   { value: "suspended", label: "Suspended" },
-]
+];
 
 const sortOptions = [
   { value: "name", label: "Name" },
   { value: "email", label: "Email" },
   { value: "createdAt", label: "Date" },
   { value: "role", label: "Role" },
-]
+];
 
 export function UsersTable({ onViewUser }: UsersTableProps) {
-  const [search, setSearch] = useState("")
-  const [searchQuery, setSearchQuery] = useState("")
-  const [statusFilter, setStatusFilter] = useState("all")
-  const [sortBy, setSortBy] = useState("name")
-  const [page, setPage] = useState(1)
-  const [rowSelection, setRowSelection] = useState({})
+  const [search, setSearch] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [sortBy, setSortBy] = useState("name");
+  const [page, setPage] = useState(1);
+  const [rowSelection, setRowSelection] = useState({});
 
   const { users, totalPages, isLoading } = useUsers({
     search: searchQuery,
@@ -46,7 +52,7 @@ export function UsersTable({ onViewUser }: UsersTableProps) {
     sortBy,
     page,
     pageSize: 10,
-  })
+  });
 
   const columns: ColumnDef<User>[] = useMemo(
     () => [
@@ -55,7 +61,9 @@ export function UsersTable({ onViewUser }: UsersTableProps) {
         header: ({ table }) => (
           <Checkbox
             checked={table.getIsAllPageRowsSelected()}
-            onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+            onCheckedChange={(value) =>
+              table.toggleAllPageRowsSelected(!!value)
+            }
             aria-label="Select all"
           />
         ),
@@ -92,7 +100,9 @@ export function UsersTable({ onViewUser }: UsersTableProps) {
       {
         accessorKey: "role",
         header: "Role",
-        cell: ({ row }) => <span className="capitalize text-gray-600">{row.original.role}</span>,
+        cell: ({ row }) => (
+          <span className="capitalize text-gray-600">{row.original.role}</span>
+        ),
       },
       {
         accessorKey: "createdAt",
@@ -122,7 +132,7 @@ export function UsersTable({ onViewUser }: UsersTableProps) {
       },
     ],
     [onViewUser],
-  )
+  );
 
   const table = useReactTable({
     data: users,
@@ -132,12 +142,12 @@ export function UsersTable({ onViewUser }: UsersTableProps) {
     state: {
       rowSelection,
     },
-  })
+  });
 
   const handleSearch = () => {
-    setSearchQuery(search)
-    setPage(1)
-  }
+    setSearchQuery(search);
+    setPage(1);
+  };
 
   return (
     <div className="space-y-4">
@@ -152,12 +162,17 @@ export function UsersTable({ onViewUser }: UsersTableProps) {
           />
         </div>
         <div className="flex items-center gap-3">
-          <FilterDropdown value={sortBy} onChange={setSortBy} options={sortOptions} placeholder="Sort by" />
+          <FilterDropdown
+            value={sortBy}
+            onChange={setSortBy}
+            options={sortOptions}
+            placeholder="Sort by"
+          />
           <FilterDropdown
             value={statusFilter}
             onChange={(value) => {
-              setStatusFilter(value)
-              setPage(1)
+              setStatusFilter(value);
+              setPage(1);
             }}
             options={statusOptions}
             placeholder="Select Status"
@@ -180,7 +195,10 @@ export function UsersTable({ onViewUser }: UsersTableProps) {
                 <table className="w-full">
                   <thead>
                     {table.getHeaderGroups().map((headerGroup) => (
-                      <tr key={headerGroup.id} className="border-b border-gray-100">
+                      <tr
+                        key={headerGroup.id}
+                        className="border-b border-gray-100"
+                      >
                         {headerGroup.headers.map((header) => (
                           <th
                             key={header.id}
@@ -188,7 +206,10 @@ export function UsersTable({ onViewUser }: UsersTableProps) {
                           >
                             {header.isPlaceholder
                               ? null
-                              : flexRender(header.column.columnDef.header, header.getContext())}
+                              : flexRender(
+                                  header.column.columnDef.header,
+                                  header.getContext(),
+                                )}
                           </th>
                         ))}
                       </tr>
@@ -196,10 +217,19 @@ export function UsersTable({ onViewUser }: UsersTableProps) {
                   </thead>
                   <tbody>
                     {table.getRowModel().rows.map((row) => (
-                      <tr key={row.id} className="border-b border-gray-50 hover:bg-gray-50 transition-colors">
+                      <tr
+                        key={row.id}
+                        className="border-b border-gray-50 hover:bg-gray-50 transition-colors"
+                      >
                         {row.getVisibleCells().map((cell) => (
-                          <td key={cell.id} className="px-4 py-3 text-sm text-gray-700">
-                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                          <td
+                            key={cell.id}
+                            className="px-4 py-3 text-sm text-gray-700"
+                          >
+                            {flexRender(
+                              cell.column.columnDef.cell,
+                              cell.getContext(),
+                            )}
                           </td>
                         ))}
                       </tr>
@@ -207,11 +237,15 @@ export function UsersTable({ onViewUser }: UsersTableProps) {
                   </tbody>
                 </table>
               </div>
-              <DataTablePagination currentPage={page} totalPages={totalPages} onPageChange={setPage} />
+              <DataTablePagination
+                currentPage={page}
+                totalPages={totalPages}
+                onPageChange={setPage}
+              />
             </>
           )}
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }
