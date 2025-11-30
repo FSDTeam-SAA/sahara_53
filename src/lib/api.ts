@@ -1,8 +1,5 @@
-<<<<<<< HEAD
 import axios from "axios";
-import { error } from "console";
 import { CreateAccountPayload, CreateAccountResponse } from "./type/auth";
-=======
 // Mock API service layer
 import type {
   User,
@@ -14,7 +11,37 @@ import type {
   PaginatedResponse,
   ApiFilters,
 } from "./types";
->>>>>>> f276b233df551b217c1b3997a8efd66b9587ebe5
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
+const axiosInstance = axios.create({
+  baseURL: API_URL,
+  withCredentials: true,
+});
+
+// Export API methods wrapper
+export const api = {
+  // Dashboard
+  getDashboardStats: () => apiFunction.getDashboardStats(),
+  getRevenueData: () => apiFunction.getRevenueData(),
+  // Users
+  getUsers: (filters?: ApiFilters) => apiFunction.getUsers(filters),
+  getUserById: (id: string) => apiFunction.getUserById(id),
+  // Orders
+  getOrders: (filters?: ApiFilters) => apiFunction.getOrders(filters),
+  getOrderById: (id: string) => apiFunction.getOrderById(id),
+  // Books
+  getBooks: (filters?: ApiFilters) => apiFunction.getBooks(filters),
+  deleteBook: (id: string) => apiFunction.deleteBook(id),
+  // Payments
+  getPayments: (filters?: ApiFilters) => apiFunction.getPayments(filters),
+  // Auth & axios methods
+  post: axiosInstance.post.bind(axiosInstance),
+  get: axiosInstance.get.bind(axiosInstance),
+  put: axiosInstance.put.bind(axiosInstance),
+  delete: axiosInstance.delete.bind(axiosInstance),
+  patch: axiosInstance.patch.bind(axiosInstance),
+};
 
 // Simulate API delay
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -41,7 +68,19 @@ const generateUsers = (count: number): User[] => {
   const roles: User["role"][] = ["admin", "user", "moderator"];
   const statuses: User["status"][] = ["active", "inactive", "suspended"];
 
-<<<<<<< HEAD
+  return Array.from({ length: count }, (_, i) => ({
+    id: `user-${i + 1}`,
+    name: names[i % names.length],
+    email: `example@example.com`,
+    phone: "+1234567890",
+    avatar: `/placeholder.svg?height=40&width=40&query=avatar ${i}`,
+    role: roles[i % roles.length],
+    status: statuses[Math.floor(Math.random() * 3)],
+    createdAt: "14 November, 2025",
+    lastLogin: "14 November, 2025",
+  }));
+};
+
 // Get reviews all with pagination and dynamic params
 export async function getAllReview(page = 1, limit = 10) {
   try {
@@ -53,17 +92,20 @@ export async function getAllReview(page = 1, limit = 10) {
   }
 }
 
-
-export async function createAccount(data: CreateAccountPayload): Promise<CreateAccountResponse> {
+export async function createAccount(
+  data: CreateAccountPayload,
+): Promise<CreateAccountResponse> {
   try {
     const payload = {
       ...data,
-      gender: data.gender ?? "Male", 
+      gender: data.gender ?? "Male",
     };
 
-    const response = await api.post<CreateAccountResponse>("/auth/register", payload);
+    const response = await api.post<CreateAccountResponse>(
+      "/auth/register",
+      payload,
+    );
     return response.data;
-
   } catch (err) {
     if (err instanceof Error) {
       throw new Error(err.message);
@@ -71,7 +113,6 @@ export async function createAccount(data: CreateAccountPayload): Promise<CreateA
     throw new Error("Unknown error occurred");
   }
 }
-
 
 export async function verifying(data: { email: string; otp: string }) {
   try {
@@ -98,7 +139,6 @@ export async function userLogin(data: { email: string; password: string }) {
   }
 }
 
-
 export async function resetPassword(data: { email: string }) {
   try {
     const response = await api.post("/auth/forgot-password", data);
@@ -111,9 +151,7 @@ export async function resetPassword(data: { email: string }) {
   }
 }
 
-
-
-export async function verify(data: { email: string,otp:string }) {
+export async function verify(data: { email: string; otp: string }) {
   try {
     const response = await api.post("/auth/reset/password/verify-otp", data);
     return response.data;
@@ -125,27 +163,18 @@ export async function verify(data: { email: string,otp:string }) {
   }
 }
 
-export async function newPassword(data: { newPassword: string }) {
+export async function newPassword(data: { newPassword: string,token:string }) {
   try {
-    const response = await api.post("auth/reset-password", data);
+    const response = await api.post("auth/reset-password", {newPassword:data.newPassword},{
+      headers:{
+        Authorization:`Bearer ${data.token}`
+      }
+    });
     return response.data;
   } catch (err) {
-    throw new Error(` ${err} `|| "Something went wrong");
+    throw new Error(` ${err} ` || "Something went wrong");
   }
 }
-=======
-  return Array.from({ length: count }, (_, i) => ({
-    id: `user-${i + 1}`,
-    name: names[i % names.length],
-    email: `example@example.com`,
-    phone: "+1234567890",
-    avatar: `/placeholder.svg?height=40&width=40&query=avatar ${i}`,
-    role: roles[i % roles.length],
-    status: statuses[Math.floor(Math.random() * 3)],
-    createdAt: "14 November, 2025",
-    lastLogin: "14 November, 2025",
-  }));
-};
 
 const generateOrders = (count: number): Order[] => {
   const names = [
@@ -271,7 +300,7 @@ const generateRevenueData = (): RevenueData[] => {
 };
 
 // API Functions
-export const api = {
+export const apiFunction = {
   // Dashboard
   getDashboardStats: async (): Promise<DashboardStats> => {
     await delay(300);
@@ -497,4 +526,3 @@ export const api = {
     };
   },
 };
->>>>>>> f276b233df551b217c1b3997a8efd66b9587ebe5

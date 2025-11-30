@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Eye, EyeOff } from "lucide-react";
 
 const formSchema = z.object({
   email: z.string().email("Invalid email"),
@@ -28,9 +29,11 @@ type FormValues = z.infer<typeof formSchema>;
 
 export default function Login() {
   const [isPending, setIsPending] = useState(false);
+  const [showPassword,setShowPassword]=useState(false)
   const [error, setError] = useState("");
   const router = useRouter();
   const searchParams = useSearchParams();
+
   
   const callbackUrl = searchParams.get("callbackUrl") || "/";
 
@@ -50,6 +53,7 @@ export default function Login() {
       const result = await signIn("credentials", {
         email: values.email,
         password: values.password,
+        
         redirect: false,
       });
 
@@ -108,11 +112,22 @@ export default function Login() {
                 <FormItem>
                   <FormLabel>Password</FormLabel>
                   <FormControl>
+                    <div className=" relative">
+
                     <Input 
-                      type="password" 
+                      type={showPassword? "text":"password"} 
                       {...field} 
                       disabled={isPending}
                     />
+                  <button type="button" 
+                  onClick={()=> setShowPassword(!showPassword)}
+                  className=" absolute right-3 top-1/2 -translate-y-1/2 text-shadow-gray-600"
+                  >
+                    {
+                      showPassword ? <EyeOff size={20} /> :<Eye size={20} />
+                    }
+                  </button>
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>

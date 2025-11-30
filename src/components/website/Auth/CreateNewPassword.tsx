@@ -18,6 +18,8 @@ import { Button } from "@/components/ui/button";
 
 import { useNewPassword } from "@/lib/hoock/Useauth";
 import { useRouter, useSearchParams } from "next/navigation";
+import { Eye, EyeOff } from "lucide-react";
+import { useState } from "react";
 
 const formSchema = z
   .object({
@@ -33,9 +35,13 @@ type FormValues = z.infer<typeof formSchema>;
 
 export default function CreateNewPassword() {
   const { mutate, isPending } = useNewPassword();
-  const route=useRouter()
+  const route = useRouter();
   const searchParams = useSearchParams();
   const token = searchParams.get("token");
+
+  // password visibility states
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -47,11 +53,11 @@ export default function CreateNewPassword() {
 
   function onSubmit(values: FormValues) {
     mutate(
-      { newPassword: values.password },
+      { newPassword: values.password, token: token! },
       {
         onSuccess: () => {
           alert("Password updated successfully!");
-          route.push("/login")
+          route.push("/login");
         },
         onError: (err) => {
           alert(err.message || "Something went wrong");
@@ -63,13 +69,16 @@ export default function CreateNewPassword() {
   return (
     <AuthReusable>
       <div className="bg-white p-10 shadow-xl rounded-xl">
-        <h2 className="text-3xl font-bold text-center mb-2">Create New Password</h2>
+        <h2 className="text-3xl font-bold text-center mb-2">
+          Create New Password
+        </h2>
         <p className="text-gray-500 text-center mb-6">
           Enter your new password below.
         </p>
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+
             {/* Password */}
             <FormField
               control={form.control}
@@ -78,7 +87,20 @@ export default function CreateNewPassword() {
                 <FormItem>
                   <FormLabel>New Password</FormLabel>
                   <FormControl>
-                    <Input type="password" {...field} placeholder="Enter new password" />
+                    <div className="relative">
+                      <Input
+                        type={showPassword ? "text" : "password"}
+                        {...field}
+                        placeholder="Enter new password"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-600"
+                      >
+                        {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                      </button>
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -93,7 +115,26 @@ export default function CreateNewPassword() {
                 <FormItem>
                   <FormLabel>Confirm Password</FormLabel>
                   <FormControl>
-                    <Input type="password" {...field} placeholder="Confirm password" />
+                    <div className="relative">
+                      <Input
+                        type={showConfirmPassword ? "text" : "password"}
+                        {...field}
+                        placeholder="Confirm password"
+                      />
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setShowConfirmPassword(!showConfirmPassword)
+                        }
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-600"
+                      >
+                        {showConfirmPassword ? (
+                          <EyeOff size={20} />
+                        ) : (
+                          <Eye size={20} />
+                        )}
+                      </button>
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>

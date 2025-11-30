@@ -18,6 +18,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useCreateAccount } from "@/lib/hoock/Useauth";
 import { CreateAccountPayload } from "@/lib/type/auth";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 const formSchema = z
   .object({
@@ -36,7 +38,7 @@ type FormValues = z.infer<typeof formSchema>;
 
 export default function CreateYourAccount() {
   const { mutate, isPending } = useCreateAccount();
-
+const router = useRouter();
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -54,12 +56,18 @@ export default function CreateYourAccount() {
       lastName: values.lastName,
       email: values.email,
       password: values.password,
-
-      // ⭐ Default gender
       gender: "Male",
     };
 
-    mutate(payload);
+    mutate(payload,{
+      onSuccess:()=>{
+        router.push('/login')
+      },
+      onError:(error)=>{
+        toast.error(error.message)
+      }
+    });
+   
   }
 
   return (

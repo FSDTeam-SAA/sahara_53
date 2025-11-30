@@ -1,10 +1,13 @@
-
-'use client'
+"use client";
 
 import { useMutation } from "@tanstack/react-query";
-import { createAccount, newPassword, resetPassword } from "../api";
-import { CreateAccountPayload, CreateAccountResponse } from "../type/auth";
 
+import {
+  CreateAccountPayload,
+  CreateAccountResponse,
+  ResetPasswordResponse,
+} from "../type/auth";
+import { createAccount, resetPassword, newPassword } from "../api";
 
 export const useCreateAccount = () =>
   useMutation<CreateAccountResponse, Error, CreateAccountPayload>({
@@ -12,15 +15,14 @@ export const useCreateAccount = () =>
     mutationFn: (data) => createAccount(data),
   });
 
-
 export function useResetPassword() {
-  return useMutation({
+  return useMutation<ResetPasswordResponse, Error, { email: string }>({
     mutationFn: resetPassword,
   });
 }
 
 export function useNewPassword() {
-  return useMutation({
+  return useMutation<ResetPasswordResponse, Error, { newPassword: string ,token:string }>({
     mutationFn: newPassword,
   });
 }

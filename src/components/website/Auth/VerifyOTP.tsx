@@ -82,7 +82,7 @@ export default function VerifyOTP() {
 
   const handleKeyDown = (
     index: number,
-    e: React.KeyboardEvent<HTMLInputElement>
+    e: React.KeyboardEvent<HTMLInputElement>,
   ) => {
     if (
       e.key === "Backspace" &&
@@ -103,18 +103,21 @@ export default function VerifyOTP() {
   };
 
   // TanStack Mutation
-const mutation = useMutation<VerifyResponse, Error, { email: string; otp: string }>({
-  mutationFn: (data) => verify(data),
-  onSuccess: (res) => {
-    const token = res.data.resetToken;
-    if (token) router.push(`/create-new-password?token=${token}`);
-    else alert("No token returned from server.");
-  },
-  onError: (error) => {
-    form.setError("code", { type: "manual", message: error.message });
-  },
-});
-
+  const mutation = useMutation<
+    VerifyResponse,
+    Error,
+    { email: string; otp: string }
+  >({
+    mutationFn: (data) => verify(data),
+    onSuccess: (res) => {
+      const token = res.data.resetToken;
+      if (token) router.push(`/create-new-password?token=${token}`);
+      else alert("No token returned from server.");
+    },
+    onError: (error) => {
+      form.setError("code", { type: "manual", message: error.message });
+    },
+  });
 
   const currentCode = form.watch("code") || "";
 
@@ -201,10 +204,10 @@ const mutation = useMutation<VerifyResponse, Error, { email: string; otp: string
 
             <Button
               type="submit"
-              className="w-full bg-gradient-to-r from-pink-400 to-indigo-600 text-white"
+              className="w-full bg-linear-to-r from-pink-400 to-indigo-600 text-white"
               // disabled={mutation.isMutating || currentCode.length !== 6} // ✅ use isMutating instead of isLoading
             >
-              {  "Verify"}
+              {"Verify"}
             </Button>
           </form>
         </Form>
