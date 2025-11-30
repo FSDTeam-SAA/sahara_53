@@ -52,16 +52,20 @@
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
-  
+
   /* Gradient colors */
-  --gradient-start: #FF7CE5;
-  --gradient-end: #5D5FEF;
-  --primary-gradient: linear-gradient(90deg, var(--gradient-start) 0%, var(--gradient-end) 100%);
-  
+  --gradient-start: #ff7ce5;
+  --gradient-end: #5d5fef;
+  --primary-gradient: linear-gradient(
+    90deg,
+    var(--gradient-start) 0%,
+    var(--gradient-end) 100%
+  );
+
   /* Fallback solid color (using gradient start color) */
-  --primary: #FF7CE5;
+  --primary: #ff7ce5;
   --primary-foreground: oklch(0.985 0 0);
-  
+
   --secondary: oklch(0.97 0 0);
   --secondary-foreground: oklch(0.205 0 0);
   --muted: oklch(0.97 0 0);
@@ -94,16 +98,20 @@
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.205 0 0);
   --popover-foreground: oklch(0.985 0 0);
-  
+
   /* Gradient colors (same in dark mode) */
-  --gradient-start: #FF7CE5;
-  --gradient-end: #5D5FEF;
-  --primary-gradient: linear-gradient(90deg, var(--gradient-start) 0%, var(--gradient-end) 100%);
-  
+  --gradient-start: #ff7ce5;
+  --gradient-end: #5d5fef;
+  --primary-gradient: linear-gradient(
+    90deg,
+    var(--gradient-start) 0%,
+    var(--gradient-end) 100%
+  );
+
   /* Fallback solid color */
-  --primary: #FF7CE5;
+  --primary: #ff7ce5;
   --primary-foreground: oklch(0.205 0 0);
-  
+
   --secondary: oklch(0.269 0 0);
   --secondary-foreground: oklch(0.985 0 0);
   --muted: oklch(0.269 0 0);
@@ -143,11 +151,11 @@
   .bg-primary-gradient {
     background-image: var(--primary-gradient);
   }
-  
+
   .hover\:bg-primary-gradient:hover {
     background-image: var(--primary-gradient);
   }
-  
+
   /* Primary Gradient Text (using background-clip) */
   .text-primary-gradient {
     background-image: var(--primary-gradient);
@@ -156,20 +164,40 @@
     -webkit-text-fill-color: transparent;
     color: transparent;
   }
-  
+
   /* Primary Gradient Border */
   .border-primary-gradient {
     border-width: 2px;
     border-style: solid;
     border-image: var(--primary-gradient) 1;
   }
-  
+
   /* From variant for gradients */
   .from-primary-start {
     --tw-gradient-from: var(--gradient-start);
   }
-  
+
   .to-primary-end {
     --tw-gradient-to: var(--gradient-end);
   }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c4b5fd;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a78bfa;
 }

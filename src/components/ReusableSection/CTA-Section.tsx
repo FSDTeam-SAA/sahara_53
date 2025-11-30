@@ -10,7 +10,7 @@ export function CTA() {
       <div
         className="bg-white flex flex-col items-center justify-center"
         style={{
-          width: "1556px",
+          width: "full",
           height: "264px",
           borderRadius: "6px",
           padding: "40px 60px",
@@ -57,18 +57,13 @@ export function CTA() {
           </button>
 
           {/* How it works button: 201x46px inner, 2px border, 5px radius */}
-          <div className="p-[2px] bg-gradient-to-r from-[#FF7CE5] to-[#5D5FEF]" style={{ borderRadius: "7px" }}>
+          <div className="p-[2px]">
             <button
-              className="bg-white font-medium"
+              className="bg-white font-medium border-primary-gradient border-2 rounded-2xl"
               style={{
                 width: "197px",
                 height: "42px",
-                borderRadius: "5px",
                 fontSize: "16px",
-                background: "linear-gradient(to right, #FF7CE5, #5D5FEF)",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-                backgroundClip: "text",
               }}
             >
               How it works

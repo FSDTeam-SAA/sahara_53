@@ -4,8 +4,8 @@ import Image from "next/image"
 
 const Footer = () => {
   return (
-    <footer className="bg-[#EFEFFD] text-gray-800 py-16 px-6 ml-2">
-      <div className="container mx-auto max-w-7xl">
+    <footer className="bg-[#EFEFFD] text-gray-800 py-16 px-6">
+      <div className="w-full mx-auto">
         {/* Main Footer Content */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
           {/* Left Section - Logo and Description */}
