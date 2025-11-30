@@ -1,127 +1,161 @@
 "use client";
 
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import Image from "next/image";
 import { useState } from "react";
-import { toast } from "sonner";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import {
   Form,
+  FormControl,
   FormField,
   FormItem,
   FormLabel,
-  FormControl,
   FormMessage,
 } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "../ui/checkbox";
+import { toast } from "sonner";
+import Link from "next/link";
 
-// Zod schema using union of literals
 const formSchema = z.object({
-  name: z.string().min(1, "Name is required"),
+  firstName: z.string().min(1, "First Name is required"),
+  lastName: z.string().min(1, "Last Name is required"),
   email: z.string().email("Invalid email address"),
-  phone: z
-    .string()
-    .min(10, "Phone number must be at least 10 digits")
-    .max(15, "Phone number is too long"),
+  phone: z.string().min(10, "Phone number must be at least 10 digits"),
   message: z.string().min(1, "Message is required"),
+  agree: z.boolean().refine((val) => val === true, {
+    message: "You must agree to the terms and conditions",
+  }),
 });
 
-export default function GetInTouch() {
+const SentMessage = () => {
   const [loading, setLoading] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: "",
+      firstName: "",
+      lastName: "",
       email: "",
       phone: "",
       message: "",
+      agree: false, // ✅ must be boolean, not string
     },
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setLoading(true);
+
     try {
       console.log(values);
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(values),
+      });
+
+      if (!response.ok) throw new Error("Failed to send message");
+
       toast.success("Your message has been sent successfully!");
       form.reset();
-    } catch {
+    } catch (error) {
       toast.error("Failed to send message.");
+      console.error(error);
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <div className="bg-gray-50 py-10">
-      <div className="container mx-auto bg-white rounded-2xl shadow-sm grid grid-cols-1 md:grid-cols-2">
-        {/* Left side: Image with gradient overlay */}
-        <div className="relative h-64 md:h-auto rounded-l-2xl overflow-hidden">
-          <Image
-            src="/image/GetInTouch.png"
-            alt="Contact Image"
-            fill
-            className="object-cover"
-            priority
-          />
-          <div className="absolute inset-0 bg-black/20 rounded-l-2xl" />
-        </div>
+    <section>
+      <div className="container mx-auto my-16 md:my-20">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 py-16 px-4 items-center">
+          {/* Image */}
+          <div>
+            <Image
+              src="/images/contact.jpg"
+              alt="sent message"
+              width={735}
+              height={890}
+              className="w-full aspect-5/5 object-cover rounded-2xl"
+            />
+          </div>
 
-        {/* Right side: Form */}
-        <div className="p-10">
-          <h2
-            className="text-xl font-bold mb-2"
-            style={{ fontFamily: "var(--font-playfair)" }}
-          >
-            Contact Us <span className="text-[#E0A523]">Builders AZ LLC</span>
-          </h2>
-          <p className="text-[#000000BA] mb-6   md:text-4xl">
-            Get in touch with us
-          </p>
+          {/* Form */}
+          <div>
+            <h2 className="text-[#181D27] text-2xl md:text-4xl mb-3 font-semibold font-serif">
+              Contact us
+            </h2>
+            <p className="text-[#717680] mb-8 md:mb-10 leading-relaxed text-sm md:text-base lg:text-xl">
+              Our friendly team would love to hear from you.
+            </p>
+            <Form {...form}>
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="space-y-4"
+              >
+                {/* Name Fields */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="firstName"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>First Name</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="First Name"
+                            {...field}
+                            className="py-5 rounded-sm"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-              {/* Name */}
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Name</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="Your Name"
-                        {...field}
-                        className="py-3 rounded-md"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                  <FormField
+                    control={form.control}
+                    name="lastName"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Last Name</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Last Name"
+                            {...field}
+                            className="py-5 rounded-sm"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
 
-              {/* Email & Phone */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {/* Email */}
                 <FormField
                   control={form.control}
                   name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Email Address</FormLabel>
+                      <FormLabel>Email</FormLabel>
                       <FormControl>
                         <Input
-                          placeholder="hello@example.com"
+                          placeholder="you@company.com"
                           {...field}
-                          className="py-3 rounded-md"
+                          className="py-5 rounded-sm"
                         />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
+
+                {/* Phone */}
                 <FormField
                   control={form.control}
                   name="phone"
@@ -132,46 +166,89 @@ export default function GetInTouch() {
                         <Input
                           placeholder="+1234567890"
                           {...field}
-                          className="py-3 rounded-md"
+                          className="py-5 rounded-sm"
                         />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-              </div>
 
-              {/* Message */}
-              <FormField
-                control={form.control}
-                name="message"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Message</FormLabel>
-                    <FormControl>
-                      <Textarea
-                        placeholder="Write your message here..."
-                        {...field}
-                        className="h-[150px] rounded-md"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                {/* Message */}
+                <FormField
+                  control={form.control}
+                  name="message"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Message</FormLabel>
+                      <FormControl>
+                        <Textarea
+                          placeholder="Write your message here..."
+                          {...field}
+                          className="h-[150px] rounded-sm align-top"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-              {/* Submit */}
-              <Button
-                type="submit"
-                disabled={loading}
-                className="w-full bg-[#E0A523] hover:bg-[#c68c1a] text-white rounded-md py-3 font-semibold cursor-pointer"
-              >
-                {loading ? "Sending..." : "Send Message"}
-              </Button>
-            </form>
-          </Form>
+                {/* Agree Checkbox */}
+                <FormField
+                  control={form.control}
+                  name="agree"
+                  render={({ field }) => (
+                    <FormItem className="flex items-center space-x-2">
+                      <FormControl>
+                        <Checkbox
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                        />
+                      </FormControl>
+                      <span className="text-sm text-gray-600">
+                        You agree to our{" "}
+                        <Link
+                          href="/terms-and-conditions"
+                          target="_blank"
+                          className="text-green-600 underline"
+                        >
+                          Terms & Conditions
+                        </Link>{" "}
+                        and{" "}
+                        <Link
+                          href="/privacy-policy"
+                          target="_blank"
+                          className="text-green-600 underline"
+                        >
+                          Privacy Policy
+                        </Link>
+                        .
+                      </span>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                {/* Submit */}
+                <Button
+                  type="submit"
+                  disabled={loading}
+                  className="
+    w-full cursor-pointer rounded-sm text-white 
+    bg-gradient-to-r from-[#FF7CE5] to-[#5D5FEF]
+    hover:opacity-90
+    disabled:opacity-50 disabled:cursor-not-allowed
+  "
+                >
+                  {loading ? "Sending..." : "Send Message"}
+                </Button>
+              </form>
+            </Form>
+          </div>
         </div>
       </div>
-    </div>
+    </section>
   );
-}
+};
+
+export default SentMessage;
