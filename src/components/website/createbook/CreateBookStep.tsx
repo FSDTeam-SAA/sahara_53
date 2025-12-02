@@ -26,7 +26,7 @@ export default function CreateBookStep({ step }: { step: number }) {
                   w-10 h-10 flex items-center justify-center rounded-full border 
                   text-sm font-semibold
                   ${isCompleted
-                    ? "bg-gradient-to-r from-[#FF7CE5] to-[#5D5FEF] text-white border-transparent"
+                    ? "bg-linear-to-r from-[#FF7CE5] to-[#5D5FEF] text-white border-transparent"
                     : "bg-white border-gray-300 text-gray-700"}
                 `}
               >
@@ -47,8 +47,8 @@ export default function CreateBookStep({ step }: { step: number }) {
             {/* Line (except last) */}
             {index !== steps.length - 1 && (
               <div
-                className={`flex-1 h-[2px] mx-4 
-                  ${isCompleted ? "bg-gradient-to-r from-[#FF7CE5] to-[#5D5FEF]" : "bg-gray-300"}
+                className={`flex-1 h-0.5 mx-4
+                  ${isCompleted ? "bg-linear-to-r from-[#FF7CE5] to-[#5D5FEF]" : "bg-gray-300"}
                 `}
               ></div>
             )}

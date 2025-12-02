@@ -10,16 +10,31 @@ import { cn } from "@/lib/utils";
 
 type RecordingState = "idle" | "loading" | "recording" | "recorded" | "playing";
 
-const VoiceRecording = () => {
+interface VoiceData {
+  blob?: Blob | null;
+  url?: string | null;
+}
+
+interface VoiceRecordingProps {
+  data: VoiceData | null;
+
+  onChange: (data: VoiceData | null) => void;
+}
+
+const VoiceRecording: React.FC<VoiceRecordingProps> = ({ data, onChange }) => {
+  const [audioBlob, setAudioBlob] = useState<Blob | null>(data?.blob || null);
   const [selectedDevice, setSelectedDevice] = useState<string>("");
   const [isMuted, setIsMuted] = useState(false);
   const [showvoice, setShowVoice] = useState(false);
   const [state, setState] = useState<RecordingState>("idle");
-  const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
   const audioElementRef = useRef<HTMLAudioElement | null>(null);
+
+  useEffect(() => {
+    onChange({ blob: audioBlob, url: audioBlob ? URL.createObjectURL(audioBlob) : null });
+  }, [audioBlob, onChange]);
 
   const startRecording = useCallback(async () => {
     try {
@@ -104,6 +119,10 @@ const VoiceRecording = () => {
 
   const toggleVoiceUI = () => setShowVoice((prev) => !prev);
 
+
+
+  // console.log('all create book data',datas)
+
   return (
     <div className="w-full max-w-2xl mx-auto">
       {/* HEADER TITLE */}
@@ -129,7 +148,7 @@ const VoiceRecording = () => {
       </div>
 
       {/* INFO BOX */}
-      <div className="p-4 mb-8 rounded-md border border-[#FF7CE5] bg-gradient-to-r from-[rgba(255,124,229,0.06)] to-[rgba(93,95,239,0.06)]">
+      <div className="p-4 mb-8 rounded-md border border-[#FF7CE5] bg-linear-to-r from-[rgba(255,124,229,0.06)] to-[rgba(93,95,239,0.06)]">
         <p className="text-gray-600 flex items-center gap-3">
           Record a voice sample so we can create personalized narration for your
           book. This step is optional but adds a special touch!

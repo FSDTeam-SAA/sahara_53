@@ -163,16 +163,54 @@ export async function verify(data: { email: string; otp: string }) {
   }
 }
 
-export async function newPassword(data: { newPassword: string,token:string }) {
+export async function newPassword(data: {
+  newPassword: string;
+  token: string;
+}) {
   try {
-    const response = await api.post("auth/reset-password", {newPassword:data.newPassword},{
-      headers:{
-        Authorization:`Bearer ${data.token}`
-      }
-    });
+    const response = await api.post(
+      "auth/reset-password",
+      { newPassword: data.newPassword },
+      {
+        headers: {
+          Authorization: `Bearer ${data.token}`,
+        },
+      },
+    );
     return response.data;
   } catch (err) {
     throw new Error(` ${err} ` || "Something went wrong");
+  }
+}
+
+// create book
+export async function createBook(data: {
+  title: string;
+  language: string;
+  style: string;
+  genre: string;
+  characters: string[];
+  beginning: string;
+}) {
+  try {
+    let config = {};
+
+    // If it's FormData, set proper headers
+    if (data instanceof FormData) {
+      config = {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      };
+    }
+
+    const res = await api.post(`/story/generate`, data, config);
+    return res.data;
+  } catch (err) {
+    if (err instanceof Error) {
+      throw new Error(err.message);
+    }
+    throw new Error("Unknown error occurred");
   }
 }
 
