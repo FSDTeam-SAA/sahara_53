@@ -6,7 +6,7 @@ const menuItems = [
   { href: "/how-it-work", label: "How It Works", icon: "/icon/howtowork.svg" },
   { href: "/create-book", label: "Create Book", icon: "/icon/createbook.svg" },
   { href: "/contact-us", label: "Contact Us", icon: "/icon/contact-us.svg" },
-  { href: "/my-order", label: "My Orders", icon: "/icon/order.svg" },
+  { href: "/myorder", label: "My Orders", icon: "/icon/order.svg" },
   { href: "/profile", label: "Profile", icon: "/icon/user.svg" },
 ];
 const SideBar = () => {

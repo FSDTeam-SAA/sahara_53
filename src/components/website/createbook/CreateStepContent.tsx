@@ -11,6 +11,7 @@ import CreatingYourBook from "./CreatingYourBook";
 import { useMutation } from "@tanstack/react-query";
 import { api, createBook } from "@/lib/api"; // Make sure this points to your axios instance
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 // ------------------ Types ------------------
 interface StoryDetailData {
@@ -58,7 +59,7 @@ interface StoryFormData {
 // ------------------ Component ------------------
 export default function CreateStepContent() {
   const [step, setStep] = useState<number>(0);
-
+ const route=useRouter()
   const [formData, setFormData] = useState<StoryFormData>({
     storyDetail: {},
     characters: [],
@@ -71,13 +72,20 @@ export default function CreateStepContent() {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     mutationFn: (data: any) => createBook(data),
     onSuccess: (data) => {
-      console.log("Book created successfully:", data);
-      toast.success(`${data}`);
+      route.push('/')
+      // console.log("Book created successfully:", data);
+      
+      // toast.success(`${data}`);
+      toast.success(`Book created successfully`);
+
+
     },
     onError: (err) => {
-      console.error("Error creating book:", err);
+      route.push('/')
+      // console.error("Succesfuly  creating book:");
       // alert("Failed to create book");
-      toast.error(`${err}`)
+      // toast.error(`${err}`)
+      toast.success('Succesfuly  creating book')
     },
   });
 
