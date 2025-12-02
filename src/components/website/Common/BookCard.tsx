@@ -1,5 +1,7 @@
 "use client"
 import { Card } from "@/components/ui/card"
+import Image from "next/image"
+import { id } from "zod/v4/locales"
 
 interface BookItem {
   id: string
@@ -15,7 +17,7 @@ const BookCard = ({ item }: { item: BookItem }) => {
   return (
     <Card className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer pt-0">
       <div className="relative w-full aspect-video bg-muted overflow-hidden">
-        <img src={item.image || "/placeholder.svg"} alt={item.title} className="w-full h-full object-cover" />
+        <Image src={item.image || "/placeholder.svg"} width={500} height={500} alt={item.title} className="w-full h-full object-cover" />
       </div>
 
       <div className="px-4 py-3 flex items-center gap-2 flex-wrap border-b">
@@ -31,7 +33,7 @@ const BookCard = ({ item }: { item: BookItem }) => {
       <div className="px-4 py-4">
         <h3 className="font-semibold text-xl font-serif text-[#2B2B2B] mb-2 line-clamp-2">{item.title}</h3>
         <p className="text-sm md:base font-medium text-[#6C757D] line-clamp-3 mb-2">{item.description}</p>
-        <a href="#" className="text-sm font-medium text-primary hover:underline">
+        <a href={`/book/${id}`} className="text-sm font-medium text-primary hover:underline">
           Read More
         </a>
       </div>

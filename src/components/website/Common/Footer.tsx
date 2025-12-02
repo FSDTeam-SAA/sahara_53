@@ -5,9 +5,9 @@ import Image from "next/image"
 const Footer = () => {
   return (
     <footer className="bg-[#EFEFFD] text-gray-800 py-16 px-6">
-      <div className="w-full mx-auto">
+      <div className="w-full mx-auto overflow-hidden">
         {/* Main Footer Content */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12 ">
           {/* Left Section - Logo and Description */}
           <div className="md:col-span-1">
             <div className="mb-4">
@@ -78,7 +78,7 @@ const Footer = () => {
               <span className="text-gray-600 text-sm">Made With Love</span>
             </div>
             <p className="text-gray-600 text-sm">
-              <a href="mailto:support@buildastorytime.com" className="hover:text-purple-600 transition">
+              <a href="mailto:support@buildastorytime.com" className="hover:text-purple-600 transition overflow-y-auto">
                 Support@buildastorytime.com
               </a>
             </p>
