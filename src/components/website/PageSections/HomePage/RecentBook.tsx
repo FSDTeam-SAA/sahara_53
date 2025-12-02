@@ -1,12 +1,21 @@
 "use client"
 
 import { useState } from "react"
-
 import { Button } from "@/components/ui/button"
 import BookCard from "../../Common/BookCard"
 import SectionHeader from "../../Common/SectionHeader"
 
-const SAMPLE_BOOKS = [
+interface BookItem {
+  id: string
+  image: string
+  status: "Completed" | "Reading" | "In Progress" | "Draft"
+  category: string
+  chapter: string
+  title: string
+  description: string
+}
+
+export const SAMPLE_BOOKS: BookItem[] = [
   {
     id: "1",
     image: "/images/book.jpg",
@@ -85,7 +94,7 @@ const RecentBooks = () => {
         ))}
       </div>
 
-      {!showAll && (
+      {!showAll && SAMPLE_BOOKS.length > 6 && (
         <div className="flex justify-center">
           <Button onClick={() => setShowAll(true)} variant="outline" className="px-8">
             See More

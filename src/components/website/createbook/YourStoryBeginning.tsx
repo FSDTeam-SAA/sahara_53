@@ -1,9 +1,19 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { User } from "lucide-react";
 
-const YourStoryBeginning = () => {
-  const [story, setStory] = useState("");
+interface YourStoryBeginningProps {
+  data: string;
+  onChange: (data: string) => void;
+}
+
+const YourStoryBeginning: React.FC<YourStoryBeginningProps> = ({ data, onChange }) => {
+  const [story, setStory] = useState<string>(data || "");
+
+  useEffect(() => {
+    onChange(story);
+  }, [story, onChange]);
+
 
   return (
     <div className="w-full max-w-2xl mx-auto">
@@ -41,7 +51,7 @@ const YourStoryBeginning = () => {
       </div>
 
       {/* Inspiration Box */}
-      <div className="p-4 mb-8 rounded-md border border-[#FF7CE5] bg-gradient-to-r from-[rgba(255,124,229,0.06)] to-[rgba(93,95,239,0.06)]">
+      <div className="p-4 mb-8 rounded-md border border-[#FF7CE5] bg-linear-to-r from-[rgba(255,124,229,0.06)] to-[rgba(93,95,239,0.06)]">
        <p
   className="flex items-center gap-3 mb-2 text-2xl font-bold"
   style={{

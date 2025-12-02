@@ -1,6 +1,7 @@
 "use client";
+"use no memo";
 
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 
 import {
@@ -28,27 +29,70 @@ interface StoryFormValues {
   genre: string;
 }
 
-const StoryDetail = () => {
+// Define props interface
+interface StoryDetailProps {
+  data: Partial<StoryFormValues>;
+  onChange: (data: StoryFormValues) => void;
+}
+
+const StoryDetail: React.FC<StoryDetailProps> = ({ data, onChange }) => {
   const form = useForm<StoryFormValues>({
     defaultValues: {
       bookTitle: "",
       language: "",
       writingStyle: "",
       genre: "",
+      ...data, // Spread existing data if any
     },
   });
 
-  // Fixed: use correct type
-  function onSubmit(data: StoryFormValues) {
-    console.log(data);
-    // Handle form submission
-  }
+  const lastValueRef = useRef<string>("");
+
+  // Watch form changes and call onChange only when values actually change
+  useEffect(() => {
+    const subscription = form.watch((value) => {
+      const currentValue = JSON.stringify(value);
+      // Only call onChange if the value has actually changed
+      if (lastValueRef.current !== currentValue) {
+        lastValueRef.current = currentValue;
+        const formValues = form.getValues();
+        onChange({
+          bookTitle: formValues.bookTitle || "",
+          language: formValues.language || "",
+          writingStyle: formValues.writingStyle || "",
+          genre: formValues.genre || "",
+        });
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, [form, onChange]);
+
+  // Reset form when data changes
+  useEffect(() => {
+    if (data) {
+      form.reset({
+        bookTitle: data.bookTitle || "",
+        language: data.language || "",
+        writingStyle: data.writingStyle || "",
+        genre: data.genre || "",
+      });
+    }
+  }, [data, form]);
+
+  // Form submission handler
+  const onSubmit = (data: StoryFormValues) => {
+    console.log("Form submitted:", data);
+    // Handle form submission if needed
+  };
 
   const languageOptions = [
     { value: "english", label: "English" },
     { value: "spanish", label: "Spanish" },
     { value: "french", label: "French" },
     { value: "german", label: "German" },
+    { value: "hindi", label: "Hindi" },
+    { value: "chinese", label: "Chinese" },
+    { value: "japanese", label: "Japanese" },
   ];
 
   const writingStyleOptions = [
@@ -56,6 +100,10 @@ const StoryDetail = () => {
     { value: "casual", label: "Casual" },
     { value: "professional", label: "Professional" },
     { value: "creative", label: "Creative" },
+    { value: "academic", label: "Academic" },
+    { value: "conversational", label: "Conversational" },
+    { value: "descriptive", label: "Descriptive" },
+    { value: "narrative", label: "Narrative" },
   ];
 
   const genreOptions = [
@@ -64,13 +112,20 @@ const StoryDetail = () => {
     { value: "mystery", label: "Mystery" },
     { value: "romance", label: "Romance" },
     { value: "sci-fi", label: "Science Fiction" },
+    { value: "fantasy", label: "Fantasy" },
+    { value: "thriller", label: "Thriller" },
+    { value: "horror", label: "Horror" },
+    { value: "biography", label: "Biography" },
+    { value: "history", label: "History" },
+    { value: "children", label: "Children's" },
+    { value: "young-adult", label: "Young Adult" },
   ];
 
   return (
-    <div className="w-full">
+    <div className="w-full max-w-2xl mx-auto">
       {/* HEADER TITLE */}
       <h2
-        className="text-2xl font-bold flex items-center gap-2"
+        className="text-2xl font-bold flex items-center gap-2 mb-6"
         style={{
           background: "linear-gradient(135deg, #FB923C 0%, #EC4899 100%)",
           WebkitBackgroundClip: "text",
@@ -93,13 +148,14 @@ const StoryDetail = () => {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-sm font-medium text-gray-700">
-                    Book Title
+                    Book Title *
                   </FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="Write here..."
+                      placeholder="Enter your story title..."
                       {...field}
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                      value={field.value || ""}
                     />
                   </FormControl>
                   <FormMessage />
@@ -114,15 +170,15 @@ const StoryDetail = () => {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-sm font-medium text-gray-700">
-                    Language
+                    Language *
                   </FormLabel>
                   <Select
                     onValueChange={field.onChange}
-                    value={field.value} // controlled value
+                    value={field.value || ""}
                   >
                     <FormControl>
                       <SelectTrigger className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent">
-                        <SelectValue placeholder="Select from here" />
+                        <SelectValue placeholder="Select language" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -139,22 +195,22 @@ const StoryDetail = () => {
             />
 
             {/* Writing Style & Genre Fields */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 items-center justify-between">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <FormField
                 control={form.control}
                 name="writingStyle"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-sm font-medium text-gray-700">
-                      Writing Style
+                      Writing Style *
                     </FormLabel>
                     <Select
                       onValueChange={field.onChange}
-                      value={field.value}
+                      value={field.value || ""}
                     >
                       <FormControl>
                         <SelectTrigger className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent">
-                          <SelectValue placeholder="Select from here" />
+                          <SelectValue placeholder="Select style" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
@@ -176,12 +232,15 @@ const StoryDetail = () => {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-sm font-medium text-gray-700">
-                      Genre
+                      Genre *
                     </FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value}>
+                    <Select
+                      onValueChange={field.onChange}
+                      value={field.value || ""}
+                    >
                       <FormControl>
                         <SelectTrigger className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent">
-                          <SelectValue placeholder="Select from here" />
+                          <SelectValue placeholder="Select genre" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
@@ -198,13 +257,10 @@ const StoryDetail = () => {
               />
             </div>
 
-            {/* Submit Button */}
-            {/* <button
-              type="submit"
-              className="w-full py-2 px-4 bg-orange-500 text-white rounded-md hover:bg-orange-600 transition"
-            >
-              Submit
-            </button> */}
+            {/* Required fields note */}
+            <div className="text-sm text-gray-500 mt-4">
+              <p>* Required fields</p>
+            </div>
           </form>
         </Form>
       </div>
