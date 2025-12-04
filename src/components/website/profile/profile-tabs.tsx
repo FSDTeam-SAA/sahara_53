@@ -1,15 +1,17 @@
-"use client"
+"use client";
 
-import MyBooksTab from "./My-book"
-import MyProfileTab from "./my-profile"
-
+import MyBooksTab from "./My-book";
+import MyProfileTab from "./my-profile";
 
 interface ProfileTabsProps {
-  activeTab: "profile" | "books"
-  onTabChange: (tab: "profile" | "books") => void
+  activeTab: "profile" | "books";
+  onTabChange: (tab: "profile" | "books") => void;
 }
 
-export default function ProfileTabs({ activeTab, onTabChange }: ProfileTabsProps) {
+export default function ProfileTabs({
+  activeTab,
+  onTabChange,
+}: ProfileTabsProps) {
   return (
     <div>
       {/* Tab Navigation */}
@@ -17,15 +19,20 @@ export default function ProfileTabs({ activeTab, onTabChange }: ProfileTabsProps
         <button
           onClick={() => onTabChange("profile")}
           className={`pb-3 font-medium transition-colors ${
-            activeTab === "profile" ? "text-pink-500 border-b-2 border-pink-500" : "text-gray-600 hover:text-gray-900"
+            activeTab === "profile"
+              ? "gradient-text border-b-2 border-pink-500"
+              : "text-gray-600 hover:text-gray-900"
           }`}
         >
           My Profile
         </button>
+
         <button
           onClick={() => onTabChange("books")}
           className={`pb-3 font-medium transition-colors ${
-            activeTab === "books" ? "text-pink-500 border-b-2 border-pink-500" : "text-gray-600 hover:text-gray-900"
+            activeTab === "books"
+              ? "gradient-text border-b-2 border-pink-500"
+              : "text-gray-600 hover:text-gray-900"
           }`}
         >
           My Books
@@ -36,5 +43,5 @@ export default function ProfileTabs({ activeTab, onTabChange }: ProfileTabsProps
       {activeTab === "profile" && <MyProfileTab />}
       {activeTab === "books" && <MyBooksTab />}
     </div>
-  )
+  );
 }

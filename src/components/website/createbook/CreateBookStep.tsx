@@ -11,13 +11,13 @@ const steps = [
 
 export default function CreateBookStep({ step }: { step: number }) {
   return (
-    <div className="flex items-center justify-between w-1/2 mx-auto mt-6">
+    <div className="flex items-center justify-between w-[90%] md:w-1/2 mx-auto mt-6">
       {steps.map((item, index) => {
-        const isCompleted = index <= step; // <= gives gradient to all previous
+        const isCompleted = index <= step; //  gives gradient to all previous
         const isActive = index === step;
 
         return (
-          <div key={index} className="flex items-center w-full ">
+          <div key={index} className="flex items-center md:w-full md:w-full  mx-auto ">
             {/* STEP CIRCLE + LABEL */}
             <div className="flex flex-col items-center">
               {/* Number Circle */}

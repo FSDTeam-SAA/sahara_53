@@ -11,7 +11,7 @@ export default function OrdersPage() {
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
 
   return (
-    <DashboardLayout>
+    <section className="mx-auto m-8 w-[95%]">
     <CreateBookHeader
           title="My"
           highlightedWord="Orders"
@@ -23,6 +23,6 @@ export default function OrdersPage() {
         open={!!selectedOrderId}
         onClose={() => setSelectedOrderId(null)}
       />
-    </DashboardLayout>
+    </section>
   );
 }

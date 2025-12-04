@@ -52,7 +52,7 @@ export function DataTablePagination({ currentPage, totalPages, onPageChange }: D
         size="sm"
         onClick={() => onPageChange(currentPage - 1)}
         disabled={currentPage === 1}
-        className="flex items-center gap-1"
+        className="flex items-center gap-1 cursor-pointer"
       >
         <ChevronLeft className="h-4 w-4" />
         Previous
@@ -69,7 +69,7 @@ export function DataTablePagination({ currentPage, totalPages, onPageChange }: D
               key={page}
               onClick={() => onPageChange(page)}
               className={cn(
-                "h-9 w-9 rounded-lg text-sm font-medium transition-colors",
+                "h-9 w-9 rounded-lg text-sm font-medium transition-colors cursor-pointer",
                 currentPage === page ? "bg-purple-100 text-purple-600" : "text-gray-600 hover:bg-gray-100",
               )}
             >
@@ -87,7 +87,7 @@ export function DataTablePagination({ currentPage, totalPages, onPageChange }: D
         className="flex items-center gap-1"
       >
         Next
-        <ChevronRight className="h-4 w-4" />
+        <ChevronRight className="h-4 w-4 cursor-pointer" />
       </Button>
     </div>
   )
