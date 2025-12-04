@@ -1,5 +1,6 @@
 "use client"
 
+import { CreateBookHeader } from "@/components/ReusableSection/page-header"
 import ProfileTabs from "@/components/website/profile/profile-tabs"
 import { useState } from "react"
 
@@ -8,9 +9,14 @@ export default function ProfilePage() {
   const [activeTab, setActiveTab] = useState<"profile" | "books">("profile")
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background m-8">
+          <CreateBookHeader
+                title="My"
+                highlightedWord="Profile"
+                subtitle="Manage your account settings and preferences "
+              />
  
-      <div className="px-6 py-8 max-w-7xl mx-auto">
+      <div className="px-6 py-8 max-w-full mx-auto">
         <ProfileTabs activeTab={activeTab} onTabChange={setActiveTab} />
       </div>
     </div>

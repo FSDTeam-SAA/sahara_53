@@ -201,3 +201,12 @@
 ::-webkit-scrollbar-thumb:hover {
   background: #a78bfa;
 }
+
+
+
+.gradient-text {
+  background: var(--Gr, linear-gradient(90deg, #FF7CE5 0%, #5D5FEF 100%));
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}

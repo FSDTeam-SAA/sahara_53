@@ -15,7 +15,7 @@ export default function Banner() {
       {/* Content */}
       <div className="relative z-10 mx-auto   px-4 py-16 sm:px-6 sm:py-24 lg:px-8 lg:py-32">
         <div className=" text-start">
-          <h1 className="text-4xl font-bold w-[60%] text-[#2B2B2B] sm:text-5xl lg:text-[60px] font-serif">
+          <h1 className="text-4xl font-bold w-[60%] text-white sm:text-5xl lg:text-[60px] font-serif">
             Strength Meets Precision in Every Steel Solution for Your Projects
           </h1>
           <p className="mt-4 text-base text-gray-200 w-[60%] sm:text-lg/relaxed">

@@ -100,7 +100,7 @@ export default function SideMenu({
         {/* Mobile Menu */}
         <div className="md:hidden">
           <Sheet open={open} onOpenChange={setOpen}>
-            <SheetTrigger asChild>
+            <SheetTrigger className={`${open ? ' absolute right-16  top-3' : 'absolute -right-16  top-3'}`} asChild>
               <Button
                 aria-label="Toggle menu"
                 className="text-gray-500 bg-white"

@@ -17,7 +17,7 @@ export default function MyBooksTab() {
   const books: BookItem[] = [
     {
       id: "1",
-      image: "https://placeholder.com/300x200?text=Book+1",
+      image: "/images/book.jpg",
       status: "Completed",
       category: "Children",
       chapter: "Chapter: 10",
@@ -27,7 +27,7 @@ export default function MyBooksTab() {
     },
     {
       id: "2",
-      image: "https://placeholder.com/300x200?text=Book+2",
+      image: "/images/book.jpg",
       status: "Completed",
       category: "Children",
       chapter: "Chapter: 10",
@@ -37,7 +37,7 @@ export default function MyBooksTab() {
     },
     {
       id: "3",
-      image: "https://placeholder.com/300x200?text=Book+3",
+      image: "/images/book2.jpg",
       status: "Completed",
       category: "Children",
       chapter: "Chapter: 10",
@@ -47,7 +47,7 @@ export default function MyBooksTab() {
     },
     {
       id: "4",
-      image: "https://placeholder.com/300x200?text=Book+4",
+      image: "/images/book.jpg",
       status: "Completed",
       category: "Children",
       chapter: "Chapter: 10",
@@ -57,7 +57,7 @@ export default function MyBooksTab() {
     },
     {
       id: "5",
-      image: "https://placeholder.com/300x200?text=Book+5",
+      image: "/images/book1.jpg",
       status: "Completed",
       category: "Children",
       chapter: "Chapter: 10",
@@ -67,7 +67,7 @@ export default function MyBooksTab() {
     },
     {
       id: "6",
-      image: "https://placeholder.com/300x200?text=Book+6",
+      image: "/images/book2.jpg",
       status: "Completed",
       category: "Children",
       chapter: "Chapter: 10",

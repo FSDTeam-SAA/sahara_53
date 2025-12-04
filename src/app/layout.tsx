@@ -18,7 +18,8 @@ const fredoka = Fredoka({
 
 export const metadata: Metadata = {
   title: "Build Story Time",
-  description: "Build your story with ai, create your own book by using your custom voice and reference image.",
+  description:
+    "Build your story with ai, create your own book by using your custom voice and reference image.",
 };
 
 export default function RootLayout({
@@ -32,7 +33,14 @@ export default function RootLayout({
         <MainProviders>
           <Provider> {children} </Provider>
         </MainProviders>
-        <Toaster position="top-right" closeButton />
+        <Toaster
+          position="top-center"
+          richColors
+          closeButton
+          duration={3000}
+          visibleToasts={3}
+          offset={16}
+        />
       </body>
     </html>
   );

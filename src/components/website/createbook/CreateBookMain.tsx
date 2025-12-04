@@ -15,7 +15,7 @@ interface createbookmainprops{
 const CreateBookMain = ({ children, step, next, back,handelcall }:createbookmainprops) => {
   // console.log('step',step,next,back)
   return (
-    <section className="space-y-10">
+    <section className="space-y-10 ">
       <CreateBookHeader
         title="Create Your"
         highlightedWord="Book"
@@ -24,14 +24,14 @@ const CreateBookMain = ({ children, step, next, back,handelcall }:createbookmain
 
       <CreateBookStep step={step} />
 
-      <Card className="my-6 max-w-3xl mx-auto px-5 py-8">
+      <Card className="my-6 max-w-6xl mx-auto px-5 py-8 ">
         {children}
        
 
        {step !==4 ?  <div className="grid grid-cols-2 gap-10 mt-10">
           <Button
             variant="outline"
-            className="border-red-400 cursor-pointer"
+            className="border-red-400 cursor-pointer py-6"
             onClick={back}
             disabled={step === 0}
           >
@@ -39,7 +39,7 @@ const CreateBookMain = ({ children, step, next, back,handelcall }:createbookmain
           </Button>
 
           <Button
-            className="bg-linear-to-r cursor-pointer from-[#FF7CE5] to-[#5D5FEF] text-white"
+            className="bg-linear-to-r cursor-pointer from-[#FF7CE5] to-[#5D5FEF] text-white py-6"
 
             onClick={step==3? handelcall : next}
           >
