@@ -82,7 +82,6 @@ const StoryDetail: React.FC<StoryDetailProps> = ({ data, onChange }) => {
   // Form submission handler
   const onSubmit = (data: StoryFormValues) => {
     console.log("Form submitted:", data);
-    // Handle form submission if needed
   };
 
   const languageOptions = [
@@ -122,40 +121,51 @@ const StoryDetail: React.FC<StoryDetailProps> = ({ data, onChange }) => {
   ];
 
   return (
-    <div className="w-full max-w-2xl mx-auto">
-      {/* HEADER TITLE */}
-      <h2
-        className="text-2xl font-bold flex items-center gap-2 mb-6"
-        style={{
-          background: "linear-gradient(135deg, #FB923C 0%, #EC4899 100%)",
-          WebkitBackgroundClip: "text",
-          backgroundClip: "text",
-          WebkitTextFillColor: "transparent",
-        }}
-      >
+    <div className="w-full z-10 ">
+      <h2 className="text-2xl md:text-4xl font-bold flex items-center gap-2 mb-6">
         <span className="text-3xl">✨</span>
-        Story Details
+
+        <span
+          className="inline-block"
+          style={{
+            background: "linear-gradient(135deg, #FB923C 0%, #EC4899 100%)",
+            WebkitBackgroundClip: "text",
+            backgroundClip: "text",
+            WebkitTextFillColor: "transparent",
+          }}
+        >
+          Story Details
+        </span>
       </h2>
 
       {/* CONTENT WRAPPER */}
       <div className="mt-6">
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <Form {...form}>
             {/* Book Title Field */}
             <FormField
               control={form.control}
               name="bookTitle"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-sm font-medium text-gray-700">
-                    Book Title *
+                  <FormLabel className="text-sm leading-[150%]  font-medium text-[#2B2B2B]">
+                    Book Title
                   </FormLabel>
                   <FormControl>
-                    <Input
+                    {/* <Input
                       placeholder="Enter your story title..."
                       {...field}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                      value={field.value || ""}
+                      className="w-full px-3 py-6 border border-gray-300 rounded-md  focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                      type="text"
+                      // value={field.value || ""}
+                    /> */}
+
+                    <Input
+                      placeholder="Enter your story title..."
+                      {...field} // শুধু এইটাই যথেষ্ট
+                      className="w-full px-3 py-6 border border-gray-300 rounded-md  focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                      type="text"
+                      // autoComplete="off"
                     />
                   </FormControl>
                   <FormMessage />
@@ -169,15 +179,15 @@ const StoryDetail: React.FC<StoryDetailProps> = ({ data, onChange }) => {
               name="language"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-sm font-medium text-gray-700">
-                    Language *
+                  <FormLabel className="text-sm leading-[150%]  font-medium text-[#2B2B2B]">
+                    Language
                   </FormLabel>
                   <Select
                     onValueChange={field.onChange}
                     value={field.value || ""}
                   >
                     <FormControl>
-                      <SelectTrigger className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent">
+                      <SelectTrigger className="w-full px-3 py-6 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent">
                         <SelectValue placeholder="Select language" />
                       </SelectTrigger>
                     </FormControl>
@@ -201,15 +211,15 @@ const StoryDetail: React.FC<StoryDetailProps> = ({ data, onChange }) => {
                 name="writingStyle"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-sm font-medium text-gray-700">
-                      Writing Style *
+                    <FormLabel className="text-sm leading-[150%]  font-medium text-[#2B2B2B]">
+                      Writing Style
                     </FormLabel>
                     <Select
                       onValueChange={field.onChange}
                       value={field.value || ""}
                     >
                       <FormControl>
-                        <SelectTrigger className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent">
+                        <SelectTrigger className="w-full px-3 py-6 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent">
                           <SelectValue placeholder="Select style" />
                         </SelectTrigger>
                       </FormControl>
@@ -231,15 +241,15 @@ const StoryDetail: React.FC<StoryDetailProps> = ({ data, onChange }) => {
                 name="genre"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-sm font-medium text-gray-700">
-                      Genre *
+                    <FormLabel className="text-sm leading-[150%]  font-medium text-[#2B2B2B]">
+                      Genre
                     </FormLabel>
                     <Select
                       onValueChange={field.onChange}
                       value={field.value || ""}
                     >
                       <FormControl>
-                        <SelectTrigger className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent">
+                        <SelectTrigger className="w-full px-3 py-6 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent">
                           <SelectValue placeholder="Select genre" />
                         </SelectTrigger>
                       </FormControl>
@@ -258,11 +268,11 @@ const StoryDetail: React.FC<StoryDetailProps> = ({ data, onChange }) => {
             </div>
 
             {/* Required fields note */}
-            <div className="text-sm text-gray-500 mt-4">
+            {/* <div className="text-sm text-gray-500 mt-4">
               <p>* Required fields</p>
-            </div>
-          </form>
-        </Form>
+            </div> */}
+          </Form>
+        </form>
       </div>
     </div>
   );

@@ -56,38 +56,39 @@ export function ReadListenBook({
               <ArrowLeft className="w-4 h-4" />
               Back to Book
             </Button>
-            <div className=" absolute inset-0 bg-black/20">
-
-            </div>
+            <div className=" absolute inset-0 bg-black/20"></div>
           </Link>
-        </div>
-      </div>
-      {/* Header */}
-      <div className="sticky top-0 bg-white border-b border-gray-200 z-10">
-        <div className="flex items-center justify-end p-4 md:p-6">
-          <Button
-            onClick={() => {
-              setIsReading(!isReading);
-              onReadAloud?.();
-            }}
-            className={`gap-2 ${
-              isReading
-                ? "bg-purple-600 hover:bg-purple-700"
-                : "border border-purple-600 text-purple-600 hover:bg-purple-50"
-            }`}
-          >
-            <Volume2 className="w-5 h-5" />
-            {isReading ? "Stop" : "Read"} Chapter Aloud
-          </Button>
         </div>
       </div>
 
       {/* Content */}
-      <main className="max-w-4xl mx-auto p-4 md:p-8">
-        {/* Title */}
-        <h1 className="text-4xl md:text-5xl font-bold text-orange-600 mb-8">
-          {bookTitle}
-        </h1>
+      <main className="max-w-6xl mx-auto p-4 md:p-8">
+        <div className="flex justify-between items-center">
+              {/* Title */}
+          <h1 className="text-4xl md:text-5xl font-bold text-orange-600 mb-8">
+            {bookTitle}
+          </h1>
+          {/* Header */}
+          <div className="sticky top-0 bg-white border-b border-gray-200 z-10">
+            <div className="flex items-center justify-end p-4 md:p-6">
+              <Button
+                onClick={() => {
+                  setIsReading(!isReading);
+                  onReadAloud?.();
+                }}
+                className={`gap-2 ${
+                  isReading
+                    ? "bg-purple-600 hover:bg-purple-700"
+                    : "border border-purple-600 text-purple-600 hover:bg-purple-50"
+                }`}
+              >
+                <Volume2 className="w-5 h-5" />
+                {isReading ? "Stop" : "Read"} Chapter Aloud
+              </Button>
+            </div>
+          </div>
+      
+        </div>
 
         {/* Chapter Content */}
         <article className="prose prose-lg max-w-none">
@@ -102,7 +103,7 @@ export function ReadListenBook({
       </main>
 
       {/* Footer Navigation */}
-      <footer className="sticky bottom-0 bg-gradient-to-t from-purple-50 to-white border-t border-purple-200 p-4 md:p-6">
+      <footer className="sticky bottom-0 mx-auto bg-gradient-to-t from-purple-50 to-white border-t border-purple-200 p-4 md:p-6">
         <div className="max-w-4xl mx-auto flex items-center justify-between">
           <Button
             variant="outline"

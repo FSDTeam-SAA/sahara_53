@@ -19,12 +19,15 @@ import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "../ui/checkbox";
 import { toast } from "sonner";
 import Link from "next/link";
+import { useMutation } from "@tanstack/react-query";
+import { createContact } from "@/lib/api";
+import { error } from "console";
 
 const formSchema = z.object({
   firstName: z.string().min(1, "First Name is required"),
   lastName: z.string().min(1, "Last Name is required"),
   email: z.string().email("Invalid email address"),
-  phone: z.string().min(10, "Phone number must be at least 10 digits"),
+  phoneNumber: z.string().min(10, "Phone number must be at least 10 digits"),
   message: z.string().min(1, "Message is required"),
   agree: z.boolean().refine((val) => val === true, {
     message: "You must agree to the terms and conditions",
@@ -40,34 +43,39 @@ const SentMessage = () => {
       firstName: "",
       lastName: "",
       email: "",
-      phone: "",
+      phoneNumber: "",
       message: "",
-      agree: false, // ✅ must be boolean, not string
+      agree: false,
     },
   });
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
-    setLoading(true);
+const sentMessageMutation = useMutation({
+  mutationKey: ["sentMessage"],
 
-    try {
-      console.log(values);
-      const response = await fetch("/api/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(values),
-      });
+  mutationFn: (data: {
+    firstName: string;
+    lastName: string;
+    email: string;
+    phoneNumber: string;
+    message: string;
+    agree?: boolean; // ignored by backend
+  }) => createContact(data),
 
-      if (!response.ok) throw new Error("Failed to send message");
+  onError: (err: Error) => {
+    setLoading(false);
+    toast.error(err.message);
+  },
 
-      toast.success("Your message has been sent successfully!");
-      form.reset();
-    } catch (error) {
-      toast.error("Failed to send message.");
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
-  }
+  onSuccess: () => {
+    setLoading(false);
+    toast.success("Message sent successfully");
+  },
+});
+
+function onSubmit(values: z.infer<typeof formSchema>) {
+  sentMessageMutation.mutate(values);
+}
+
 
   return (
     <section>
@@ -158,7 +166,7 @@ const SentMessage = () => {
                 {/* Phone */}
                 <FormField
                   control={form.control}
-                  name="phone"
+                  name="phoneNumber"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Phone Number</FormLabel>

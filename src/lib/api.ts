@@ -11,6 +11,7 @@ import type {
   PaginatedResponse,
   ApiFilters,
 } from "./types";
+import { it } from "node:test";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -211,6 +212,24 @@ export async function createBook(data: {
       throw new Error(err.message);
     }
     throw new Error("Unknown error occurred");
+  }
+}
+
+
+// contact post
+
+export async function createContact(data: {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phoneNumber: string;
+  message: string;
+}) {
+  try {
+    const response = await api.post("/contact-us", data);
+    return response.data;
+  } catch (error) {
+    throw new Error("Fail to Send Message");
   }
 }
 

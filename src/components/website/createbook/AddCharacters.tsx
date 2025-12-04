@@ -28,7 +28,7 @@ const AddCharacters: React.FC<AddCharactersProps> = ({ data, onChange }) => {
     onChange(characters);
   }, [characters, onChange]);
 
-  /** ➕ Add new character */
+
   const handleAddCharacter = () => {
     const newCharacter: Character = {
       id: Date.now().toString(),
@@ -38,12 +38,12 @@ const AddCharacters: React.FC<AddCharactersProps> = ({ data, onChange }) => {
     setCharacters((prev) => [...prev, newCharacter]);
   };
 
-  /** ❌ Remove */
+  //  Remove 
   const handleRemoveCharacter = (id: string) => {
     setCharacters((prev) => prev.filter((c) => c.id !== id));
   };
 
-  /** ✏️ Update name */
+//  Update name 
   const handleNameChange = (id: string, name: string) => {
     setCharacters((prev) =>
       prev.map((character) =>
@@ -142,7 +142,7 @@ const AddCharacters: React.FC<AddCharactersProps> = ({ data, onChange }) => {
   };
 
   return (
-    <div className="w-full max-w-2xl mx-auto">
+    <div className="w-full max-full mx-auto">
       {/* HEADER */}
       <div className="flex justify-between items-center">
         <h2
@@ -159,7 +159,7 @@ const AddCharacters: React.FC<AddCharactersProps> = ({ data, onChange }) => {
 
         <button
           onClick={handleSkip}
-          className="text-orange-500 hover:text-orange-600 font-medium text-lg transition"
+          className="text-orange-500 hover:text-orange-600 cursor-pointer  font-medium text-lg transition"
         >
           Skip Characters
         </button>

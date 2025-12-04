@@ -20,7 +20,7 @@ export function CreateBookHeader({
         background: "linear-gradient(90deg, #f5e6f0 0%, #f0e8f2 25%, #eaebf4 50%, #e8ecf5 75%, #e5eef6 100%)",
       }}
     >
-      {/* Decorative sparkles/stars */}
+      {/* Decorative sparkles/stars */} 
       <Sparkle className="absolute top-4 left-[15%] h-1.5 w-1.5 opacity-40" />
       <Sparkle className="absolute top-8 right-[20%] h-1 w-1 opacity-30" />
       <Sparkle className="absolute top-6 right-[35%] h-1.5 w-1.5 opacity-25" />

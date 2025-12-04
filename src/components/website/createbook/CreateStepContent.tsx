@@ -27,10 +27,11 @@ interface Character {
   image: string | null; // This will store the URL or base64 string
 }
 
-interface VoiceData {
-  blob?: Blob | null;
-  url?: string | null;
+export interface VoiceData {
+  audioUrl: string;
+  blob: Blob;
 }
+
 
 interface StoryFormData {
   storyDetail: StoryDetailData;
@@ -103,7 +104,7 @@ export default function CreateStepContent() {
 
   const next = () => {
     if (!validateStep()) {
-      alert("Please fill required fields before continuing.");
+      toast.error("Please fill required fields before continuing.");
       return;
     }
     setStep((prev) => prev + 1);
