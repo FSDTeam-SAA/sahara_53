@@ -121,7 +121,7 @@ const StoryDetail: React.FC<StoryDetailProps> = ({ data, onChange }) => {
   ];
 
   return (
-    <div className="w-full z-10 ">
+    <div className="w-full z-50 ">
       <h2 className="text-2xl md:text-4xl font-bold flex items-center gap-2 mb-6">
         <span className="text-3xl">✨</span>
 
