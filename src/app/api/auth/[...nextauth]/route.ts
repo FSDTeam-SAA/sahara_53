@@ -2,15 +2,31 @@
 
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import { jwtDecode } from "jwt-decode";
 
 const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 
+// ------------------------------------------------------
+// ⭐ Create proper interface for decoded JWT payload
+// ------------------------------------------------------
+interface DecodedToken {
+  sub: string;   // user ID
+  role: string;
+  name: string;
+  iat: number;
+  exp: number;
+}
+
+// ------------------------------------------------------
+// Extend NextAuth types
+// ------------------------------------------------------
 declare module "next-auth" {
   interface Session {
     user: {
       id: string;
       email: string;
       role: string;
+      name?: string;
     };
     accessToken: string;
   }
@@ -19,6 +35,7 @@ declare module "next-auth" {
     id: string;
     email: string;
     role: string;
+    name?: string;
     token: string;
   }
 }
@@ -28,10 +45,14 @@ declare module "next-auth/jwt" {
     id: string;
     email: string;
     role: string;
+    name?: string;
     accessToken: string;
   }
 }
 
+// ------------------------------------------------------
+// NextAuth Handler
+// ------------------------------------------------------
 const handler = NextAuth({
   providers: [
     CredentialsProvider({
@@ -40,10 +61,9 @@ const handler = NextAuth({
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
       },
+
       async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) {
-          return null;
-        }
+        if (!credentials?.email || !credentials?.password) return null;
 
         try {
           const res = await fetch(`${baseUrl}/auth/login`, {
@@ -56,26 +76,23 @@ const handler = NextAuth({
           });
 
           const data = await res.json();
-          console.log('auth login data :', data);
+          console.log("auth login data:", data);
 
           if (!res.ok) {
-            console.error('API Error:', data);
             throw new Error(data.message || "Login failed");
           }
 
-          // Since your API returns token directly in data.data.token
           const token = data.data?.token;
+          if (!token) throw new Error("No token received");
 
-          if (!token) {
-            throw new Error("No token received");
-          }
+          // ⭐ Decode token using the typed interface
+          const decoded = jwtDecode<DecodedToken>(token);
 
-          // For NextAuth, we need to return a user object with id
-          // Using email as id since your API doesn't return user ID
           return {
-            id: credentials.email, 
+            id: decoded.sub,
             email: credentials.email,
-            role: "user", // Default role
+            role: decoded.role,
+            name: decoded.name,
             token: token,
           };
         } catch (error) {
@@ -88,29 +105,27 @@ const handler = NextAuth({
 
   session: {
     strategy: "jwt",
-    maxAge: 30 * 24 * 60 * 60, // 30 days
+    maxAge: 30 * 24 * 60 * 60,
   },
 
   callbacks: {
     async jwt({ token, user }) {
-      // Pass user data to token on initial sign in
       if (user) {
         token.id = user.id;
         token.email = user.email;
         token.role = user.role;
+        token.name = user.name;
         token.accessToken = user.token;
       }
       return token;
     },
 
     async session({ session, token }) {
-      // Send properties to the client
-      if (token) {
-        session.user.id = token.id as string;
-        session.user.email = token.email as string;
-        session.user.role = token.role as string;
-        session.accessToken = token.accessToken as string;
-      }
+      session.user.id = token.id;
+      session.user.email = token.email;
+      session.user.role = token.role;
+      session.user.name = token.name;
+      session.accessToken = token.accessToken;
       return session;
     },
   },
