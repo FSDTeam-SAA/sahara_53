@@ -5,11 +5,14 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { X, Upload, Camera, User, Trash } from "lucide-react";
 import Image from "next/image";
+import { useSession } from "next-auth/react";
+import { useMutation } from "@tanstack/react-query";
+import { imageGenerate } from "@/lib/api";
+import { toast } from "sonner";
 
 interface Character {
-  id: string;
   name: string;
-  image: string | null;
+  image: string | null; // This will store original image first, then Ghibli image if successful
 }
 
 interface AddCharactersProps {
@@ -17,132 +20,296 @@ interface AddCharactersProps {
   onChange: (characters: Character[]) => void;
 }
 
+// ✅ Camera Modal Component - MOVED OUTSIDE
+// ✅ Fix: Update interface to accept nullable refs
+interface CameraModalProps {
+  onClose: () => void;
+  onCapture: () => void;
+  cameraPreviewRef: React.RefObject<HTMLVideoElement | null>;
+  cameraCanvasRef: React.RefObject<HTMLCanvasElement | null>;
+}
+
+const CameraModal: React.FC<CameraModalProps> = ({ 
+  onClose, 
+  onCapture, 
+  cameraPreviewRef, 
+  cameraCanvasRef 
+}) => (
+  <div className="fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center justify-center p-4">
+    <div className="bg-white rounded-lg w-full max-w-md">
+      <div className="p-4 border-b flex justify-between items-center">
+        <h3 className="text-lg font-semibold">Take Photo</h3>
+        <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
+          <X size={24} />
+        </button>
+      </div>
+      
+      <div className="p-4">
+        <div className="relative bg-black rounded-lg overflow-hidden">
+          <video
+            ref={cameraPreviewRef}
+            autoPlay
+            playsInline
+            className="w-full h-96 object-cover"
+          />
+          <canvas ref={cameraCanvasRef} className="hidden" />
+        </div>
+        
+        <div className="flex justify-center gap-4 mt-6">
+          <Button
+            variant="outline"
+            onClick={onClose}
+            className="flex-1"
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={onCapture}
+            className="flex-1 bg-gradient-to-r from-orange-500 to-pink-500 text-white"
+          >
+            Capture
+          </Button>
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
+// ✅ Now AddCharacters component starts here
 const AddCharacters: React.FC<AddCharactersProps> = ({ data, onChange }) => {
+  const session = useSession();
   const [characters, setCharacters] = useState<Character[]>(data || []);
   const [isUploading, setIsUploading] = useState(false);
-  const uploadFileInputRef = useRef<HTMLInputElement>(null);
-  const cameraFileInputRef = useRef<HTMLInputElement>(null);
+  const [cameraStream, setCameraStream] = useState<MediaStream | null>(null);
+  const [isCameraActive, setIsCameraActive] = useState(false);
 
-  /** 🔥 Sync local state changes back to parent */
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const cameraPreviewRef = useRef<HTMLVideoElement>(null);
+  const cameraCanvasRef = useRef<HTMLCanvasElement>(null);
+
+  const imageGenerateMutation = useMutation({
+    mutationKey: ["generateImage"],
+    mutationFn: (data: FormData) => imageGenerate(data),
+    onSuccess: (response) => {
+      if (response?.url && characters.length > 0) {
+        // Update character with Ghibli image
+        setCharacters((prev) => {
+          const updated = [...prev];
+          if (updated[0]) {
+            updated[0] = {
+              ...updated[0],
+              image: response.url, // Replace with Ghibli image
+            };
+          }
+          return updated;
+        });
+
+        toast.success("Ghibli-style image generated successfully!");
+
+        // Pass updated character to parent
+        onChange(
+          characters.map((char, index) =>
+            index === 0 ? { ...char, image: response.url } : char,
+          ),
+        );
+      } else {
+        // Keep original image if no Ghibli image returned
+        toast.info("Using original image (Ghibli generation unavailable)");
+      }
+    },
+    onError: (error) => {
+      toast.info("Using original uploaded image");
+      console.error("Ghibli image generation error:", error);
+    },
+  });
+
+  // Clean up camera stream
+  useEffect(() => {
+    return () => {
+      if (cameraStream) {
+        cameraStream.getTracks().forEach((track) => track.stop());
+      }
+    };
+  }, [cameraStream]);
+
+  // Sync characters to parent
   useEffect(() => {
     onChange(characters);
   }, [characters, onChange]);
 
-
-  const handleAddCharacter = () => {
-    const newCharacter: Character = {
-      id: Date.now().toString(),
-      name: "",
-      image: null,
-    };
-    setCharacters((prev) => [...prev, newCharacter]);
+  // Handle character removal
+  const handleRemoveCharacter = () => {
+    setCharacters([]);
+    onChange([]);
   };
 
-  //  Remove 
-  const handleRemoveCharacter = (id: string) => {
-    setCharacters((prev) => prev.filter((c) => c.id !== id));
-  };
+  // Start camera
+  const startCamera = async () => {
+    try {
+      if (characters.length > 0) {
+        toast.info(
+          "Only one character allowed. Please remove existing character first.",
+        );
+        return;
+      }
 
-//  Update name 
-  const handleNameChange = (id: string, name: string) => {
-    setCharacters((prev) =>
-      prev.map((character) =>
-        character.id === id ? { ...character, name } : character,
-      ),
-    );
-  };
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: "environment" },
+      });
 
-  /** 📷 Upload image for existing character */
-  const handleImageUpload = (
-    id: string,
-    event: React.ChangeEvent<HTMLInputElement>,
-  ) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
+      setCameraStream(stream);
+      setIsCameraActive(true);
 
-    setIsUploading(true);
-
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      setCharacters((prev) =>
-        prev.map((character) =>
-          character.id === id
-            ? { ...character, image: e.target?.result as string }
-            : character,
-        ),
-      );
-      setIsUploading(false);
-    };
-
-    reader.readAsDataURL(file);
-    event.target.value = ""; // Reset input
-  };
-
-  /** 📷 Handle upload from main upload button */
-  const handleMainUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-
-    setIsUploading(true);
-
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const newCharacter: Character = {
-        id: Date.now().toString(),
-        name: "",
-        image: e.target?.result as string,
-      };
-      setCharacters((prev) => [...prev, newCharacter]);
-      setIsUploading(false);
-    };
-
-    reader.readAsDataURL(file);
-    event.target.value = ""; // Reset input
-  };
-
-  /** 📱 Trigger camera for taking photo */
-  const handleTakePhoto = async () => {
-    // For mobile devices, try to use camera
-    if (navigator.mediaDevices && await navigator.mediaDevices.getUserMedia()) {
-      // You can implement actual camera capture here
-      // For now, just trigger the file input with camera capture
-      cameraFileInputRef.current?.setAttribute('capture', 'environment');
-      cameraFileInputRef.current?.click();
-    } else {
-      // Fallback to file input for desktop
-      cameraFileInputRef.current?.removeAttribute('capture');
-      cameraFileInputRef.current?.click();
+      if (cameraPreviewRef.current) {
+        cameraPreviewRef.current.srcObject = stream;
+      }
+    } catch (error) {
+      console.error("Error accessing camera:", error);
+      toast.error("Unable to access camera. Please check permissions.");
     }
   };
 
-  /** 📷 Handle camera photo capture */
-  const handleCameraCapture = (event: React.ChangeEvent<HTMLInputElement>) => {
+  // Stop camera
+  const stopCamera = () => {
+    if (cameraStream) {
+      cameraStream.getTracks().forEach((track) => track.stop());
+      setCameraStream(null);
+      setIsCameraActive(false);
+    }
+  };
+
+  // Capture photo
+  const capturePhoto = () => {
+    if (!cameraPreviewRef.current || !cameraCanvasRef.current || !cameraStream)
+      return;
+
+    const video = cameraPreviewRef.current;
+    const canvas = cameraCanvasRef.current;
+    const context = canvas.getContext("2d");
+
+    if (!context) return;
+
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+
+    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    const imageData = canvas.toDataURL("image/jpeg", 0.8);
+
+    // Create character with captured photo
+    const newCharacter: Character = {
+      name: session.data?.user?.name || "User",
+      image: imageData,
+    };
+
+    setCharacters([newCharacter]);
+    stopCamera();
+    toast.success("Photo captured!");
+
+    // Try to generate Ghibli image
+    generateGhibliImage(imageData);
+  };
+
+  // Handle file upload
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
+
+    if (characters.length > 0) {
+      toast.info(
+        "Only one character allowed. Please remove existing character first.",
+      );
+      event.target.value = "";
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("File size should be less than 5MB");
+      event.target.value = "";
+      return;
+    }
+
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please upload an image file");
+      event.target.value = "";
+      return;
+    }
 
     setIsUploading(true);
 
     const reader = new FileReader();
     reader.onload = (e) => {
       const newCharacter: Character = {
-        id: Date.now().toString(),
-        name: "",
+        name: session.data?.user?.name || "User",
         image: e.target?.result as string,
       };
-      setCharacters((prev) => [...prev, newCharacter]);
+
+      setCharacters([newCharacter]);
+      setIsUploading(false);
+      toast.success("Image uploaded!");
+
+      // Try to generate Ghibli image
+      generateGhibliImage(e.target?.result as string);
+    };
+
+    reader.onerror = () => {
+      toast.error("Failed to read image file");
       setIsUploading(false);
     };
 
     reader.readAsDataURL(file);
-    event.target.value = ""; // Reset input
+    event.target.value = "";
+  };
+
+  // Generate Ghibli image from uploaded photo
+  const generateGhibliImage = async (imageData: string) => {
+    if (!imageData || !session.data?.user?.name) return;
+
+    try {
+      // Convert base64 to Blob
+      const base64Data = imageData.split(",")[1];
+      const byteCharacters = atob(base64Data);
+      const byteNumbers = new Array(byteCharacters.length);
+
+      for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
+      }
+
+      const byteArray = new Uint8Array(byteNumbers);
+      const blob = new Blob([byteArray], { type: "image/jpeg" });
+
+      // Create FormData
+      const formData = new FormData();
+      const fileName = `${session.data.user.name.replace(/\s+/g, "_")}_${Date.now()}.jpg`;
+      const file = new File([blob], fileName, { type: "image/jpeg" });
+
+      formData.append("file", file);
+      formData.append("name", session.data.user.name);
+
+      await imageGenerateMutation.mutateAsync(formData);
+    } catch (error) {
+      console.error("Error generating Ghibli image:", error);
+      // Don't show error toast - we'll keep original image
+    }
   };
 
   const handleSkip = () => {
-    console.log("Skipping character addition");
+    toast.info("Skipped character addition");
+    onChange([]);
   };
 
   return (
-    <div className="w-full max-full mx-auto">
+    <div className="w-full max-full mx-auto z-50">
+      {/* Camera Modal */}
+      {isCameraActive && (
+        <CameraModal
+          onClose={stopCamera}
+          onCapture={capturePhoto}
+          cameraPreviewRef={cameraPreviewRef}
+          cameraCanvasRef={cameraCanvasRef}
+        />
+      )}
+
       {/* HEADER */}
       <div className="flex justify-between items-center">
         <h2
@@ -159,7 +326,7 @@ const AddCharacters: React.FC<AddCharactersProps> = ({ data, onChange }) => {
 
         <button
           onClick={handleSkip}
-          className="text-orange-500 hover:text-orange-600 cursor-pointer  font-medium text-lg transition"
+          className="text-orange-500 hover:text-orange-600 cursor-pointer font-medium text-lg transition"
         >
           Skip Characters
         </button>
@@ -169,70 +336,105 @@ const AddCharacters: React.FC<AddCharactersProps> = ({ data, onChange }) => {
       <div className="p-4 mb-8 rounded-md border border-[#FF7CE5] bg-linear-to-r from-[rgba(255,124,229,0.06)] to-[rgba(93,95,239,0.06)]">
         <p className="text-gray-600 flex items-center gap-3">
           <User className="w-6 h-6" />
-          Upload photos of people who should be characters in your story.
+          Upload a photo to generate a Ghibli-style character for your story.
+          {imageGenerateMutation.isPending && (
+            <span className="text-orange-500 text-sm ml-2">
+              Generating Ghibli version...
+            </span>
+          )}
         </p>
       </div>
 
-      {/* LIST - Character cards */}
+      {/* CHARACTER CARD */}
       <div className="space-y-6 mb-8">
-        {characters.map((character) => (
-          <Card key={character.id} className="relative">
+        {characters.map((character, index) => (
+          <Card key={index} className="relative">
             <CardContent className="p-6">
               <button
-                onClick={() => handleRemoveCharacter(character.id)}
+                onClick={handleRemoveCharacter}
                 className="absolute cursor-pointer top-3 right-3 bg-red-100 hover:bg-red-200 text-red-600 hover:text-red-700 rounded-md p-2 transition-colors"
                 title="Remove character"
               >
                 <Trash size={16} />
               </button>
-              <div className="flex items-start gap-4">
-                {/* IMAGE UPLOAD */}
-                <div>
-                  <label
-                    htmlFor={`image-upload-${character.id}`}
-                    className="cursor-pointer"
-                  >
-                    {character.image ? (
-                      <div className="w-full aspect-5/3 rounded-lg overflow-hidden border-2 py-5 px-5 ">
-                        <Image
-                          src={character.image}
-                          alt="Character"
-                          width={580}
-                          height={580}
-                          className="w-full aspect-5/3 object-cover"
-                        />
-                      </div>
-                    ) : (
-                      <div className="w-20 h-20 border-2 border-dashed border-gray-300 flex items-center justify-center rounded-lg bg-gray-50 hover:bg-gray-100">
-                        <User size={24} className="text-gray-400" />
-                      </div>
-                    )}
-                  </label>
+
+              {/* Image Display */}
+              <div className="flex flex-col gap-4">
+                <h4 className="text-sm font-medium text-gray-700">
+                  {imageGenerateMutation.isSuccess
+                    ? "Your Ghibli Character"
+                    : "Your Character"}
+                  {imageGenerateMutation.isPending &&
+                    " (Generating Ghibli version...)"}
+                </h4>
+
+                <div
+                  className={`w-full aspect-5/3 rounded-lg overflow-hidden border-2 ${
+                    imageGenerateMutation.isSuccess
+                      ? "border-green-500"
+                      : "border-gray-300"
+                  }`}
+                >
+                  {character.image ? (
+                    <Image
+                      src={character.image}
+                      alt={
+                        imageGenerateMutation.isSuccess
+                          ? "Ghibli character"
+                          : "Original character"
+                      }
+                      width={580}
+                      height={580}
+                      className="w-full aspect-5/3 object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-48 flex items-center justify-center bg-gray-100">
+                      <User size={48} className="text-gray-400" />
+                    </div>
+                  )}
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <p className="text-sm text-gray-600">
+                    Character:{" "}
+                    <span className="font-semibold">{character.name}</span>
+                  </p>
+
+                  {imageGenerateMutation.isSuccess && (
+                    <span className="px-2 py-1 text-xs bg-green-100 text-green-800 rounded-full">
+                      Ghibli Style
+                    </span>
+                  )}
                 </div>
               </div>
             </CardContent>
           </Card>
         ))}
+
+        {/* Empty state */}
+        {characters.length === 0 && (
+          <Card className="border-dashed border-2">
+            <CardContent className="p-8 text-center">
+              <User className="w-16 h-16 mx-auto text-gray-400 mb-4" />
+              <h3 className="text-lg font-medium text-gray-700 mb-2">
+                No Character Added
+              </h3>
+              <p className="text-gray-500">
+                Upload a photo or take a photo to add your main character
+              </p>
+            </CardContent>
+          </Card>
+        )}
       </div>
 
-      {/* Hidden file inputs */}
+      {/* Hidden file input */}
       <input
-        ref={uploadFileInputRef}
+        ref={fileInputRef}
         type="file"
         id="upload-photo-input"
         accept="image/*"
         className="hidden"
-        onChange={handleMainUpload}
-      />
-
-      <input
-        ref={cameraFileInputRef}
-        type="file"
-        id="camera-capture-input"
-        
-        accept="image/*"
-        className="hidden"
-        onChange={handleCameraCapture}
+        onChange={handleFileUpload}
       />
 
       {/* ACTION BUTTONS */}
@@ -240,9 +442,14 @@ const AddCharacters: React.FC<AddCharactersProps> = ({ data, onChange }) => {
         {/* Upload Photo Button */}
         <Button
           variant="outline"
-          className="w-full flex cursor-pointer items-center justify-center gap-2 py-10 border-2 border-dashed"
-          disabled={isUploading}
-          onClick={() => uploadFileInputRef.current?.click()}
+          className="w-full flex cursor-pointer items-center justify-center gap-2 py-8 border-2 border-dashed"
+          disabled={
+            isUploading ||
+            isCameraActive ||
+            characters.length > 0 ||
+            imageGenerateMutation.isPending
+          }
+          onClick={() => fileInputRef.current?.click()}
         >
           {isUploading ? (
             "Uploading..."
@@ -257,9 +464,14 @@ const AddCharacters: React.FC<AddCharactersProps> = ({ data, onChange }) => {
         {/* Take Photo Button */}
         <Button
           variant="outline"
-          className="w-full flex cursor-pointer items-center justify-center gap-2 py-10 border-2 border-dashed"
-          onClick={handleTakePhoto}
-          disabled={isUploading}
+          className="w-full flex cursor-pointer items-center justify-center gap-2 py-8 border-2 border-dashed"
+          onClick={startCamera}
+          disabled={
+            isUploading ||
+            isCameraActive ||
+            characters.length > 0 ||
+            imageGenerateMutation.isPending
+          }
         >
           <Camera size={20} />
           Take Photo

@@ -186,34 +186,23 @@ export async function newPassword(data: {
 
 // create book
 export async function createBook(data: {
+  userId: string;
   title: string;
   language: string;
   style: string;
   genre: string;
-  characters: string[];
+  characters: { name: string; image: string }[];
   beginning: string;
 }) {
   try {
-    let config = {};
-
-    // If it's FormData, set proper headers
-    if (data instanceof FormData) {
-      config = {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      };
-    }
-
-    const res = await api.post(`/story/generate`, data, config);
+    const res = await api.post(`/story/generate`, data);
     return res.data;
   } catch (err) {
-    if (err instanceof Error) {
-      throw new Error(err.message);
-    }
+    if (err instanceof Error) throw new Error(err.message);
     throw new Error("Unknown error occurred");
   }
 }
+
 
 
 // contact post
@@ -232,6 +221,50 @@ export async function createContact(data: {
     throw new Error("Fail to Send Message");
   }
 }
+
+// image genarate
+
+// lib/api.ts
+export async function imageGenerate(data: FormData) {
+  try {
+    const res = await api.post("/image/ghibli", data, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return res.data;
+  } catch (err) {
+    if (err instanceof Error) {
+      throw new Error(`Image upload failed: ${err.message}`);
+    }
+    throw new Error('Unknown error occurred');
+  }
+}
+
+
+
+
+
+// recent book get 
+
+
+
+export async function recentBookFetch(id: string) {
+  try {
+    console.log('fuck')
+    const res = await api.get(`/story/user/674b9e9e8c1e22df9e78a638`);
+    const data= await res.data
+    console.log('respons data',data)
+    return res.data;
+  } catch (err) {
+    if (err instanceof Error) {
+      throw new Error(err.message);
+    }
+  }
+}
+
+
+
 
 const generateOrders = (count: number): Order[] => {
   const names = [
