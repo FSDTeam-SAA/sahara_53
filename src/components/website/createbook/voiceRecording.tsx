@@ -9,9 +9,10 @@ import { VoiceData } from "./CreateStepContent";
 interface VoiceRecordingProps {
   data: VoiceData | null;
   onChange: (voiceData: VoiceData | null) => void;
+  bookid?:string
 }
 
-export default function StoryAudio({ data, onChange }: VoiceRecordingProps) {
+export default function StoryAudio({ data, onChange,bookid }: VoiceRecordingProps) {
   const [recording, setRecording] = useState(false);
   const [recorded, setRecorded] = useState(false);
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null);
@@ -23,6 +24,8 @@ export default function StoryAudio({ data, onChange }: VoiceRecordingProps) {
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const [showvoice, setShowVoice] = useState(false);
+
+  console.log('voice', showvoice)
 
   // -----------------------------
   // Recording Timer Logic

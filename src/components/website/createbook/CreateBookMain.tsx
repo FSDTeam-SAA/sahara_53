@@ -41,7 +41,7 @@ const CreateBookMain = ({ children, step, next, back,handelcall }:createbookmain
           <Button
             className="bg-linear-to-r cursor-pointer from-[#FF7CE5] to-[#5D5FEF] text-white py-6"
 
-            onClick={step==3? handelcall : next}
+            onClick={step==2? handelcall : next}
           >
             {step==3 ?'Generate Book':'Next Step'
 

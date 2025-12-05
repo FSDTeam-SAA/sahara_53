@@ -1,18 +1,21 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import BookCard from "../../Common/BookCard"
-import SectionHeader from "../../Common/SectionHeader"
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import BookCard from "../../Common/BookCard";
+import SectionHeader from "../../Common/SectionHeader";
+import { useSession } from "next-auth/react";
+import { useMyOrder } from "@/lib/hoock/useMyorder";
+import { BackendBook } from "@/lib/type/order";
 
 interface BookItem {
-  id: string
-  image: string
-  status: "Completed" | "Reading" | "In Progress" | "Draft"
-  category: string
-  chapter: string
-  title: string
-  description: string
+  id: string;
+  image: string;
+  status: "Completed" | "Reading" | "In Progress" | "Draft";
+  category: string;
+  chapter: string;
+  title: string;
+  description: string;
 }
 
 export const SAMPLE_BOOKS: BookItem[] = [
@@ -33,7 +36,8 @@ export const SAMPLE_BOOKS: BookItem[] = [
     category: "Adventure",
     chapter: "Chapter: 5",
     title: "The Great Adventure",
-    description: "Embark on an epic journey through mystical lands and discover hidden treasures...",
+    description:
+      "Embark on an epic journey through mystical lands and discover hidden treasures...",
   },
   {
     id: "3",
@@ -42,7 +46,8 @@ export const SAMPLE_BOOKS: BookItem[] = [
     category: "Fantasy",
     chapter: "Chapter: 15",
     title: "Magic Realm",
-    description: "Step into a world of magic, mystery, and enchantment where anything is possible...",
+    description:
+      "Step into a world of magic, mystery, and enchantment where anything is possible...",
   },
   {
     id: "4",
@@ -51,7 +56,8 @@ export const SAMPLE_BOOKS: BookItem[] = [
     category: "Sci-Fi",
     chapter: "Chapter: 8",
     title: "Space Explorer",
-    description: "Journey through the cosmos and encounter extraordinary civilizations and wonders...",
+    description:
+      "Journey through the cosmos and encounter extraordinary civilizations and wonders...",
   },
   {
     id: "5",
@@ -60,7 +66,8 @@ export const SAMPLE_BOOKS: BookItem[] = [
     category: "Mystery",
     chapter: "Chapter: 12",
     title: "The Secret Detective",
-    description: "Unravel complex mysteries and solve puzzling cases with our brilliant detective...",
+    description:
+      "Unravel complex mysteries and solve puzzling cases with our brilliant detective...",
   },
   {
     id: "6",
@@ -69,34 +76,43 @@ export const SAMPLE_BOOKS: BookItem[] = [
     category: "Romance",
     chapter: "Chapter: 9",
     title: "Hearts Connect",
-    description: "A touching tale of love, friendship, and personal growth across beautiful landscapes...",
+    description:
+      "A touching tale of love, friendship, and personal growth across beautiful landscapes...",
   },
-]
+];
 
 const RecentBooks = () => {
-  const [showAll, setShowAll] = useState(false)
+  const [showAll, setShowAll] = useState(false);
+  const userId = useSession().data?.user?.id;
 
-  const displayedBooks = showAll ? SAMPLE_BOOKS : SAMPLE_BOOKS.slice(0, 6)
+  const { data, isLoading } = useMyOrder(userId);
+
+  console.log("recent data", data);
+  const displayedBooks = showAll ? SAMPLE_BOOKS : SAMPLE_BOOKS.slice(0, 6);
 
   return (
     <div className="w-full max-w-7xl mx-auto">
-        <div className="mb-12 text-center">
-          <SectionHeader
-            title1="Recent"
-            title2=" Books"
-            dis="Discover vibrant, fun, and personalized stories brought to life with your own voice and favorite characters!"
-          />
-        </div>
+      <div className="mb-12 text-center">
+        <SectionHeader
+          title1="Recent"
+          title2=" Books"
+          dis="Discover vibrant, fun, and personalized stories brought to life with your own voice and favorite characters!"
+        />
+      </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-        {displayedBooks.map((book) => (
-          <BookCard key={book.id} item={book} />
+        {data?.map((book: BackendBook) => (
+          <BookCard key={book._id} item={book} />
         ))}
       </div>
 
       {!showAll && SAMPLE_BOOKS.length > 6 && (
         <div className="flex justify-center">
-          <Button onClick={() => setShowAll(true)} variant="outline" className="px-8">
+          <Button
+            onClick={() => setShowAll(true)}
+            variant="outline"
+            className="px-8"
+          >
             See More
           </Button>
         </div>
@@ -104,13 +120,17 @@ const RecentBooks = () => {
 
       {showAll && (
         <div className="flex justify-center">
-          <Button onClick={() => setShowAll(false)} variant="outline" className="px-8">
+          <Button
+            onClick={() => setShowAll(false)}
+            variant="outline"
+            className="px-8"
+          >
             Show Less
           </Button>
         </div>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default RecentBooks
+export default RecentBooks;
