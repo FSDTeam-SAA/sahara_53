@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/immutability */
 "use client";
 
 import React, { useState } from "react";
@@ -9,11 +10,27 @@ import VoiceRecording from "./voiceRecording";
 import CreateBookMain from "./CreateBookMain";
 import CreatingYourBook from "./CreatingYourBook";
 import { useMutation } from "@tanstack/react-query";
-import { api, createBook } from "@/lib/api"; // Make sure this points to your axios instance
+import {  createBook } from "@/lib/api"; 
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 
 // ------------------ Types ------------------
+interface CharacterPayload {
+  name: string;
+  image: string;
+}
+
+export interface CreateBookPayload {
+  userId: string;
+  title: string;
+  language: string;
+  style: string;
+  genre: string;
+  characters: CharacterPayload[];
+  beginning: string;
+}
+
 interface StoryDetailData {
   bookTitle?: string;
   language?: string;
@@ -22,7 +39,7 @@ interface StoryDetailData {
 }
 
 interface Character {
-  id: string;
+  // id: string;
   name: string;
   image: string | null; // This will store the URL or base64 string
 }
@@ -60,6 +77,7 @@ interface StoryFormData {
 // ------------------ Component ------------------
 export default function CreateStepContent() {
   const [step, setStep] = useState<number>(0);
+  const userId=useSession().data?.user.id
  const route=useRouter()
   const [formData, setFormData] = useState<StoryFormData>({
     storyDetail: {},
@@ -67,28 +85,21 @@ export default function CreateStepContent() {
     beginning: "",
     voice: null,
   });
+  let bookId:string=''
+const bookCreateMutation = useMutation({
+  mutationKey: ["createbook"],
+  mutationFn: (data: CreateBookPayload) => createBook(data),
 
-  const bookCreateMutation = useMutation({
-    mutationKey: ["createbook"],
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    mutationFn: (data: any) => createBook(data),
-    onSuccess: (data) => {
-      route.push('/')
-      // console.log("Book created successfully:", data);
-      
-      // toast.success(`${data}`);
-      toast.success(`Book created successfully`);
+  onSuccess: (data) => {
+    toast.success("Book created successfully");
+    bookId= data._id
+  },
 
-
-    },
-    onError: (err) => {
-      route.push('/')
-      // console.error("Succesfuly  creating book:");
-      // alert("Failed to create book");
-      // toast.error(`${err}`)
-      toast.success('Succesfuly  creating book')
-    },
-  });
+  onError: (err: unknown) => {
+    const message = err instanceof Error ? err.message : "Failed to create book";
+    toast.error(message);
+  },
+});
 
   // ------------------ Validation ------------------
   const validateStep = (): boolean => {
@@ -97,7 +108,7 @@ export default function CreateStepContent() {
       return !!d.bookTitle && !!d.language && !!d.genre && !!d.writingStyle;
     }
     if (step === 1) return true;
-    if (step === 2) return formData.beginning?.length > 10;
+    if (step === 2) return formData.beginning?.length > 5;
     if (step === 3) return true;
     return false;
   };
@@ -113,24 +124,31 @@ export default function CreateStepContent() {
   const back = () => setStep((prev) => Math.max(prev - 1, 0));
 
   // ------------------ Submit to backend ------------------
-  const handleSubmit = () => {
-    // Backend expects only URLs for characters
-    const characterUrls = formData.characters
-      .filter((c) => c.image)
-      .map((c) => c.image!) as string[];
 
-    const payload = {
-      title: formData.storyDetail.bookTitle || "",
-      language: formData.storyDetail.language || "",
-      style: formData.storyDetail.writingStyle || "",
-      genre: formData.storyDetail.genre || "",
-      characters: characterUrls,
-      beginning: formData.beginning || "",
-    };
 
-    console.log("Submitting payload:", payload);
-    bookCreateMutation.mutate(payload);
+  console.log('form data',formData)
+  // console.log('form data in 3 number step',formData)
+const handleSubmit = () => {
+  const characterObjects = formData.characters
+    .filter((c) => c.name && c.image)
+    .map((c) => ({
+      name: c.name || "",
+      image: c.image || "",
+    }));
+
+  const payload = {
+    userId: userId || "", 
+    title: formData.storyDetail.bookTitle || "",
+    language: formData.storyDetail.language || "",
+    style: formData.storyDetail.writingStyle || "",
+    genre: formData.storyDetail.genre || "",
+    characters: characterObjects,
+    beginning: formData.beginning || "",
   };
+
+  console.log("Submitting payload:", payload);
+  bookCreateMutation.mutate(payload);
+};
 
   // ------------------ Render Steps ------------------
   const renderStep = () => {
@@ -166,6 +184,7 @@ export default function CreateStepContent() {
         return (
           <VoiceRecording
             data={formData.voice}
+            bookid={bookId}
             onChange={(voiceData: VoiceData | null) =>
               setFormData((prev) => ({ ...prev, voice: voiceData }))
             }
