@@ -1,6 +1,6 @@
-import Link from "next/link"
-import { Heart } from "lucide-react"
-import Image from "next/image"
+import Link from "next/link";
+import { Heart } from "lucide-react";
+import Image from "next/image";
 
 const Footer = () => {
   return (
@@ -19,34 +19,55 @@ const Footer = () => {
                 <span className="text-yellow-500">Time</span>
               </h2> */}
 
-              <Image src={'/images/logo.png'}  alt="logo" width={56} height={80} className=" object-cover"/>
+              <Image
+                src={"/images/logo.png"}
+                alt="logo"
+                width={56}
+                height={80}
+                className=" object-cover"
+              />
             </div>
             <p className="text-gray-600 text-sm leading-relaxed">
-              Design amazing digital experiences that create more happy in the world.
+              Craft magical stories that inspire imagination and bring joy to
+              every reader.
             </p>
           </div>
 
           {/* Quick Links */}
           <div>
-            <h3 className="text-gray-800 font-semibold text-lg mb-6">Quick Links</h3>
+            <h3 className="text-gray-800 font-semibold text-lg mb-6">
+              Quick Links
+            </h3>
             <ul className="space-y-3">
               <li>
-                <Link href="#" className="text-gray-600 hover:text-purple-600 transition text-sm">
+                <Link
+                  href="#"
+                  className="text-gray-600 hover:text-purple-600 transition text-sm"
+                >
                   My Books
                 </Link>
               </li>
               <li>
-                <Link href="#" className="text-gray-600 hover:text-purple-600 transition text-sm">
+                <Link
+                  href="#"
+                  className="text-gray-600 hover:text-purple-600 transition text-sm"
+                >
                   Create Book
                 </Link>
               </li>
               <li>
-                <Link href="#" className="text-gray-600 hover:text-purple-600 transition text-sm">
+                <Link
+                  href="#"
+                  className="text-gray-600 hover:text-purple-600 transition text-sm"
+                >
                   My Orders
                 </Link>
               </li>
               <li>
-                <Link href="#" className="text-gray-600 hover:text-purple-600 transition text-sm">
+                <Link
+                  href="#"
+                  className="text-gray-600 hover:text-purple-600 transition text-sm"
+                >
                   Profile
                 </Link>
               </li>
@@ -55,15 +76,23 @@ const Footer = () => {
 
           {/* Learn More */}
           <div>
-            <h3 className="text-gray-800 font-semibold text-lg mb-6">Learn More</h3>
+            <h3 className="text-gray-800 font-semibold text-lg mb-6">
+              Learn More
+            </h3>
             <ul className="space-y-3">
               <li>
-                <Link href="#" className="text-gray-600 hover:text-purple-600 transition text-sm">
+                <Link
+                  href="#"
+                  className="text-gray-600 hover:text-purple-600 transition text-sm"
+                >
                   How It Works
                 </Link>
               </li>
               <li>
-                <Link href="#" className="text-gray-600 hover:text-purple-600 transition text-sm">
+                <Link
+                  href="#"
+                  className="text-gray-600 hover:text-purple-600 transition text-sm"
+                >
                   Contact Us
                 </Link>
               </li>
@@ -72,13 +101,18 @@ const Footer = () => {
 
           {/* Get In Touch */}
           <div>
-            <h3 className="text-gray-800 font-semibold text-lg mb-6">Get In Touch</h3>
+            <h3 className="text-gray-800 font-semibold text-lg mb-6">
+              Get In Touch
+            </h3>
             <div className="flex items-center gap-2 mb-3">
               <Heart className="w-4 h-4 text-red-500 fill-red-500" />
               <span className="text-gray-600 text-sm">Made With Love</span>
             </div>
             <p className="text-gray-600 text-sm">
-              <a href="mailto:support@buildastorytime.com" className="hover:text-purple-600 transition overflow-y-auto">
+              <a
+                href="mailto:support@buildastorytime.com"
+                className="hover:text-purple-600 transition overflow-y-auto"
+              >
                 Support@buildastorytime.com
               </a>
             </p>
@@ -92,17 +126,23 @@ const Footer = () => {
         <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-600">
           <p>© 2025 Build a Story Time. All rights reserved.</p>
           <div className="flex gap-6">
-            <Link href="#" className="hover:text-purple-600 transition font-medium">
+            <Link
+              href="#"
+              className="hover:text-purple-600 transition font-medium"
+            >
               Terms
             </Link>
-            <Link href="#" className="hover:text-purple-600 transition font-medium">
+            <Link
+              href="#"
+              className="hover:text-purple-600 transition font-medium"
+            >
               Privacy
             </Link>
           </div>
         </div>
       </div>
     </footer>
-  )
-}
+  );
+};
 
-export default Footer
+export default Footer;
