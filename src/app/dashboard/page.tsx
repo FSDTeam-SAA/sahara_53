@@ -16,10 +16,7 @@ export default function DashboardPage() {
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
   const { stats, isLoading: statsLoading } = useDashboardStats();
   const { revenueData, isLoading: revenueLoading } = useRevenueData();
-  const { orders, isLoading: ordersLoading } = useOrders({
-    page: 1,
-    pageSize: 10,
-  });
+  const { data:orders, isLoading: ordersLoading } = useOrders();
 
   return (
     <DashboardLayout>

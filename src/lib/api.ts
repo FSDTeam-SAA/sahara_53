@@ -3,7 +3,7 @@ import { CreateAccountPayload, CreateAccountResponse } from "./type/auth";
 // Mock API service layer
 import type {
   User,
-  Order,
+  // Order,
   Book,
   Payment,
   DashboardStats,
@@ -29,8 +29,8 @@ export const api = {
   getUsers: (filters?: ApiFilters) => apiFunction.getUsers(filters),
   getUserById: (id: string) => apiFunction.getUserById(id),
   // Orders
-  getOrders: (filters?: ApiFilters) => apiFunction.getOrders(filters),
-  getOrderById: (id: string) => apiFunction.getOrderById(id),
+  // getOrders: (filters?: ApiFilters) => apiFunction.getOrders(filters),
+  // getOrderById: (id: string) => apiFunction.getOrderById(id),
   // Books
   getBooks: (filters?: ApiFilters) => apiFunction.getBooks(filters),
   deleteBook: (id: string) => apiFunction.deleteBook(id),
@@ -251,7 +251,7 @@ export async function imageGenerate(data: FormData) {
 
 export async function recentBookFetch(id: string) {
   try {
-    console.log('fuck')
+ 
     const res = await api.get(`/story/user/674b9e9e8c1e22df9e78a638`);
     const data= await res.data
     console.log('respons data',data)
@@ -264,57 +264,72 @@ export async function recentBookFetch(id: string) {
 }
 
 
+//  my order
+
+export async function myOrderFetch() {
+  try {
+    console.log('fuck')
+    const res = await api.get(`/orders`);
+    const data= await res.data
+    console.log('respons data',data)
+    return res.data;
+  } catch (err) {
+    if (err instanceof Error) {
+      throw new Error(err.message);
+    }
+  }
+}
 
 
-const generateOrders = (count: number): Order[] => {
-  const names = [
-    "Ronald Richards",
-    "Jane Cooper",
-    "Floyd Miles",
-    "Darlene Robertson",
-    "Robert Fox",
-    "Marvin McKinney",
-    "Ralph Edwards",
-    "Jerome Bell",
-    "Cody Fisher",
-    "Cameron Williamson",
-  ];
-  const locations = [
-    "2715 Ash Dr. San Jose, S...",
-    "3517 W. Gray St...",
-    "2118 Thornridge...",
-    "4517 Washington...",
-    "1901 Thornridge...",
-    "8502 Preston R...",
-    "6391 Elgin St. C...",
-    "3891 Ranchvie...",
-    "4140 Parker Rd...",
-    "2972 Westheim...",
-  ];
-  const payments: Order["payment"][] = ["Paid", "Pending", "Cancelled"];
-  const statuses: Order["status"][] = [
-    "Delivered",
-    "In Progress",
-    "Pending",
-    "Cancelled",
-  ];
+// const generateOrders = (count: number): Order[] => {
+//   const names = [
+//     "Ronald Richards",
+//     "Jane Cooper",
+//     "Floyd Miles",
+//     "Darlene Robertson",
+//     "Robert Fox",
+//     "Marvin McKinney",
+//     "Ralph Edwards",
+//     "Jerome Bell",
+//     "Cody Fisher",
+//     "Cameron Williamson",
+//   ];
+//   const locations = [
+//     "2715 Ash Dr. San Jose, S...",
+//     "3517 W. Gray St...",
+//     "2118 Thornridge...",
+//     "4517 Washington...",
+//     "1901 Thornridge...",
+//     "8502 Preston R...",
+//     "6391 Elgin St. C...",
+//     "3891 Ranchvie...",
+//     "4140 Parker Rd...",
+//     "2972 Westheim...",
+//   ];
+//   const payments: Order["payment"][] = ["Paid", "Pending", "Cancelled"];
+//   const statuses: Order["status"][] = [
+//     "Delivered",
+//     "In Progress",
+//     "Pending",
+//     "Cancelled",
+//   ];
 
-  return Array.from({ length: count }, (_, i) => ({
-    id: `order-${i + 1}`,
-    invoiceNumber: `#${3066 - i}`,
-    customer: {
-      name: names[i % names.length],
-      email: `example@exa...`,
-      phone: "+1234567890",
-    },
-    location: locations[i % locations.length],
-    orderedItem: "Book Name H...",
-    price: Number.parseFloat((Math.random() * 500 + 200).toFixed(2)),
-    payment: payments[Math.floor(Math.random() * 3)],
-    status: statuses[Math.floor(Math.random() * 4)],
-    createdAt: "14 November, 2025",
-  }));
-};
+//   return Array.from({ length: count }, (_, i) => ({
+//     id: `order-${i + 1}`,
+//     invoiceNumber: `#${3066 - i}`,
+//     customer: {
+//       name: names[i % names.length],
+//       email: `example@exa...`,
+//       phone: "+1234567890",
+//     },
+//     location: locations[i % locations.length],
+//     orderedItem: "Book Name H...",
+//     price: Number.parseFloat((Math.random() * 500 + 200).toFixed(2)),
+//     payment: payments[Math.floor(Math.random() * 3)],
+//     status: statuses[Math.floor(Math.random() * 4)],
+//     createdAt: "14 November, 2025",
+//   }));
+// };
 
 const generateBooks = (count: number): Book[] => {
   const images = [
@@ -471,62 +486,62 @@ export const apiFunction = {
   },
 
   // Orders
-  getOrders: async (
-    filters: ApiFilters = {},
-  ): Promise<PaginatedResponse<Order>> => {
-    await delay(300);
-    const {
-      page = 1,
-      pageSize = 10,
-      search,
-      status,
-      sortBy,
-      sortOrder,
-    } = filters;
-    let orders = generateOrders(100);
+  // getOrders: async (
+  //   filters: ApiFilters = {},
+  // ): Promise<PaginatedResponse<Order>> => {
+  //   await delay(300);
+  //   const {
+  //     page = 1,
+  //     pageSize = 10,
+  //     search,
+  //     status,
+  //     sortBy,
+  //     sortOrder,
+  //   } = filters;
+  //   let orders = generateOrders(100);
 
-    if (search) {
-      orders = orders.filter(
-        (o) =>
-          o.invoiceNumber.toLowerCase().includes(search.toLowerCase()) ||
-          o.customer.name.toLowerCase().includes(search.toLowerCase()) ||
-          o.customer.email.toLowerCase().includes(search.toLowerCase()),
-      );
-    }
+  //   if (search) {
+  //     orders = orders.filter(
+  //       (o) =>
+  //         o.invoiceNumber.toLowerCase().includes(search.toLowerCase()) ||
+  //         o.customer.name.toLowerCase().includes(search.toLowerCase()) ||
+  //         o.customer.email.toLowerCase().includes(search.toLowerCase()),
+  //     );
+  //   }
 
-    if (status && status !== "all") {
-      orders = orders.filter((o) => o.status === status);
-    }
+  //   if (status && status !== "all") {
+  //     orders = orders.filter((o) => o.status === status);
+  //   }
 
-    if (sortBy) {
-      orders.sort((a, b) => {
-        const aVal = a[sortBy as keyof Order];
-        const bVal = b[sortBy as keyof Order];
-        if (sortOrder === "desc") {
-          return String(bVal).localeCompare(String(aVal));
-        }
-        return String(aVal).localeCompare(String(bVal));
-      });
-    }
+  //   if (sortBy) {
+  //     orders.sort((a, b) => {
+  //       const aVal = a[sortBy as keyof Order];
+  //       const bVal = b[sortBy as keyof Order];
+  //       if (sortOrder === "desc") {
+  //         return String(bVal).localeCompare(String(aVal));
+  //       }
+  //       return String(aVal).localeCompare(String(bVal));
+  //     });
+  //   }
 
-    const total = orders.length;
-    const start = (page - 1) * pageSize;
-    const data = orders.slice(start, start + pageSize);
+  //   const total = orders.length;
+  //   const start = (page - 1) * pageSize;
+  //   const data = orders.slice(start, start + pageSize);
 
-    return {
-      data,
-      total,
-      page,
-      pageSize,
-      totalPages: Math.ceil(total / pageSize),
-    };
-  },
+  //   return {
+  //     data,
+  //     total,
+  //     page,
+  //     pageSize,
+  //     totalPages: Math.ceil(total / pageSize),
+  //   };
+  // },
 
-  getOrderById: async (id: string): Promise<Order | null> => {
-    await delay(200);
-    const orders = generateOrders(100);
-    return orders.find((o) => o.id === id) || null;
-  },
+  // getOrderById: async (id: string): Promise<Order | null> => {
+  //   await delay(200);
+  //   const orders = generateOrders(100);
+  //   return orders.find((o) => o.id === id) || null;
+  // },
 
   // Books
   getBooks: async (
