@@ -12,21 +12,23 @@ export interface User {
   lastLogin?: string
 }
 
-export interface Order {
-  id: string
-  invoiceNumber: string
-  customer: {
-    name: string
-    email: string
-    phone: string
-  }
-  location: string
-  orderedItem: string
-  price: number
-  payment: "Paid" | "Pending" | "Cancelled"
-  status: "Delivered" | "In Progress" | "Pending" | "Cancelled"
-  createdAt: string
-}
+// export interface Order {
+//   private _id(_id: any): void
+//   userId: any
+//   id: string
+//   invoiceNumber: string
+//   customer: {
+//     name: string
+//     email: string
+//     phone: string
+//   }
+//   location: string
+//   orderedItem: string
+//   price: number
+//   payment: "Paid" | "Pending" | "Cancelled"
+//   status: "Delivered" | "In Progress" | "Pending" | "Cancelled"
+//   createdAt: string
+// }
 
 export interface Book {
   id: string

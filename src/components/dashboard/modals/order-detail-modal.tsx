@@ -2,9 +2,11 @@
 
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { StatusBadge } from "@/components/ui/status-badge"
-import { useOrder } from "@/hooks/use-orders"
+
 import { Skeleton } from "@/components/ui/skeleton"
 import { FileText, User, Mail, Phone, MapPin, Package, DollarSign, Calendar } from "lucide-react"
+
+import { useOrders } from "@/hooks/use-orders"
 
 interface OrderDetailModalProps {
   orderId: string | null
@@ -13,7 +15,7 @@ interface OrderDetailModalProps {
 }
 
 export function OrderDetailModal({ orderId, open, onClose }: OrderDetailModalProps) {
-  const { order, isLoading } = useOrder(orderId)
+  const { data:order, isLoading } = useOrders()
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
@@ -48,7 +50,7 @@ export function OrderDetailModal({ orderId, open, onClose }: OrderDetailModalPro
                   <User className="h-5 w-5 text-gray-400" />
                   <div>
                     <p className="text-xs text-gray-500">Name</p>
-                    <p className="text-sm font-medium">{order.customer.name}</p>
+                    {/* <p className="text-sm font-medium">{order.customer.name}</p> */}
                   </div>
                 </div>
 
@@ -56,7 +58,7 @@ export function OrderDetailModal({ orderId, open, onClose }: OrderDetailModalPro
                   <Mail className="h-5 w-5 text-gray-400" />
                   <div>
                     <p className="text-xs text-gray-500">Email</p>
-                    <p className="text-sm font-medium">{order.customer.email}</p>
+                    {/* <p className="text-sm font-medium">{order.customer.user.email}</p> */}
                   </div>
                 </div>
 
@@ -64,7 +66,7 @@ export function OrderDetailModal({ orderId, open, onClose }: OrderDetailModalPro
                   <Phone className="h-5 w-5 text-gray-400" />
                   <div>
                     <p className="text-xs text-gray-500">Phone</p>
-                    <p className="text-sm font-medium">{order.customer.phone}</p>
+                    {/* <p className="text-sm font-medium">{order.customer.phone}</p> */}
                   </div>
                 </div>
 
@@ -72,7 +74,7 @@ export function OrderDetailModal({ orderId, open, onClose }: OrderDetailModalPro
                   <MapPin className="h-5 w-5 text-gray-400" />
                   <div>
                     <p className="text-xs text-gray-500">Location</p>
-                    <p className="text-sm font-medium">{order.location}</p>
+                    {/* <p className="text-sm font-medium">{order.location}</p> */}
                   </div>
                 </div>
               </div>
@@ -93,7 +95,7 @@ export function OrderDetailModal({ orderId, open, onClose }: OrderDetailModalPro
                   <DollarSign className="h-5 w-5 text-gray-400" />
                   <div>
                     <p className="text-xs text-gray-500">Price</p>
-                    <p className="text-sm font-medium">${order.price.toFixed(2)}</p>
+                    {/* <p className="text-sm font-medium">${order.price.toFixed(2)}</p> */}
                   </div>
                 </div>
 

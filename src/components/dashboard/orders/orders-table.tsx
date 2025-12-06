@@ -10,9 +10,11 @@ import { FilterDropdown } from "@/components/ui/filter-dropdown"
 import { DataTablePagination } from "@/components/ui/data-table-pagination"
 import { Eye, Download, ChevronDown, Menu, X } from "lucide-react"
 import { useOrders } from "@/hooks/use-orders"
-import type { Order } from "@/lib/types"
+
 import { Skeleton } from "@/components/ui/skeleton"
 import Image from "next/image"
+import { Order } from "@/lib/type/order"
+
 
 interface OrdersTableProps {
   onViewOrder: (orderId: string) => void
@@ -42,13 +44,7 @@ export function OrdersTable({ onViewOrder }: OrdersTableProps) {
   const [rowSelection, setRowSelection] = useState({})
   const [showMobileFilters, setShowMobileFilters] = useState(false)
 
-  const { orders, totalPages, isLoading } = useOrders({
-    search: searchQuery,
-    status: statusFilter,
-    sortBy,
-    page,
-    pageSize: 10,
-  })
+  const { data:orders, isLoading } = useOrders()
 
   const columns: ColumnDef<Order>[] = useMemo(
     () => [
@@ -61,7 +57,7 @@ export function OrdersTable({ onViewOrder }: OrdersTableProps) {
         ),
         cell: ({ row }) => (
           <div className="flex flex-col">
-            <span className="font-medium text-sm md:text-base">#{row.original.invoiceNumber}</span>
+            <span className="font-medium text-sm md:text-base">#{row.original._id}</span>
             <span className="text-xs text-gray-500 md:hidden">{row.original.createdAt}</span>
           </div>
         ),
@@ -71,24 +67,27 @@ export function OrdersTable({ onViewOrder }: OrdersTableProps) {
         header: "Book Name",
         cell: ({ row }) => (
           <div className="flex gap-2 md:gap-3 items-center">
-            <div className="relative w-12 h-12 md:w-16 md:h-16 flex-shrink-0">
-              <Image 
-                src={'/images/mybook.png'} 
-                alt="bookname" 
+              <div className="relative w-12 h-12 md:w-16 md:h-16 flex-shrink-0">
+              <Image
+                src={
+                  row.original?.storyBookId?.generatedStory?.[0]?.chapterImage ??
+                  '/images/mybook.png'
+                }
+                alt="bookname"
                 fill
-                className="object-cover rounded-sm" 
+                className="object-cover rounded-sm"
               />
             </div>
             <div className="flex flex-col gap-1 min-w-0">
               <span className="truncate text-sm md:text-base font-medium leading-tight">
-                {row.original.customer.name}
+                {row.original?.userId?.name}
               </span>
               <span className="truncate text-xs md:text-sm text-gray-600">
-                {row.original.orderedItem}
+                {row.original.bookName}
               </span>
               <div className="md:hidden flex items-center gap-2 mt-1">
-                <StatusBadge status={row.original.status} showIcon={false} />
-                <span className="text-sm font-medium">${row.original.price.toFixed(2)}</span>
+                <StatusBadge status={row?.original?.status} showIcon={false} />
+                <span className="text-sm font-medium">${(row.original?.price ?? 0).toFixed(2)}</span>
               </div>
             </div>
           </div>
@@ -112,14 +111,14 @@ export function OrdersTable({ onViewOrder }: OrdersTableProps) {
         accessorKey: "Format",
         header: "Format",
         cell: ({ row }) => (
-          <span className="truncate hidden lg:block">{row.original.orderedItem}</span>
+          <span className="truncate hidden lg:block">{row.original.formate}</span>
         ),
       },
       {
         accessorKey: "price",
         header: "Price",
         cell: ({ row }) => (
-          <span className="hidden md:block">${row.original.price.toFixed(2)}</span>
+          <span className="hidden md:block">${(row.original?.price ?? 0).toFixed(2)}</span>
         ),
       },
       {
@@ -137,7 +136,7 @@ export function OrdersTable({ onViewOrder }: OrdersTableProps) {
         cell: ({ row }) => (
           <div className="flex items-center gap-1 md:gap-2">
             <button
-              onClick={() => onViewOrder(row.original.id)}
+              onClick={() => onViewOrder(row.original._id)}
               className="p-1.5 md:p-2 rounded-full hover:bg-gray-100 transition-colors"
               aria-label="View order"
             >
@@ -285,10 +284,10 @@ export function OrdersTable({ onViewOrder }: OrdersTableProps) {
                     <div className="flex justify-between items-start mb-3">
                       <div className="flex-1">
                         <div className="flex justify-between items-start mb-2">
-                          <span className="font-medium text-sm">#{row.original.invoiceNumber}</span>
+                          <span className="font-medium text-sm">#{row.original._id}</span>
                           <div className="flex items-center gap-2">
                             <button
-                              onClick={() => onViewOrder(row.original.id)}
+                              onClick={() => onViewOrder(row.original._id)}
                               className="p-1 rounded-full hover:bg-gray-100"
                               aria-label="View order"
                             >
@@ -302,7 +301,7 @@ export function OrdersTable({ onViewOrder }: OrdersTableProps) {
                             </button>
                           </div>
                         </div>
-                        <span className="text-xs text-gray-500">{row.original.customer.email}</span>
+                        {/* <span className="text-xs text-gray-500">{row.original.customer.email}</span> */}
                       </div>
                     </div>
                     
@@ -319,10 +318,10 @@ export function OrdersTable({ onViewOrder }: OrdersTableProps) {
                         <div className="flex justify-between items-start">
                           <div className="flex-1 min-w-0">
                             <h4 className="font-medium text-sm truncate">
-                              {row.original.customer.name}
+                              {row.original.userId?.name}
                             </h4>
                             <p className="text-xs text-gray-600 truncate">
-                              {row.original.orderedItem}
+                              {row.original.bookName}
                             </p>
                           </div>
                         </div>
@@ -340,7 +339,7 @@ export function OrdersTable({ onViewOrder }: OrdersTableProps) {
                       </div>
                       <div>
                         <span className="text-xs text-gray-500">Format</span>
-                        <p className="text-sm truncate">{row.original.orderedItem}</p>
+                        <p className="text-sm truncate">{row.original.bookName}</p>
                       </div>
                     </div>
                   </div>
@@ -349,11 +348,11 @@ export function OrdersTable({ onViewOrder }: OrdersTableProps) {
 
               {/* Pagination */}
               <div className="px-4 py-3 border-t border-gray-100">
-                <DataTablePagination 
+                {/* <DataTablePagination 
                   currentPage={page} 
                   totalPages={totalPages} 
                   onPageChange={setPage} 
-                />
+                /> */}
               </div>
             </>
           )}

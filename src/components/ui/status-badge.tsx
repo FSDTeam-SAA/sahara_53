@@ -15,6 +15,7 @@ type StatusType =
   | "suspended"
   | "Completed"
   | "Draft"
+  |string
 
 interface StatusBadgeProps {
   status: StatusType

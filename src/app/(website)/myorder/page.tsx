@@ -6,6 +6,7 @@ import { Header } from "@/components/dashboard/layout/header";
 import { OrdersTable } from "@/components/dashboard/orders/orders-table";
 import { OrderDetailModal } from "@/components/dashboard/modals/order-detail-modal";
 import { CreateBookHeader } from "@/components/ReusableSection/page-header";
+import MyOrder from "@/components/website/myorder/MyOrder";
 
 export default function OrdersPage() {
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
@@ -17,7 +18,7 @@ export default function OrdersPage() {
           highlightedWord="Orders"
           subtitle="Track your purchases, downloads, and order status in one place."
         />
-      <OrdersTable onViewOrder={setSelectedOrderId} />
+      <MyOrder onViewOrder={setSelectedOrderId} />
       <OrderDetailModal
         orderId={selectedOrderId}
         open={!!selectedOrderId}
