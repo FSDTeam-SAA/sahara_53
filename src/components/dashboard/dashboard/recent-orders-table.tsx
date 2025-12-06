@@ -7,7 +7,8 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { StatusBadge } from "@/components/ui/status-badge"
 import { FilterDropdown } from "@/components/ui/filter-dropdown"
 import { Eye, Download, ChevronDown } from "lucide-react"
-import type { Order } from "@/lib/types"
+import { Order } from "@/lib/type/order"
+
 
 interface RecentOrdersTableProps {
   orders: Order[]
@@ -56,12 +57,12 @@ export function RecentOrdersTable({ orders, onViewOrder }: RecentOrdersTableProp
     {
       accessorKey: "customer.name",
       header: "Customer",
-      cell: ({ row }) => <span className="truncate max-w-[100px] block">{row.original.customer.name}</span>,
+      cell: ({ row }) => <span className="truncate max-w-[100px] block">{row.original.userId?.name}</span>,
     },
     {
       accessorKey: "customer.email",
       header: "Mail address",
-      cell: ({ row }) => <span className="truncate max-w-[100px] block">{row.original.customer.email}</span>,
+      cell: ({ row }) => <span className="truncate max-w-[100px] block">{row.original.userId?.email}</span>,
     },
     {
       accessorKey: "customer.phone",
@@ -75,7 +76,7 @@ export function RecentOrdersTable({ orders, onViewOrder }: RecentOrdersTableProp
     {
       accessorKey: "orderedItem",
       header: "Ordered Item",
-      cell: ({ row }) => <span className="truncate max-w-[100px] block">{row.original.orderedItem}</span>,
+      cell: ({ row }) => <span className="truncate max-w-[100px] block">{row.original.bookName}</span>,
     },
     {
       accessorKey: "price",
@@ -85,7 +86,7 @@ export function RecentOrdersTable({ orders, onViewOrder }: RecentOrdersTableProp
     {
       accessorKey: "payment",
       header: "Payment",
-      cell: ({ row }) => <StatusBadge status={row.original.payment} />,
+      cell: ({ row }) => <StatusBadge status={row.original.status} />,
     },
     {
       accessorKey: "status",
@@ -103,7 +104,7 @@ export function RecentOrdersTable({ orders, onViewOrder }: RecentOrdersTableProp
       cell: ({ row }) => (
         <div className="flex items-center gap-2">
           <button
-            onClick={() => onViewOrder(row.original.id)}
+            onClick={() => onViewOrder(row.original._id)}
             className="p-1.5 rounded-full hover:bg-gray-100 transition-colors"
           >
             <Eye className="h-4 w-4 text-gray-500" />
