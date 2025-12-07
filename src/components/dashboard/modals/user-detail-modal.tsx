@@ -14,6 +14,8 @@ interface UserDetailModalProps {
 }
 
 export function UserDetailModal({ userId, open, onClose }: UserDetailModalProps) {
+
+  
   const { user, isLoading } = useUser(userId)
 
   return (

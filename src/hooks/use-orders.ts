@@ -17,6 +17,19 @@ export function useOrders() {
   });
 }
 
+export function useUserOrders(userId?: string) {
+  return useQuery({
+    queryKey: ["userorders", userId],
+    queryFn: async () => {
+      if (!userId) return [];
+      const res = await api.get(`/orders/user/${userId}`);
+      return res.data.data; // assuming your API returns { data: [...] }
+    },
+    enabled: !!userId, // only run if userId exists
+  });
+}
+
+
 
 // export function useOrder(id: string | null) {
 //   const { data, error, isLoading } = useQuery<Order | null>({
