@@ -252,7 +252,7 @@ export async function imageGenerate(data: FormData) {
 export async function recentBookFetch(id: string) {
   try {
  
-    const res = await api.get(`/story/user/674b9e9e8c1e22df9e78a638`);
+    const res = await api.get(`/story/user/${id}`);
     const data= await res.data
     console.log('respons data',data)
     return res.data;
@@ -262,7 +262,20 @@ export async function recentBookFetch(id: string) {
     }
   }
 }
-
+// single book 
+export async function SingleBookFetch(id: string) {
+  try {
+ 
+    const res = await api.get(`/story/${id}`);
+    const data= await res.data
+    console.log('respons data',data)
+    return res.data;
+  } catch (err) {
+    if (err instanceof Error) {
+      throw new Error(err.message);
+    }
+  }
+}
 
 //  my order
 
@@ -279,6 +292,21 @@ export async function myOrderFetch() {
     }
   }
 }
+
+export async function SearchFetch(userId:string,search:string) {
+  try {
+    console.log('fuck')
+    const res = await api.get(`/story/user/${userId}?/${search}`);
+    const data= await res.data
+    console.log('respons data',data)
+    return res.data;
+  } catch (err) {
+    if (err instanceof Error) {
+      throw new Error(err.message);
+    }
+  }
+}
+
 
 
 // const generateOrders = (count: number): Order[] => {
