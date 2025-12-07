@@ -12,18 +12,18 @@ export default function OrdersPage() {
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
 
   return (
-    <section className="mx-auto m-8 w-[95%]">
+    <section className="mx-auto m-8 w-[95%] flex flex-col justify-between  space-y-8">
     <CreateBookHeader
           title="My"
           highlightedWord="Orders"
           subtitle="Track your purchases, downloads, and order status in one place."
         />
-      <MyOrder onViewOrder={setSelectedOrderId} />
-      <OrderDetailModal
+      <MyOrder  />
+      {/* <OrderDetailModal
         orderId={selectedOrderId}
         open={!!selectedOrderId}
         onClose={() => setSelectedOrderId(null)}
-      />
+      /> */}
     </section>
   );
 }

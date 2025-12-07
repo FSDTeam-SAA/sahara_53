@@ -8,152 +8,99 @@ import {
   type ColumnDef,
 } from "@tanstack/react-table";
 import { Card, CardContent } from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
 import { StatusBadge } from "@/components/ui/status-badge";
-import { Eye, Download, ChevronDown } from "lucide-react";
-import { useOrders } from "@/hooks/use-orders";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Order } from "@/lib/type/order";
+import { Eye, Download, ChevronLeft, ChevronRight } from "lucide-react";
 import Image from "next/image";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useSession } from "next-auth/react";
+import { useUserOrders } from "@/hooks/use-orders";
+import { Order } from "@/lib/type/order";
+import { UserDetailModal } from "./UserOrdermodal";
 
-interface OrdersTableProps {
-  onViewOrder: (orderId: string) => void;
-}
+export default function MyOrder() {
+  const [open, setOpen] = useState(false);
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  const { data: session } = useSession();
+  const userId = session?.user?.id;
 
-const MyOrder = ({ onViewOrder }: OrdersTableProps) => {
-  const [rowSelection, setRowSelection] = useState({});
-  const { data: orders = [], isLoading } = useOrders();
+  const { data: orders = [], isLoading } = useUserOrders(userId);
+
+  const handleViewOrder = (order: Order) => {
+    setSelectedOrder(order);
+    setOpen(true);
+  };
 
   const columns: ColumnDef<Order>[] = useMemo(
     () => [
       {
-        accessorKey: "invoiceNumber",
-        header: () => <div className="flex items-center gap-1">Order ID</div>,
-        cell: ({ row }) => (
-          <div className="flex flex-col">
-            <span className="font-medium text-sm md:text-base">
-              #{row.original._id.slice(0, 5)}
-            </span>
-
-            <span className="text-xs text-gray-500 md:hidden">
-              {row.original.createdAt}
-            </span>
-          </div>
-        ),
+        accessorKey: "_id",
+        header: "Order ID",
+        cell: ({ row }) => <span>#{row.original._id.slice(0, 5)}</span>,
       },
       {
-        accessorKey: "Book Name",
+        accessorKey: "bookName",
         header: "Book Name",
         cell: ({ row }) => (
-          <div className="flex gap-2 md:gap-3 items-center">
-            <div className="relative w-12 h-12 md:w-16 md:h-16 flex-shrink-0">
+          <div className="flex gap-2 items-center">
+            <div className="relative w-12 h-12 flex-shrink-0">
               <Image
                 src={
-                  row.original?.storyBookId?.generatedStory?.[0]
-                    ?.chapterImage ?? "/images/mybook.png"
+                  row.original.storyBookId?.generatedStory?.[0]?.chapterImage ??
+                  "/images/mybook.png"
                 }
-                alt="bookname"
+                alt={row.original.bookName ?? "Book"}
                 fill
                 className="object-cover rounded-sm"
               />
             </div>
-            <div className="flex flex-col gap-1 min-w-0">
-              <span className="truncate text-sm md:text-base font-medium leading-tight">
-                {row.original?.userId?.name}
+            <div className="flex flex-col">
+              <span className="font-medium">
+                {row.original.storyBookId?.title ?? row.original.bookName}
               </span>
-              <span className="truncate text-xs md:text-sm text-gray-600">
-                {row.original.bookName}
-              </span>
-              <div className="md:hidden flex items-center gap-2 mt-1">
-                <StatusBadge status={row?.original?.status} showIcon={false} />
-                <span className="text-sm font-medium">
-                  ${(row.original?.price ?? 0).toFixed(2)}
-                </span>
-              </div>
+              <StatusBadge status={row.original.status} />
             </div>
           </div>
         ),
       },
       {
-        accessorKey: "Date",
-        header: "Date",
-        cell: ({ row }) => (
-          <span className="truncate hidden md:block">
-            {new Intl.DateTimeFormat("en-US", {
-              year: "numeric",
-              month: "short",
-              day: "2-digit",
-            }).format(new Date(row.original.createdAt))}
-          </span>
-        ),
-      },
-      // {
-      //   accessorKey: "location",
-      //   header: "Location",
-      //   cell: ({ row }) => (
-      //     <span className="truncate hidden md:block">
-      //       {row.original.location}
-      //     </span>
-      //   ),
-      // },
-      {
-        accessorKey: "Format",
+        accessorKey: "formate",
         header: "Format",
-        cell: ({ row }) => (
-          <span className="truncate hidden lg:block">
-            {row.original.formate}
-          </span>
-        ),
       },
       {
         accessorKey: "price",
         header: "Price",
-        cell: ({ row }) => (
-          <span className="hidden md:block">
-            ${(row.original?.price ?? 0).toFixed(2)}
-          </span>
-        ),
+        cell: ({ row }) => `$${row.original.price?.toFixed(2) ?? "0.00"}`,
       },
       {
         accessorKey: "status",
         header: "Status",
-        cell: ({ row }) => (
-          <div className="hidden md:flex items-center gap-1">
-            <StatusBadge status={row.original.status} showIcon={false} />
-          </div>
-        ),
+        cell: ({ row }) => <StatusBadge status={row.original.status} />,
       },
       {
         id: "actions",
         header: "Action",
         cell: ({ row }) => (
-          <div className="flex items-center gap-1 md:gap-2">
+          <div className="flex gap-2">
             <button
-              onClick={() => onViewOrder(row.original._id)}
-              className="p-1.5 md:p-2 rounded-full hover:bg-gray-100 transition-colors"
-              aria-label="View order"
+              onClick={() => handleViewOrder(row.original)}
+              className="p-1 rounded hover:bg-gray-100"
             >
-              <Eye className="h-4 w-4 md:h-5 md:w-5 text-gray-500" />
+              <Eye className="w-4 h-4 text-gray-500" />
             </button>
-            <button
-              className="p-1.5 md:p-2 rounded-full hover:bg-gray-100 transition-colors"
-              aria-label="Download order"
-            >
-              <Download className="h-4 w-4 md:h-5 md:w-5 text-purple-500" />
+            <button className="p-1 rounded hover:bg-gray-100">
+              <Download className="w-4 h-4 text-purple-500" />
             </button>
           </div>
         ),
       },
     ],
-    [onViewOrder],
+    [],
   );
 
   const table = useReactTable({
     data: orders,
     columns,
     getCoreRowModel: getCoreRowModel(),
-    onRowSelectionChange: setRowSelection,
-    state: { rowSelection },
   });
 
   return (
@@ -169,46 +116,29 @@ const MyOrder = ({ onViewOrder }: OrdersTableProps) => {
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full">
-                {/* Table Header */}
                 <thead>
                   {table.getHeaderGroups().map((headerGroup) => (
-                    <tr
-                      key={headerGroup.id}
-                      className="border-b border-gray-100"
-                    >
+                    <tr key={headerGroup.id}>
                       {headerGroup.headers.map((header) => (
-                        <th
-                          key={header.id}
-                          className="px-4 py-3 text-left text-base font-medium text-[#2B2B2B] leading-[150%] bg-gray-50"
-                        >
-                          {header.isPlaceholder
-                            ? null
-                            : flexRender(
-                                header.column.columnDef.header,
-                                header.getContext(),
-                              )}
+                        <th key={header.id} className="px-4 py-2 text-left bg-gray-50">
+                          {flexRender(
+                            header.column.columnDef.header,
+                            header.getContext(),
+                          )}
                         </th>
                       ))}
                     </tr>
                   ))}
                 </thead>
-
-                {/* Table Body */}
                 <tbody>
                   {table.getRowModel().rows.map((row) => (
                     <tr
                       key={row.id}
-                      className="border-b border-gray-50 hover:bg-gray-50 transition-colors"
+                      className="border-b border-gray-100 hover:bg-gray-50"
                     >
                       {row.getVisibleCells().map((cell) => (
-                        <td
-                          key={cell.id}
-                          className="px-4 py-3 text-sm text-gray-700"
-                        >
-                          {flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext(),
-                          )}
+                        <td key={cell.id} className="px-4 py-2 text-sm text-gray-700">
+                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
                         </td>
                       ))}
                     </tr>
@@ -219,8 +149,14 @@ const MyOrder = ({ onViewOrder }: OrdersTableProps) => {
           )}
         </CardContent>
       </Card>
+
+      {selectedOrder && (
+        <UserDetailModal
+          data={selectedOrder}
+          open={open}
+          onClose={() => setOpen(false)}
+        />
+      )}
     </div>
   );
-};
-
-export default MyOrder;
+}

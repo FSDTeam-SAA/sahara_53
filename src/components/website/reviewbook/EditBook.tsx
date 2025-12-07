@@ -15,13 +15,13 @@ import {
 import { BookDetails } from "./Reviewbook"
 
 interface EditBookProps {
-  book: BookDetails
+  books: BookDetails
   onBack: () => void
   onSave?: (updatedBook: BookDetails) => void
 }
 
-export function EditBook({ book, onBack, onSave }: EditBookProps) {
-  const [editedBook, setEditedBook] = useState<BookDetails>({ ...book })
+export function EditBook({ books, onBack, onSave }: EditBookProps) {
+  const [editedBook, setEditedBook] = useState<BookDetails>({ ...books })
   const [isSaving, setIsSaving] = useState(false)
 
   const handleChange = (field: keyof BookDetails, value: string | number) => {
