@@ -60,7 +60,7 @@ export default function BookPageClient() {
           onChapterChange={setCurrentChapter}
         />
       ) : edit ? (
-        <EditBook books={bookDetails} onBack={() => setEdit(false)} />
+        <EditBook book={book} books={bookDetails} onBack={() => setEdit(false)} />
       ) : (
         <ReviewBook
           book={bookDetails}

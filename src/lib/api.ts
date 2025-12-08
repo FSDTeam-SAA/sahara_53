@@ -13,11 +13,41 @@ import type {
 } from "./types";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
+import { getSession } from "next-auth/react";
+
+
+
 
 const axiosInstance = axios.create({
   baseURL: API_URL,
-  withCredentials: true,
 });
+
+axiosInstance.interceptors.request.use(
+  async (config) => {
+    const session = await getSession();
+    if (session?.accessToken) {
+      config.headers.Authorization = `Bearer ${session.accessToken}`;
+    } else {
+      console.warn("No token in session");
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
+// Add Authorization header automatically
+axiosInstance.interceptors.request.use((config) => {
+  const token = typeof window !== "undefined" 
+    ? localStorage.getItem("accessToken")
+    : null;
+
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+
+  return config;
+});
+
 
 // Export API methods wrapper
 export const api = {
