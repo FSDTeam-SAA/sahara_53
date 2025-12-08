@@ -8,47 +8,47 @@ export async function middleware(req: NextRequest) {
     secret: process.env.NEXTAUTH_SECRET,
   });
 
-  const path = req.nextUrl.pathname;
+  const { pathname } = req.nextUrl;
 
-  // If NOT authenticated → always redirect to login (except allowed pages)
+  // Public routes
   const publicPaths = ["/login", "/create-your-account"];
-  const isPublic = publicPaths.some((p) => path.startsWith(p));
+  const isPublic = publicPaths.some((p) => pathname.startsWith(p));
 
-  if (!token && !isPublic) {
-    return NextResponse.redirect(new URL("/login", req.url));
+  // Protected routes
+  const protectedRoutes = ["/profile", "/myorder", "/create-book", "/dashboard"];
+  const isProtected = protectedRoutes.some((p) => pathname.startsWith(p));
+
+  // Not logged in → redirect to login
+  if (!token && isProtected) {
+    const loginUrl = new URL("/login", req.url);
+    loginUrl.searchParams.set("callbackUrl", pathname);
+    return NextResponse.redirect(loginUrl);
   }
 
-  // If logged in & visiting login/signup → redirect away
+  // Logged in → redirect from login/signup
   if (token && isPublic) {
-    if (token.role === "admin") {
-      return NextResponse.redirect(new URL("/dashboard", req.url));
-    }
+    if (token.role === "admin") return NextResponse.redirect(new URL("/dashboard", req.url));
     return NextResponse.redirect(new URL("/", req.url));
   }
 
-  // Role-based protections
-  if (token) {
-    const role = token.role;
-
-    // USER ROLE BLOCKED FROM ADMIN AREA
-    if (role === "user" && path.startsWith("/dashboard")) {
+  // Role-based access
+  if (token && token.role) {
+    if (token.role === "user" && pathname.startsWith("/dashboard")) {
       return NextResponse.redirect(new URL("/", req.url));
-    }
-
-    // ADMIN CAN ACCESS DASHBOARD
-    if (role === "admin") {
-      return NextResponse.next();
     }
   }
 
   return NextResponse.next();
 }
 
+// ✅ Important: include all protected routes in matcher
 export const config = {
   matcher: [
-    "/dashboard/:path*", //
+    "/profile/:path*",
+    "/myorder/:path*",
+    "/create-book/:path*",
+    "/dashboard/:path*",
     "/login",
     "/create-your-account",
-    "/",
   ],
 };
