@@ -1,15 +1,11 @@
 // Core types for the admin dashboard
 
 export interface User {
-  id: string
-  name: string
-  email: string
-  phone: string
-  avatar?: string
-  role: "admin" | "user" | "moderator"
-  status: "active" | "inactive" | "suspended"
-  createdAt: string
-  lastLogin?: string
+  firstName: string;
+  lastName: string;
+  email: string;
+  address: string;
+  totalStories: number;
 }
 
 // export interface Order {
@@ -31,58 +27,74 @@ export interface User {
 // }
 
 export interface Book {
-  id: string
-  title: string
-  description: string
-  image: string
-  status: "Completed" | "In Progress" | "Draft"
-  category: string
-  chapters: number
-  createdAt: string
+  _id: string;
+  userId: string;
+  title: string;
+  language: string;
+  style: string;
+  genre: string;
+  characters: {
+    name: string;
+    _id: string;
+  }[];
+  beginning: string;
+  chapterCount: number;
+  generatedStory: {
+    chapter: number;
+    title: string;
+    text: string;
+    audioUrl: string | null;
+    _id: string;
+    chapterImage?: string;
+  }[];
+  createdAt: string;
+  updatedAt: string;
+  voiceId?: string;
+  __v?: number;
 }
 
 export interface Payment {
-  id: string
-  amount: number
-  customerName: string
-  email: string
-  phone: string
-  date: string
-  status: "Succeeded" | "Pending" | "Failed"
+  id: string;
+  amount: number;
+  customerName: string;
+  email: string;
+  phone: string;
+  date: string;
+  status: "Succeeded" | "Pending" | "Failed";
 }
 
 export interface DashboardStats {
-  totalUsers: number
-  totalOrders: number
-  revenue: number
-  storiesCreated: number
+  totalUsers: number;
+  totalOrders: number;
+  revenue: number;
+  storiesCreated: number;
   percentageChange: {
-    users: number
-    orders: number
-    revenue: number
-    stories: number
-  }
+    users: number;
+    orders: number;
+    revenue: number;
+    stories: number;
+  };
 }
 
 export interface RevenueData {
-  month: string
-  revenue: number
-  orders: number
+  month: string;
+  revenue: number;
+  orders: number;
 }
 
 export interface PaginatedResponse<T> {
-  data: T[]
-  total: number
-  page: number
-  pageSize: number
-  totalPages: number
+  data: T[];
+  total: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
 }
 
 export interface ApiFilters {
-  search?: string
-  status?: string
-  sortBy?: string
-  sortOrder?: "asc" | "desc"
-  page?: number
-  pageSize?: number
+  search?: string;
+  status?: string;
+  sortBy?: string;
+  sortOrder?: "asc" | "desc";
+  page?: number;
+  pageSize?: number;
 }

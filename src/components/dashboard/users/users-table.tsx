@@ -10,8 +10,7 @@ import {
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { StatusBadge } from "@/components/ui/status-badge";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { SearchInput } from "@/components/ui/search-input";
 import { FilterDropdown } from "@/components/ui/filter-dropdown";
 import { DataTablePagination } from "@/components/ui/data-table-pagination";
@@ -21,15 +20,8 @@ import type { User } from "@/lib/types";
 import { Skeleton } from "@/components/ui/skeleton";
 
 interface UsersTableProps {
-  onViewUser: (userId: string) => void;
+  onViewUser: (user: User) => void;
 }
-
-const statusOptions = [
-  { value: "all", label: "All Status" },
-  { value: "active", label: "Active" },
-  { value: "inactive", label: "Inactive" },
-  { value: "suspended", label: "Suspended" },
-];
 
 const sortOptions = [
   { value: "name", label: "Name" },
@@ -41,14 +33,12 @@ const sortOptions = [
 export function UsersTable({ onViewUser }: UsersTableProps) {
   const [search, setSearch] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
-  const [statusFilter, setStatusFilter] = useState("all");
   const [sortBy, setSortBy] = useState("name");
   const [page, setPage] = useState(1);
   const [rowSelection, setRowSelection] = useState({});
 
   const { users, totalPages, isLoading } = useUsers({
     search: searchQuery,
-    status: statusFilter,
     sortBy,
     page,
     pageSize: 10,
@@ -82,10 +72,11 @@ export function UsersTable({ onViewUser }: UsersTableProps) {
         cell: ({ row }) => (
           <div className="flex items-center gap-3">
             <Avatar className="h-8 w-8">
-              <AvatarImage src={row.original.avatar || "/placeholder.svg"} />
-              <AvatarFallback>{row.original.name.charAt(0)}</AvatarFallback>
+              <AvatarFallback>
+                {row.original.firstName.charAt(0)}
+              </AvatarFallback>
             </Avatar>
-            <span className="font-medium">{row.original.name}</span>
+            <span className="font-medium">{`${row.original.firstName} ${row.original.lastName}`}</span>
           </div>
         ),
       },
@@ -94,24 +85,18 @@ export function UsersTable({ onViewUser }: UsersTableProps) {
         header: "Email",
       },
       {
-        accessorKey: "phone",
-        header: "Phone",
-      },
-      {
-        accessorKey: "role",
-        header: "Role",
+        accessorKey: "address",
+        header: "Address",
         cell: ({ row }) => (
-          <span className="capitalize text-gray-600">{row.original.role}</span>
+          <span className="text-gray-600">{row.original.address || "N/A"}</span>
         ),
       },
       {
-        accessorKey: "createdAt",
-        header: "Created At",
-      },
-      {
-        accessorKey: "status",
-        header: "Status",
-        cell: ({ row }) => <StatusBadge status={row.original.status} />,
+        accessorKey: "totalStories",
+        header: "Total Stories",
+        cell: ({ row }) => (
+          <span className="text-gray-600">{row.original.totalStories}</span>
+        ),
       },
       {
         id: "actions",
@@ -119,7 +104,7 @@ export function UsersTable({ onViewUser }: UsersTableProps) {
         cell: ({ row }) => (
           <div className="flex items-center gap-2">
             <button
-              onClick={() => onViewUser(row.original.id)}
+              onClick={() => onViewUser(row.original)}
               className="p-1.5 rounded-full hover:bg-gray-100 transition-colors"
             >
               <Eye className="h-4 w-4 text-gray-500" />
@@ -138,6 +123,7 @@ export function UsersTable({ onViewUser }: UsersTableProps) {
     data: users,
     columns,
     getCoreRowModel: getCoreRowModel(),
+    getRowId: (row) => row.email,
     onRowSelectionChange: setRowSelection,
     state: {
       rowSelection,
@@ -158,7 +144,7 @@ export function UsersTable({ onViewUser }: UsersTableProps) {
             value={search}
             onChange={setSearch}
             onSearch={handleSearch}
-            placeholder="Search by name, email, phone"
+            placeholder="Search by name, email"
           />
         </div>
         <div className="flex items-center gap-3">
@@ -167,15 +153,6 @@ export function UsersTable({ onViewUser }: UsersTableProps) {
             onChange={setSortBy}
             options={sortOptions}
             placeholder="Sort by"
-          />
-          <FilterDropdown
-            value={statusFilter}
-            onChange={(value) => {
-              setStatusFilter(value);
-              setPage(1);
-            }}
-            options={statusOptions}
-            placeholder="Select Status"
           />
         </div>
       </div>

@@ -11,7 +11,6 @@ import type {
   PaginatedResponse,
   ApiFilters,
 } from "./types";
-import { it } from "node:test";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -27,7 +26,7 @@ export const api = {
   getRevenueData: () => apiFunction.getRevenueData(),
   // Users
   getUsers: (filters?: ApiFilters) => apiFunction.getUsers(filters),
-  getUserById: (id: string) => apiFunction.getUserById(id),
+
   // Orders
   // getOrders: (filters?: ApiFilters) => apiFunction.getOrders(filters),
   // getOrderById: (id: string) => apiFunction.getOrderById(id),
@@ -48,39 +47,39 @@ export const api = {
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 // Mock data generators
-const generateUsers = (count: number): User[] => {
-  const names = [
-    "Ronald Richards",
-    "Jane Cooper",
-    "Floyd Miles",
-    "Darlene Robertson",
-    "Robert Fox",
-    "Marvin McKinney",
-    "Ralph Edwards",
-    "Jerome Bell",
-    "Cody Fisher",
-    "Cameron Williamson",
-    "Brooklyn Simmons",
-    "Leslie Alexander",
-    "Jenny Wilson",
-    "Guy Hawkins",
-    "Jacob Jones",
-  ];
-  const roles: User["role"][] = ["admin", "user", "moderator"];
-  const statuses: User["status"][] = ["active", "inactive", "suspended"];
+// const generateUsers = (count: number): User[] => {
+//   const names = [
+//     "Ronald Richards",
+//     "Jane Cooper",
+//     "Floyd Miles",
+//     "Darlene Robertson",
+//     "Robert Fox",
+//     "Marvin McKinney",
+//     "Ralph Edwards",
+//     "Jerome Bell",
+//     "Cody Fisher",
+//     "Cameron Williamson",
+//     "Brooklyn Simmons",
+//     "Leslie Alexander",
+//     "Jenny Wilson",
+//     "Guy Hawkins",
+//     "Jacob Jones",
+//   ];
+//   const roles: User["role"][] = ["admin", "user", "moderator"];
+//   const statuses: User["status"][] = ["active", "inactive", "suspended"];
 
-  return Array.from({ length: count }, (_, i) => ({
-    id: `user-${i + 1}`,
-    name: names[i % names.length],
-    email: `example@example.com`,
-    phone: "+1234567890",
-    avatar: `/placeholder.svg?height=40&width=40&query=avatar ${i}`,
-    role: roles[i % roles.length],
-    status: statuses[Math.floor(Math.random() * 3)],
-    createdAt: "14 November, 2025",
-    lastLogin: "14 November, 2025",
-  }));
-};
+//   return Array.from({ length: count }, (_, i) => ({
+//     id: `user-${i + 1}`,
+//     name: names[i % names.length],
+//     email: `example@example.com`,
+//     phone: "+1234567890",
+//     avatar: `/placeholder.svg?height=40&width=40&query=avatar ${i}`,
+//     role: roles[i % roles.length],
+//     status: statuses[Math.floor(Math.random() * 3)],
+//     createdAt: "14 November, 2025",
+//     lastLogin: "14 November, 2025",
+//   }));
+// };
 
 // Get reviews all with pagination and dynamic params
 export async function getAllReview(page = 1, limit = 10) {
@@ -203,8 +202,6 @@ export async function createBook(data: {
   }
 }
 
-
-
 // contact post
 
 export async function createContact(data: {
@@ -229,7 +226,7 @@ export async function imageGenerate(data: FormData) {
   try {
     const res = await api.post("/image/ghibli", data, {
       headers: {
-        'Content-Type': 'multipart/form-data',
+        "Content-Type": "multipart/form-data",
       },
     });
     return res.data;
@@ -237,24 +234,17 @@ export async function imageGenerate(data: FormData) {
     if (err instanceof Error) {
       throw new Error(`Image upload failed: ${err.message}`);
     }
-    throw new Error('Unknown error occurred');
+    throw new Error("Unknown error occurred");
   }
 }
 
-
-
-
-
-// recent book get 
-
-
+// recent book get
 
 export async function recentBookFetch(id: string) {
   try {
- 
     const res = await api.get(`/story/user/${id}`);
-    const data= await res.data
-    console.log('respons data',data)
+    const data = await res.data;
+    console.log("respons data", data);
     return res.data;
   } catch (err) {
     if (err instanceof Error) {
@@ -262,13 +252,12 @@ export async function recentBookFetch(id: string) {
     }
   }
 }
-// single book 
+// single book
 export async function SingleBookFetch(id: string) {
   try {
- 
     const res = await api.get(`/story/${id}`);
-    const data= await res.data
-    console.log('respons data',data)
+    const data = await res.data;
+    console.log("respons data", data);
     return res.data;
   } catch (err) {
     if (err instanceof Error) {
@@ -281,10 +270,10 @@ export async function SingleBookFetch(id: string) {
 
 export async function myOrderFetch() {
   try {
-    console.log('fuck')
+    console.log("fuck");
     const res = await api.get(`/orders`);
-    const data= await res.data
-    console.log('respons data',data)
+    const data = await res.data;
+    console.log("respons data", data);
     return res.data;
   } catch (err) {
     if (err instanceof Error) {
@@ -293,12 +282,12 @@ export async function myOrderFetch() {
   }
 }
 
-export async function SearchFetch(userId:string,search:string) {
+export async function SearchFetch(userId: string, search: string) {
   try {
-    console.log('fuck')
+    console.log("fuck");
     const res = await api.get(`/story/user/${userId}?/${search}`);
-    const data= await res.data
-    console.log('respons data',data)
+    const data = await res.data;
+    console.log("respons data", data);
     return res.data;
   } catch (err) {
     if (err instanceof Error) {
@@ -306,8 +295,6 @@ export async function SearchFetch(userId:string,search:string) {
     }
   }
 }
-
-
 
 // const generateOrders = (count: number): Order[] => {
 //   const names = [
@@ -361,26 +348,41 @@ export async function SearchFetch(userId:string,search:string) {
 
 const generateBooks = (count: number): Book[] => {
   const images = [
-    "/cartoon-character-sumo.jpg",
-    "/anime-warrior-blue.jpg",
-    "/robot-girl-pink.jpg",
-    "/adventure-time-finn.jpg",
-    "/dragon-monster-cute.jpg",
-    "/space-ranger-pink.jpg",
+    "https://imgen.x.ai/xai-imgen/xai-tmp-imgen-140e117e-e39b-43be-9761-76741dd9f943.jpeg",
+    "https://imgen.x.ai/xai-imgen/xai-tmp-imgen-2615a52f-c478-490d-a921-109f0d5d39b8.jpeg",
+    "https://imgen.x.ai/xai-imgen/xai-tmp-imgen-3704d02c-2452-4052-8a33-376955c8404e.jpeg",
+    "https://imgen.x.ai/xai-imgen/xai-tmp-imgen-1f899276-13c0-43ad-970c-6b1618d7dafc.jpeg",
   ];
-  const statuses: Book["status"][] = ["Completed", "In Progress", "Draft"];
-  const categories = ["Children", "Adventure", "Fantasy", "Sci-Fi"];
+  const genres = ["adventure", "fantasy", "sci-fi", "mystery"];
+  const styles = ["fantasy", "realistic", "cartoon", "anime"];
+  const languages = ["en", "es", "fr", "de"];
 
   return Array.from({ length: count }, (_, i) => ({
-    id: `book-${i + 1}`,
-    title: "Story Name Here",
-    description:
-      "Discover vibrant, fun, and personalized stories brought to life with your own voice and favorite characters...",
-    image: images[i % images.length],
-    status: statuses[Math.floor(Math.random() * 3)],
-    category: categories[i % categories.length],
-    chapters: 10,
-    createdAt: "14 November, 2025",
+    _id: `book-${i + 1}`,
+    userId: `user-${i + 1}`,
+    title: `Story Name ${i + 1}`,
+    language: languages[i % languages.length],
+    style: styles[i % styles.length],
+    genre: genres[i % genres.length],
+    characters: [
+      {
+        name: "John",
+        _id: `char-${i + 1}`,
+      },
+    ],
+    beginning: "Story was about a boy who wants to be a software Engineer.",
+    chapterCount: 4,
+    generatedStory: Array.from({ length: 4 }, (_, j) => ({
+      chapter: j + 1,
+      title: `CHAPTER ${j + 1}: The Adventure Begins`,
+      text: "Once upon a time...",
+      audioUrl: null,
+      _id: `chapter-${i + 1}-${j + 1}`,
+      chapterImage: images[j % images.length],
+    })),
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    __v: 0,
   }));
 };
 
@@ -460,58 +462,38 @@ export const apiFunction = {
   getUsers: async (
     filters: ApiFilters = {},
   ): Promise<PaginatedResponse<User>> => {
-    await delay(300);
-    const {
-      page = 1,
-      pageSize = 10,
-      search,
-      status,
-      sortBy,
-      sortOrder,
-    } = filters;
-    let users = generateUsers(100);
+    const { page = 1, pageSize = 10 } = filters;
+    const res = await api.get(`/user?page=${page}&limit=${pageSize}`);
 
-    if (search) {
-      users = users.filter(
-        (u) =>
-          u.name.toLowerCase().includes(search.toLowerCase()) ||
-          u.email.toLowerCase().includes(search.toLowerCase()),
-      );
-    }
+    // The API response structure is:
+    // {
+    //   success: true,
+    //   message: "Users retrieved successfully",
+    //   data: {
+    //     users: User[],
+    //     total: number,
+    //     page: number,
+    //     limit: number,
+    //     totalPages: number
+    //   }
+    // }
 
-    if (status && status !== "all") {
-      users = users.filter((u) => u.status === status);
-    }
-
-    if (sortBy) {
-      users.sort((a, b) => {
-        const aVal = a[sortBy as keyof User];
-        const bVal = b[sortBy as keyof User];
-        if (sortOrder === "desc") {
-          return String(bVal).localeCompare(String(aVal));
-        }
-        return String(aVal).localeCompare(String(bVal));
-      });
-    }
-
-    const total = users.length;
-    const start = (page - 1) * pageSize;
-    const data = users.slice(start, start + pageSize);
+    const responseData = res.data?.data;
 
     return {
-      data,
-      total,
-      page,
-      pageSize,
-      totalPages: Math.ceil(total / pageSize),
+      data: responseData?.users || [],
+      total: responseData?.total || 0,
+      page: responseData?.page || page,
+      pageSize: responseData?.limit || pageSize,
+      totalPages: responseData?.totalPages || 0,
     };
   },
 
-  getUserById: async (id: string): Promise<User | null> => {
-    await delay(200);
-    const users = generateUsers(100);
-    return users.find((u) => u.id === id) || null;
-  },
+  // getUserById: async (id: string): Promise<User | null> => {
+  //   await delay(200);
+  //   const users = generateUsers(100);
+  //   return users.find((u) => u.id === id) || null;
+  // },
 
   // Orders
   // getOrders: async (
@@ -575,31 +557,65 @@ export const apiFunction = {
   getBooks: async (
     filters: ApiFilters = {},
   ): Promise<PaginatedResponse<Book>> => {
-    await delay(300);
-    const { page = 1, pageSize = 9, search, status } = filters;
-    let books = generateBooks(50);
+    // await delay(300);
+    const { page = 1, pageSize = 10, search } = filters;
 
-    if (search) {
-      books = books.filter((b) =>
-        b.title.toLowerCase().includes(search.toLowerCase()),
-      );
+    try {
+      const queryParams = new URLSearchParams({
+        page: page.toString(),
+        limit: pageSize.toString(),
+        ...(search && { search }),
+      });
+
+      const res = await api.get(`/story?${queryParams.toString()}`);
+
+      // The API response structure matches the example provided
+      const responseData = res.data;
+
+      if (responseData.success && responseData.data) {
+        return {
+          data: responseData.data.stories,
+          total: responseData.data.total,
+          page: responseData.data.page,
+          pageSize: responseData.data.limit,
+          totalPages: responseData.data.totalPages,
+        };
+      }
+
+      // Fallback if response structure is unexpected but successful
+      return {
+        data: [],
+        total: 0,
+        page,
+        pageSize,
+        totalPages: 0,
+      };
+    } catch (error) {
+      console.error("Failed to fetch books:", error);
+      // Fallback to mock data if API fails (or for development if API is not ready)
+      // Remove this fallback if you want to strictly use the API
+
+      let books = generateBooks(10); // Generate fewer mock items for fallback
+
+      if (search) {
+        books = books.filter((b) =>
+          b.title.toLowerCase().includes(search.toLowerCase()),
+        );
+      }
+
+      const total = books.length;
+      // Mock pagination
+      // const start = (page - 1) * pageSize;
+      // const data = books.slice(start, start + pageSize);
+
+      return {
+        data: books,
+        total,
+        page,
+        pageSize,
+        totalPages: Math.ceil(total / pageSize),
+      };
     }
-
-    if (status && status !== "all") {
-      books = books.filter((b) => b.status === status);
-    }
-
-    const total = books.length;
-    const start = (page - 1) * pageSize;
-    const data = books.slice(start, start + pageSize);
-
-    return {
-      data,
-      total,
-      page,
-      pageSize,
-      totalPages: Math.ceil(total / pageSize),
-    };
   },
 
   deleteBook: async (id: string): Promise<boolean> => {

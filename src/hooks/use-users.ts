@@ -25,17 +25,3 @@ export function useUsers(filters: ApiFilters = {}) {
     mutate: refetch,
   };
 }
-
-export function useUser(id: string | null) {
-  const { data, error, isLoading } = useQuery<User | null>({
-    queryKey: ["user", id],
-    queryFn: () => (id ? api.getUserById(id) : null),
-    enabled: !!id,
-  });
-
-  return {
-    user: data,
-    isLoading,
-    error,
-  };
-}
