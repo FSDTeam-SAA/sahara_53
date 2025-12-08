@@ -386,32 +386,6 @@ const generateBooks = (count: number): Book[] => {
   }));
 };
 
-const generatePayments = (count: number): Payment[] => {
-  const names = [
-    "Ronald Richards",
-    "Jane Cooper",
-    "Floyd Miles",
-    "Darlene Robertson",
-    "Robert Fox",
-    "Marvin McKinney",
-    "Ralph Edwards",
-    "Jerome Bell",
-    "Cody Fisher",
-    "Cameron Williamson",
-  ];
-  const statuses: Payment["status"][] = ["Succeeded", "Pending", "Failed"];
-
-  return Array.from({ length: count }, (_, i) => ({
-    id: `payment-${i + 1}`,
-    amount: 123.0,
-    customerName: names[i % names.length],
-    email: "example@example.com",
-    phone: "+1234567890",
-    date: "14 November, 2025",
-    status: statuses[Math.floor(Math.random() * 3)],
-  }));
-};
-
 const generateRevenueData = (): RevenueData[] => {
   const months = [
     "Jan",
@@ -628,50 +602,38 @@ export const apiFunction = {
   getPayments: async (
     filters: ApiFilters = {},
   ): Promise<PaginatedResponse<Payment>> => {
-    await delay(300);
-    const {
-      page = 1,
-      pageSize = 10,
-      search,
-      status,
-      sortBy,
-      sortOrder,
-    } = filters;
-    let payments = generatePayments(100);
+    const { page = 1, pageSize = 10 } = filters;
 
-    if (search) {
-      payments = payments.filter(
-        (p) =>
-          p.customerName.toLowerCase().includes(search.toLowerCase()) ||
-          p.email.toLowerCase().includes(search.toLowerCase()),
-      );
+    try {
+      const res = await api.get(`/payments?page=${page}&limit=${pageSize}`);
+      const responseData = res.data;
+
+      if (responseData.success && responseData.data) {
+        return {
+          data: responseData.data.payments,
+          total: responseData.data.total,
+          page: responseData.data.page,
+          pageSize: responseData.data.limit,
+          totalPages: responseData.data.totalPages,
+        };
+      }
+
+      return {
+        data: [],
+        total: 0,
+        page,
+        pageSize,
+        totalPages: 0,
+      };
+    } catch (error) {
+      console.error("Failed to fetch payments:", error);
+      return {
+        data: [],
+        total: 0,
+        page,
+        pageSize,
+        totalPages: 0,
+      };
     }
-
-    if (status && status !== "all") {
-      payments = payments.filter((p) => p.status === status);
-    }
-
-    if (sortBy) {
-      payments.sort((a, b) => {
-        const aVal = a[sortBy as keyof Payment];
-        const bVal = b[sortBy as keyof Payment];
-        if (sortOrder === "desc") {
-          return String(bVal).localeCompare(String(aVal));
-        }
-        return String(aVal).localeCompare(String(bVal));
-      });
-    }
-
-    const total = payments.length;
-    const start = (page - 1) * pageSize;
-    const data = payments.slice(start, start + pageSize);
-
-    return {
-      data,
-      total,
-      page,
-      pageSize,
-      totalPages: Math.ceil(total / pageSize),
-    };
   },
 };

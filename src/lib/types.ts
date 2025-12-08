@@ -54,13 +54,22 @@ export interface Book {
 }
 
 export interface Payment {
-  id: string;
-  amount: number;
-  customerName: string;
-  email: string;
-  phone: string;
-  date: string;
-  status: "Succeeded" | "Pending" | "Failed";
+  _id: string;
+  userId: {
+    _id: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    phoneNum: string | null;
+  };
+  orderId: string;
+  totalAmount: number;
+  status: string;
+  sessionId: string;
+  currency: string;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
 }
 
 export interface DashboardStats {

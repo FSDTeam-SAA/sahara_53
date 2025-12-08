@@ -12,12 +12,12 @@ import { api } from "@/lib/api";
 import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
 
-const statusOptions = [
-  { value: "all", label: "All Status" },
-  { value: "Completed", label: "Completed" },
-  { value: "In Progress", label: "In Progress" },
-  { value: "Draft", label: "Draft" },
-];
+// const statusOptions = [
+//   { value: "all", label: "All Status" },
+//   { value: "Completed", label: "Completed" },
+//   { value: "In Progress", label: "In Progress" },
+//   { value: "Draft", label: "Draft" },
+// ];
 
 const sortOptions = [
   { value: "title", label: "Title" },
@@ -28,7 +28,7 @@ const sortOptions = [
 export function BooksGrid() {
   const [search, setSearch] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
-  const [statusFilter, setStatusFilter] = useState("all");
+  // const [statusFilter, setStatusFilter] = useState("all");
   const [sortBy, setSortBy] = useState("title");
   const [page, setPage] = useState(1);
 
