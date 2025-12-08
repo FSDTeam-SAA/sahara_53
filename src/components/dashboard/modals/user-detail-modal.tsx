@@ -1,23 +1,22 @@
-"use client"
+"use client";
 
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { StatusBadge } from "@/components/ui/status-badge"
-import { useUser } from "@/hooks/use-users"
-import { Skeleton } from "@/components/ui/skeleton"
-import { Mail, Phone, Calendar, Shield, Clock } from "lucide-react"
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import type { User } from "@/lib/types";
+import { Mail } from "lucide-react";
 
 interface UserDetailModalProps {
-  userId: string | null
-  open: boolean
-  onClose: () => void
+  user: User | null;
+  open: boolean;
+  onClose: () => void;
 }
 
-export function UserDetailModal({ userId, open, onClose }: UserDetailModalProps) {
-
-  
-  const { user, isLoading } = useUser(userId)
-
+export function UserDetailModal({ user, open, onClose }: UserDetailModalProps) {
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[500px]">
@@ -25,27 +24,14 @@ export function UserDetailModal({ userId, open, onClose }: UserDetailModalProps)
           <DialogTitle>User Details</DialogTitle>
         </DialogHeader>
 
-        {isLoading ? (
-          <div className="space-y-4">
-            <div className="flex items-center gap-4">
-              <Skeleton className="h-16 w-16 rounded-full" />
-              <div className="space-y-2">
-                <Skeleton className="h-5 w-32" />
-                <Skeleton className="h-4 w-24" />
-              </div>
-            </div>
-            <Skeleton className="h-20 w-full" />
-          </div>
-        ) : user ? (
+        {user ? (
           <div className="space-y-6">
             <div className="flex items-center gap-4">
               <Avatar className="h-16 w-16">
-                <AvatarImage src={user.avatar || "/placeholder.svg"} />
-                <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+                <AvatarFallback>{user.firstName.charAt(0)}</AvatarFallback>
               </Avatar>
               <div>
-                <h3 className="text-lg font-semibold">{user.name}</h3>
-                <StatusBadge status={user.status} />
+                <h3 className="text-lg font-semibold">{`${user.firstName} ${user.lastName}`}</h3>
               </div>
             </div>
 
@@ -59,34 +45,22 @@ export function UserDetailModal({ userId, open, onClose }: UserDetailModalProps)
               </div>
 
               <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                <Phone className="h-5 w-5 text-gray-400" />
+                <div className="h-5 w-5 flex items-center justify-center text-gray-400">
+                  <span className="text-lg">📍</span>
+                </div>
                 <div>
-                  <p className="text-xs text-gray-500">Phone</p>
-                  <p className="text-sm font-medium">{user.phone}</p>
+                  <p className="text-xs text-gray-500">Address</p>
+                  <p className="text-sm font-medium">{user.address || "N/A"}</p>
                 </div>
               </div>
 
               <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                <Shield className="h-5 w-5 text-gray-400" />
-                <div>
-                  <p className="text-xs text-gray-500">Role</p>
-                  <p className="text-sm font-medium capitalize">{user.role}</p>
+                <div className="h-5 w-5 flex items-center justify-center text-gray-400">
+                  <span className="text-lg">📚</span>
                 </div>
-              </div>
-
-              <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                <Calendar className="h-5 w-5 text-gray-400" />
                 <div>
-                  <p className="text-xs text-gray-500">Created At</p>
-                  <p className="text-sm font-medium">{user.createdAt}</p>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                <Clock className="h-5 w-5 text-gray-400" />
-                <div>
-                  <p className="text-xs text-gray-500">Last Login</p>
-                  <p className="text-sm font-medium">{user.lastLogin || "Never"}</p>
+                  <p className="text-xs text-gray-500">Total Stories</p>
+                  <p className="text-sm font-medium">{user.totalStories}</p>
                 </div>
               </div>
             </div>
@@ -96,5 +70,5 @@ export function UserDetailModal({ userId, open, onClose }: UserDetailModalProps)
         )}
       </DialogContent>
     </Dialog>
-  )
+  );
 }
