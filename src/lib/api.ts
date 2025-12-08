@@ -270,8 +270,7 @@ export async function SingleBookFetch(id: string) {
 
 export async function myOrderFetch() {
   try {
-    console.log("fuck");
-    const res = await api.get(`/orders`);
+  const res = await api.get(`/orders`);
     const data = await res.data;
     console.log("respons data", data);
     return res.data;
@@ -284,8 +283,7 @@ export async function myOrderFetch() {
 
 export async function SearchFetch(userId: string, search: string) {
   try {
-    console.log("fuck");
-    const res = await api.get(`/story/user/${userId}?/${search}`);
+  const res = await api.get(`/story/user/${userId}?/${search}`);
     const data = await res.data;
     console.log("respons data", data);
     return res.data;
@@ -293,6 +291,40 @@ export async function SearchFetch(userId: string, search: string) {
     if (err instanceof Error) {
       throw new Error(err.message);
     }
+  }
+}
+//user update
+
+export async function userProfileUpdate(formData: {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  address: string;
+  avatar?: string;
+}) {
+  try {
+    console.log("Updating profile...");
+
+    // Convert to the format your API expects
+    const apiData = {
+      firstName: formData.firstName,
+      lastName: formData.lastName,
+      email: formData.email,
+      phone: formData.phone,
+      address: formData.address,
+    };
+
+    const res = await api.patch(`/user/me`, apiData);
+    const data = await res.data;
+    console.log("Response data", data);
+    return data;
+  } catch (err) {
+    console.error("Update failed:", err);
+    if (err instanceof Error) {
+      throw new Error(err.message);
+    }
+    throw new Error("Failed to update profile");
   }
 }
 
