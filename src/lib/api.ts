@@ -323,6 +323,9 @@ export async function SearchFetch(userId: string, search: string) {
     }
   }
 }
+
+
+
 //user update
 
 export async function userProfileUpdate(formData: {
@@ -357,6 +360,45 @@ export async function userProfileUpdate(formData: {
     throw new Error("Failed to update profile");
   }
 }
+
+
+// order create
+
+export async function OrderCreate(datas: {
+  userId: string;
+  storyBookId: string;
+  formate: string;
+  price: string;
+}) {
+  try {
+    const res = await api.post(`/orders`, datas);
+    return res.data;
+  } catch (err) {
+    if(err instanceof Error){
+
+      throw new Error(err.message || 'Create Fail');
+    }
+  }
+}
+
+
+export async function paymentCreate(datas: {
+  userId: string;
+  orderId: string;
+  totalAmount: number;
+}) {
+  try {
+    const res = await api.post(`/payments/create-checkout`, datas);
+    return res.data;
+  } catch (err) {
+    if(err instanceof Error){
+
+      throw new Error(err.message || 'Create Fail');
+    }
+  }
+}
+
+
 
 const generateBooks = (count: number): Book[] => {
   const images = [
