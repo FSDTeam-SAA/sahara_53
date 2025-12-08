@@ -4,7 +4,6 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-
 import AuthReusable from "./authreuseable";
 import {
   Form,
@@ -16,7 +15,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useCreateAccount } from "@/lib/hoock/Useauth";
+import { useCreateAccount } from "@/hooks/Useauth";
 import { CreateAccountPayload } from "@/lib/type/auth";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -38,7 +37,7 @@ type FormValues = z.infer<typeof formSchema>;
 
 export default function CreateYourAccount() {
   const { mutate, isPending } = useCreateAccount();
-const router = useRouter();
+  const router = useRouter();
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -59,28 +58,28 @@ const router = useRouter();
       gender: "Male",
     };
 
-    mutate(payload,{
-      onSuccess:()=>{
-        router.push('/login')
+    mutate(payload, {
+      onSuccess: () => {
+        router.push("/login");
       },
-      onError:(error)=>{
-        toast.error(error.message)
-      }
+      onError: (error) => {
+        toast.error(error.message);
+      },
     });
-   
   }
 
   return (
     <AuthReusable>
       <div className="bg-white p-10 shadow-xl rounded-xl">
-        <h2 className="text-3xl font-bold text-center mb-2">Create Your Account</h2>
+        <h2 className="text-3xl font-bold text-center mb-2">
+          Create Your Account
+        </h2>
         <p className="text-gray-500 text-center mb-6">
           Create your account to start booking, hosting, and sharing kitchens.
         </p>
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-
             <div className="grid grid-cols-2 gap-4">
               <FormField
                 control={form.control}
@@ -153,7 +152,10 @@ const router = useRouter();
               )}
             />
 
-            <Button disabled={isPending} className="w-full bg-gradient-to-r from-pink-400 to-indigo-600 text-white">
+            <Button
+              disabled={isPending}
+              className="w-full bg-gradient-to-r from-pink-400 to-indigo-600 text-white"
+            >
               {isPending ? "Creating..." : "Sign Up"}
             </Button>
           </form>
@@ -161,7 +163,9 @@ const router = useRouter();
 
         <p className="text-center mt-4 text-gray-600 text-sm">
           Already have an account?{" "}
-          <a href="/login" className="text-indigo-600 font-semibold">Sign In</a>
+          <a href="/login" className="text-indigo-600 font-semibold">
+            Sign In
+          </a>
         </p>
       </div>
     </AuthReusable>

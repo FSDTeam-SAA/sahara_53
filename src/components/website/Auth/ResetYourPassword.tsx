@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useResetPassword } from "@/lib/hoock/Useauth";
+import { useResetPassword } from "@/hooks/Useauth";
 import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
@@ -44,7 +44,7 @@ export default function ResetYourPassword() {
         onError: (error) => {
           alert(error.message || "Something went wrong");
         },
-      }
+      },
     );
   }
 

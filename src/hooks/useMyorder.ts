@@ -1,7 +1,7 @@
 "use client";
 
+import { recentBookFetch } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
-import { recentBookFetch } from "../api";
 
 export function useMyOrder(id?: string) {
   return useQuery({
