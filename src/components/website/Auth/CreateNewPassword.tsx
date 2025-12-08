@@ -16,7 +16,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
-import { useNewPassword } from "@/lib/hoock/Useauth";
+import { useNewPassword } from "@/hooks/Useauth";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
@@ -62,7 +62,7 @@ export default function CreateNewPassword() {
         onError: (err) => {
           alert(err.message || "Something went wrong");
         },
-      }
+      },
     );
   }
 
@@ -78,7 +78,6 @@ export default function CreateNewPassword() {
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-
             {/* Password */}
             <FormField
               control={form.control}
@@ -98,7 +97,11 @@ export default function CreateNewPassword() {
                         onClick={() => setShowPassword(!showPassword)}
                         className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-600"
                       >
-                        {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                        {showPassword ? (
+                          <EyeOff size={20} />
+                        ) : (
+                          <Eye size={20} />
+                        )}
                       </button>
                     </div>
                   </FormControl>

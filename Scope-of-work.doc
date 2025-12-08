@@ -1,0 +1,252 @@
+
+
+
+
+
+
+Build a Story Time – Personalized Storybook Website Design & Development
+
+Date: 24.10.2025
+
+
+
+
+
+
+			Buyer Name		: sahara 53
+			Buyer Country	: Australia
+			App Language	: English
+			Prepared by		: Sristi
+
+
+
+
+
+
+
+
+
+Table of content
+
+Project Overview	2
+Project Purpose	2
+Targeted Audience	3
+Key Features and Functionalities	3
+Technology Stack	5
+Pricing and timeline	6
+Deliverables	6
+Requirements	7
+Maintenance & Support	7
+
+
+
+
+
+
+
+
+
+Project Overview
+Build a Story Time aims to create an interactive, AI-powered personalized storybook website where users can upload a short voice recording and a photo to create a unique storybook experience. The AI will extend the user’s voice to narrate the full story or nursery rhyme, and the uploaded face will be mapped into the story illustrations.
+The website will be bright, fun, and visually engaging, designed to stand out in the personalized book market. Users will also have the option to download or print their storybooks in eBook and hard copy formats.
+
+Project Purpose
+The purpose of this project is to:
+Deliver a fun and interactive storybook experience for children and users who want personalized books.
+
+
+Integrate AI voice cloning and face personalization to create a unique, user-centric experience.
+
+
+Provide a smooth, secure, and responsive platform for creating, previewing, and purchasing personalized books.
+
+
+Targeted Audience
+The website is designed to attract:
+Parents and caregivers seeking personalized storybooks for children.
+
+
+Children and young users who enjoy interactive storytelling.
+
+
+Users looking for unique, AI-powered customization options.
+
+
+Audiences who value bright, engaging visuals and fun, interactive content.
+
+
+Key Features and Functionalities
+1. User Accounts & Profiles
+Secure registration/login (email or social login).
+
+
+Dashboard to manage uploads, created books, and orders.
+
+
+2. Storybook Creation
+Select story templates or nursery rhymes.
+
+
+Upload 15-second voice recording.
+
+
+Upload photo for face personalization.
+
+
+Preview personalized story before purchase.
+
+
+3. AI Voice Integration
+Clone user’s voice to narrate full story.
+
+
+Voice playback button on every page.
+
+
+4. Face Personalization
+Map uploaded photo into story illustrations.
+
+
+Preview personalized character images.
+
+
+5. Interactive Storybook Viewer
+Page-by-page viewing with voice playback.
+
+
+Bright, playful UI with animations and transitions.
+
+
+Fully responsive design for desktop and mobile.
+
+
+6. eBook & Print Output
+Generate downloadable PDF/eBook.
+
+
+Print-ready version of personalized storybook.
+
+
+7. Payments & Orders
+Secure checkout system (Stripe/PayPal).
+
+
+Automated book generation after payment.
+
+
+8. Admin Panel
+Manage story templates, users, and orders.
+
+
+Dashboard analytics for popular stories, orders, and revenue.
+
+
+9. Optional Enhancements
+Multi-language support.
+
+
+Social sharing of created books.
+
+
+“Read-along” feature highlighting words as AI narrates.
+
+ 
+Technology Stack
+UI/UX Design: Figma – for fun, intuitive, and child-friendly interfaces
+
+Frontend: React.js – interactive storybook experience with responsive design
+
+Backend: Node.js + Express – scalable, secure APIs
+
+Database: MongoDB – store users, stories, assets, and orders
+
+AI Integration: Voice cloning and image mapping APIs (e.g., ElevenLabs or equivalent)
+
+Deployment: AWS / DirectAdmin for scalable performance
+
+
+Pricing and timeline
+
+Description	
+Timeline
+Amount (USD)
+UI/UX Design, Backend Development
+20 Days
+$1,000 USD
+AI Integration: Voice cloning and image mapping APIs 
+10 Days
+$800 USD
+Frontend Integration, Testing & Deployment
+15 Days 
+$700 USD
+Total
+35 Days
+$2,500 USD
+
+
+Deliverables
+Fully functional, AI-powered personalized storybook website
+
+
+Interactive storybook viewer with voice & face personalization
+
+
+eBook and print-ready storybook generation
+
+
+Secure checkout and payment system
+
+
+Admin panel for managing stories, users, and orders
+
+
+Responsive design optimized for desktop and mobile
+
+
+Documentation for future updates
+
+Requirements
+To get started, I will need:
+Brand guidelines (logo, color palette, typography)
+
+
+Story templates or content for the book
+
+
+Sample images and voice reference (if any)
+
+
+Domain & hosting information
+
+
+Access credentials for deployment/testing
+
+
+Point of contact for communication and feedback
+
+Maintenance & Support
+After publishing, we will provide free ongoing support for 30 days.
+
+亖  Additional Costs (Beyond Development):
+
+Service	
+Cost (USD)
+Post-Launch Support (After 4 months)
+$200-$400/month
+Extra Feature Additions
+Custom Pricing
+Hosting per month 
+$30 - $150 
+
+
+
+
+		Thank You
+
+Thank you for considering this proposal. I am confident I can deliver a fun, bright, and fully interactive personalized storybook platform with AI-powered voice and face customization. My approach combines innovation, reliability, and user-centric design to create a unique experience that stands out in the market.
+I look forward to collaborating with you and bringing Build a Story Time to life.
+Warm regards,
+Sristi
+Full stack Developer
+
+

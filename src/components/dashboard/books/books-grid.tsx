@@ -12,29 +12,29 @@ import { api } from "@/lib/api";
 import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
 
-const statusOptions = [
-  { value: "all", label: "All Status" },
-  { value: "Completed", label: "Completed" },
-  { value: "In Progress", label: "In Progress" },
-  { value: "Draft", label: "Draft" },
-];
+// const statusOptions = [
+//   { value: "all", label: "All Status" },
+//   { value: "Completed", label: "Completed" },
+//   { value: "In Progress", label: "In Progress" },
+//   { value: "Draft", label: "Draft" },
+// ];
 
 const sortOptions = [
   { value: "title", label: "Title" },
   { value: "createdAt", label: "Date" },
-  { value: "chapters", label: "Chapters" },
+  { value: "chapterCount", label: "Chapters" },
 ];
 
 export function BooksGrid() {
   const [search, setSearch] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
-  const [statusFilter, setStatusFilter] = useState("all");
+  // const [statusFilter, setStatusFilter] = useState("all");
   const [sortBy, setSortBy] = useState("title");
   const [page, setPage] = useState(1);
 
   const { books, totalPages, isLoading, mutate } = useBooks({
     search: searchQuery,
-    status: statusFilter,
+    // status: statusFilter,
     sortBy,
     page,
     pageSize: 9,
@@ -78,7 +78,7 @@ export function BooksGrid() {
             options={sortOptions}
             placeholder="Sort by"
           />
-          <FilterDropdown
+          {/* <FilterDropdown
             value={statusFilter}
             onChange={(value) => {
               setStatusFilter(value);
@@ -86,7 +86,7 @@ export function BooksGrid() {
             }}
             options={statusOptions}
             placeholder="Select Status"
-          />
+          /> */}
           <Button
             onClick={handleAddBook}
             className="bg-linear-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
@@ -108,7 +108,7 @@ export function BooksGrid() {
         <>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {books.map((book) => (
-              <BookCard key={book.id} book={book} onDelete={handleDelete} />
+              <BookCard key={book._id} book={book} onDelete={handleDelete} />
             ))}
           </div>
           {totalPages > 1 && (

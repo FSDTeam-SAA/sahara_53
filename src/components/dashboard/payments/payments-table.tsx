@@ -1,23 +1,28 @@
-"use client"
+"use client";
 
-import { useState, useMemo } from "react"
-import { useReactTable, getCoreRowModel, flexRender, type ColumnDef } from "@tanstack/react-table"
-import { Card, CardContent } from "@/components/ui/card"
-import { Checkbox } from "@/components/ui/checkbox"
-import { StatusBadge } from "@/components/ui/status-badge"
-import { DataTablePagination } from "@/components/ui/data-table-pagination"
-import { usePayments } from "@/hooks/use-payments"
-import type { Payment } from "@/lib/types"
-import { Skeleton } from "@/components/ui/skeleton"
+import { useState, useMemo } from "react";
+import {
+  useReactTable,
+  getCoreRowModel,
+  flexRender,
+  type ColumnDef,
+} from "@tanstack/react-table";
+import { Card, CardContent } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
+import { StatusBadge } from "@/components/ui/status-badge";
+import { DataTablePagination } from "@/components/ui/data-table-pagination";
+import { usePayments } from "@/hooks/use-payments";
+import type { Payment } from "@/lib/types";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export function PaymentsTable() {
-  const [page, setPage] = useState(1)
-  const [rowSelection, setRowSelection] = useState({})
+  const [page, setPage] = useState(1);
+  const [rowSelection, setRowSelection] = useState({});
 
   const { payments, totalPages, isLoading } = usePayments({
     page,
     pageSize: 10,
-  })
+  });
 
   const columns: ColumnDef<Payment>[] = useMemo(
     () => [
@@ -26,7 +31,9 @@ export function PaymentsTable() {
         header: ({ table }) => (
           <Checkbox
             checked={table.getIsAllPageRowsSelected()}
-            onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+            onCheckedChange={(value) =>
+              table.toggleAllPageRowsSelected(!!value)
+            }
             aria-label="Select all"
           />
         ),
@@ -40,25 +47,38 @@ export function PaymentsTable() {
         size: 40,
       },
       {
-        accessorKey: "amount",
+        accessorKey: "totalAmount",
         header: "Amount",
-        cell: ({ row }) => <span className="font-medium">${row.original.amount.toFixed(2)}</span>,
+        cell: ({ row }) => (
+          <span className="font-medium">
+            ${row.original.totalAmount.toFixed(2)}
+          </span>
+        ),
       },
       {
-        accessorKey: "customerName",
+        accessorKey: "userId.firstName",
         header: "Customer name",
+        cell: ({ row }) => (
+          <span>
+            {row.original.userId.firstName} {row.original.userId.lastName}
+          </span>
+        ),
       },
       {
-        accessorKey: "email",
+        accessorKey: "userId.email",
         header: "Mail address",
       },
       {
-        accessorKey: "phone",
+        accessorKey: "userId.phoneNum",
         header: "Phone Number",
+        cell: ({ row }) => <span>{row.original.userId.phoneNum || "N/A"}</span>,
       },
       {
-        accessorKey: "date",
+        accessorKey: "createdAt",
         header: "Date",
+        cell: ({ row }) => (
+          <span>{new Date(row.original.createdAt).toLocaleDateString()}</span>
+        ),
       },
       {
         accessorKey: "status",
@@ -67,7 +87,7 @@ export function PaymentsTable() {
       },
     ],
     [],
-  )
+  );
 
   const table = useReactTable({
     data: payments,
@@ -77,7 +97,7 @@ export function PaymentsTable() {
     state: {
       rowSelection,
     },
-  })
+  });
 
   return (
     <Card className="bg-white shadow-sm border-0 overflow-hidden">
@@ -94,7 +114,10 @@ export function PaymentsTable() {
               <table className="w-full">
                 <thead>
                   {table.getHeaderGroups().map((headerGroup) => (
-                    <tr key={headerGroup.id} className="border-b border-gray-100">
+                    <tr
+                      key={headerGroup.id}
+                      className="border-b border-gray-100"
+                    >
                       {headerGroup.headers.map((header) => (
                         <th
                           key={header.id}
@@ -102,7 +125,10 @@ export function PaymentsTable() {
                         >
                           {header.isPlaceholder
                             ? null
-                            : flexRender(header.column.columnDef.header, header.getContext())}
+                            : flexRender(
+                                header.column.columnDef.header,
+                                header.getContext(),
+                              )}
                         </th>
                       ))}
                     </tr>
@@ -110,10 +136,19 @@ export function PaymentsTable() {
                 </thead>
                 <tbody>
                   {table.getRowModel().rows.map((row) => (
-                    <tr key={row.id} className="border-b border-gray-50 hover:bg-gray-50 transition-colors">
+                    <tr
+                      key={row.id}
+                      className="border-b border-gray-50 hover:bg-gray-50 transition-colors"
+                    >
                       {row.getVisibleCells().map((cell) => (
-                        <td key={cell.id} className="px-4 py-3 text-sm text-gray-700">
-                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        <td
+                          key={cell.id}
+                          className="px-4 py-3 text-sm text-gray-700"
+                        >
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext(),
+                          )}
                         </td>
                       ))}
                     </tr>
@@ -121,10 +156,14 @@ export function PaymentsTable() {
                 </tbody>
               </table>
             </div>
-            <DataTablePagination currentPage={page} totalPages={totalPages} onPageChange={setPage} />
+            <DataTablePagination
+              currentPage={page}
+              totalPages={totalPages}
+              onPageChange={setPage}
+            />
           </>
         )}
       </CardContent>
     </Card>
-  )
+  );
 }

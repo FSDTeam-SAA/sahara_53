@@ -1,35 +1,30 @@
 "use client";
 
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { api, myOrderFetch } from "@/lib/api";
-import type { ApiFilters, PaginatedResponse } from "@/lib/types";
+import { useQuery } from "@tanstack/react-query";
+import { api } from "@/lib/api";
 import { Order } from "@/lib/type/order";
-
-
 
 export function useOrders() {
   return useQuery({
     queryKey: ["orders"],
     queryFn: async () => {
       const res = await api.get("/orders");
-      return res.data.data; 
+      return res.data.data;
     },
   });
 }
 
 export function useUserOrders(userId?: string) {
-  return useQuery({
-    queryKey: ["userorders", userId],
-    queryFn: async () => {
-      if (!userId) return [];
-      const res = await api.get(`/orders/user/${userId}`);
-      return res.data.data; // assuming your API returns { data: [...] }
-    },
-    enabled: !!userId, // only run if userId exists
-  });
+  const { data, isLoading, error } = useOrders();
+
+  const filtered = data?.filter((order: Order) => order._id === userId) ?? [];
+
+  return {
+    data: filtered[0],
+    isLoading,
+    error,
+  };
 }
-
-
 
 // export function useOrder(id: string | null) {
 //   const { data, error, isLoading } = useQuery<Order | null>({
