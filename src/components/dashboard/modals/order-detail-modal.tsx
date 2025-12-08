@@ -34,7 +34,6 @@ export function OrderDetailModal({
   onClose,
 }: OrderDetailModalProps) {
   const { data: order, isLoading } = useUserOrders(orderId || "");
-  // console.log(order);
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[550px]">

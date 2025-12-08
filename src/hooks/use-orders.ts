@@ -15,7 +15,6 @@ export function useOrders() {
 }
 
 export function useUserOrders(userId?: string) {
-  console.log(userId);
   const { data, isLoading, error } = useOrders();
 
   const filtered = data?.filter((order: Order) => order._id === userId) ?? [];
