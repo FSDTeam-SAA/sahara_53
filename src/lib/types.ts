@@ -88,7 +88,6 @@ export interface DashboardStats {
 export interface RevenueData {
   month: string;
   revenue: number;
-  orders: number;
 }
 
 export interface PaginatedResponse<T> {

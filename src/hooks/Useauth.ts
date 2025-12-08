@@ -6,8 +6,8 @@ import {
   CreateAccountPayload,
   CreateAccountResponse,
   ResetPasswordResponse,
-} from "../type/auth";
-import { createAccount, resetPassword, newPassword } from "../api";
+} from "@/lib/type/auth";
+import { createAccount, resetPassword, newPassword } from "@/lib/api";
 
 export const useCreateAccount = () =>
   useMutation<CreateAccountResponse, Error, CreateAccountPayload>({
@@ -22,7 +22,11 @@ export function useResetPassword() {
 }
 
 export function useNewPassword() {
-  return useMutation<ResetPasswordResponse, Error, { newPassword: string ,token:string }>({
+  return useMutation<
+    ResetPasswordResponse,
+    Error,
+    { newPassword: string; token: string }
+  >({
     mutationFn: newPassword,
   });
 }

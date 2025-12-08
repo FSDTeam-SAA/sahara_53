@@ -412,24 +412,13 @@ const generateRevenueData = (): RevenueData[] => {
 export const apiFunction = {
   // Dashboard
   getDashboardStats: async (): Promise<DashboardStats> => {
-    await delay(300);
-    return {
-      totalUsers: 1234,
-      totalOrders: 1234,
-      revenue: 1234,
-      storiesCreated: 1234,
-      percentageChange: {
-        users: 36,
-        orders: 36,
-        revenue: 36,
-        stories: 36,
-      },
-    };
+    const res = await api.get("/statistics/dashboard");
+    return res.data?.data;
   },
 
   getRevenueData: async (): Promise<RevenueData[]> => {
-    await delay(300);
-    return generateRevenueData();
+    const res = await api.get("/statistics/monthly-revenue");
+    return res.data?.data || [];
   },
 
   // Users

@@ -1,11 +1,10 @@
-"use client"
+"use client";
 
-import { Bell } from "lucide-react"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 interface HeaderProps {
-  title: string
-  subtitle?: string
+  title: string;
+  subtitle?: string;
 }
 
 export function Header({
@@ -19,10 +18,6 @@ export function Header({
         <p className="text-sm text-gray-500">{subtitle}</p>
       </div>
       <div className="flex items-center gap-4">
-        <button className="relative p-2 rounded-full hover:bg-gray-100 transition-colors">
-          <Bell className="h-5 w-5 text-gray-600" />
-          <span className="absolute top-1 right-1 h-2 w-2 bg-red-500 rounded-full" />
-        </button>
         <div className="flex items-center gap-3">
           <Avatar className="h-10 w-10 border-2 border-green-400">
             <AvatarImage src="/olivia-rhye-avatar.jpg" />
@@ -35,5 +30,5 @@ export function Header({
         </div>
       </div>
     </header>
-  )
+  );
 }

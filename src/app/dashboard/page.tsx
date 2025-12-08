@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-import { useDashboardStats, useRevenueData } from "@/hooks/use-dashboard";
+import { useDashboardStats } from "@/hooks/use-dashboard";
 import { useOrders } from "@/hooks/use-orders";
 import { Skeleton } from "@/components/ui/skeleton";
 import { DashboardLayout } from "@/components/dashboard/layout/dashboard-layout";
@@ -15,8 +15,8 @@ import { OrderDetailModal } from "@/components/dashboard/modals/order-detail-mod
 export default function DashboardPage() {
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
   const { stats, isLoading: statsLoading } = useDashboardStats();
-  const { revenueData, isLoading: revenueLoading } = useRevenueData();
-  const { data:orders, isLoading: ordersLoading } = useOrders();
+  const { data: orders, isLoading: ordersLoading } = useOrders();
+  console.log(selectedOrderId);
 
   return (
     <DashboardLayout>
@@ -33,23 +33,23 @@ export default function DashboardPage() {
             <StatsCard
               title="Total Users"
               value={stats.totalUsers}
-              percentageChange={stats.percentageChange.users}
+              // percentageChange={stats.percentageChange.users}
             />
             <StatsCard
               title="Total Orders"
               value={stats.totalOrders}
-              percentageChange={stats.percentageChange.orders}
+              // percentageChange={stats.percentageChange.orders}
             />
             <StatsCard
               title="Revenue"
               value={stats.revenue}
-              percentageChange={stats.percentageChange.revenue}
+              // percentageChange={stats.percentageChange.revenue}
             />
             <StatsCard
               title="Stories Created"
               value={stats.storiesCreated}
-              percentageChange={stats.percentageChange.stories}
-              prefix="$"
+              // percentageChange={stats.percentageChange.stories}
+              // prefix="$"
             />
           </>
         ) : null}
@@ -57,11 +57,7 @@ export default function DashboardPage() {
 
       {/* Revenue Chart */}
       <div className="mb-6">
-        {revenueLoading ? (
-          <Skeleton className="h-[400px] rounded-xl" />
-        ) : (
-          <RevenueChart data={revenueData} />
-        )}
+        <RevenueChart />
       </div>
 
       {/* Recent Orders */}

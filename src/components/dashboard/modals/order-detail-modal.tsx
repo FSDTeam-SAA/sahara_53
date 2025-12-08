@@ -1,22 +1,40 @@
-"use client"
+"use client";
 
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { StatusBadge } from "@/components/ui/status-badge"
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { StatusBadge } from "@/components/ui/status-badge";
 
-import { Skeleton } from "@/components/ui/skeleton"
-import { FileText, User, Mail, Phone, MapPin, Package, DollarSign, Calendar } from "lucide-react"
+import { Skeleton } from "@/components/ui/skeleton";
+import {
+  FileText,
+  User,
+  Mail,
+  Phone,
+  MapPin,
+  Package,
+  DollarSign,
+  Calendar,
+} from "lucide-react";
 
-import { useOrders } from "@/hooks/use-orders"
+import { useUserOrders } from "@/hooks/use-orders";
 
 interface OrderDetailModalProps {
-  orderId: string | null
-  open: boolean
-  onClose: () => void
+  orderId: string | null;
+  open: boolean;
+  onClose: () => void;
 }
 
-export function OrderDetailModal({ orderId, open, onClose }: OrderDetailModalProps) {
-  const { data:order, isLoading } = useOrders()
-
+export function OrderDetailModal({
+  orderId,
+  open,
+  onClose,
+}: OrderDetailModalProps) {
+  const { data: order, isLoading } = useUserOrders(orderId || "");
+  // console.log(order);
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[550px]">
@@ -44,13 +62,15 @@ export function OrderDetailModal({ orderId, open, onClose }: OrderDetailModalPro
             </div>
 
             <div className="border-t pt-4">
-              <h4 className="text-sm font-semibold text-gray-500 mb-3">Customer Information</h4>
+              <h4 className="text-sm font-semibold text-gray-500 mb-3">
+                Customer Information
+              </h4>
               <div className="grid gap-3">
                 <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
                   <User className="h-5 w-5 text-gray-400" />
                   <div>
                     <p className="text-xs text-gray-500">Name</p>
-                    {/* <p className="text-sm font-medium">{order.customer.name}</p> */}
+                    {/* <p className="text-sm font-medium">{order.userId.name}</p> */}
                   </div>
                 </div>
 
@@ -58,7 +78,7 @@ export function OrderDetailModal({ orderId, open, onClose }: OrderDetailModalPro
                   <Mail className="h-5 w-5 text-gray-400" />
                   <div>
                     <p className="text-xs text-gray-500">Email</p>
-                    {/* <p className="text-sm font-medium">{order.customer.user.email}</p> */}
+                    {/* <p className="text-sm font-medium">{order.userId.email}</p> */}
                   </div>
                 </div>
 
@@ -81,13 +101,15 @@ export function OrderDetailModal({ orderId, open, onClose }: OrderDetailModalPro
             </div>
 
             <div className="border-t pt-4">
-              <h4 className="text-sm font-semibold text-gray-500 mb-3">Order Information</h4>
+              <h4 className="text-sm font-semibold text-gray-500 mb-3">
+                Order Information
+              </h4>
               <div className="grid gap-3">
                 <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
                   <Package className="h-5 w-5 text-gray-400" />
                   <div>
                     <p className="text-xs text-gray-500">Ordered Item</p>
-                    <p className="text-sm font-medium">{order.orderedItem}</p>
+                    <p className="text-sm font-medium">{order.bookName}</p>
                   </div>
                 </div>
 
@@ -114,5 +136,5 @@ export function OrderDetailModal({ orderId, open, onClose }: OrderDetailModalPro
         )}
       </DialogContent>
     </Dialog>
-  )
+  );
 }
