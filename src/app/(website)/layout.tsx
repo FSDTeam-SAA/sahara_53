@@ -25,7 +25,7 @@ export default function RootLayout({
         </div>
 
         {/* Main Content */}
-        <div className="col-span-12 md:col-span-10 md:ml-[312px] h-screen flex flex-col justify-between  w-full">
+        <div className="col-span-12 md:col-span-10 md:ml-[312px] min-h-screen flex flex-col justify-between  w-full">
           <LayoutVisibilityWrapper>
             {children}
             {/* <Footer /> */}

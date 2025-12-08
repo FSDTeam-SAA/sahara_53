@@ -13,14 +13,16 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { BookDetails } from "./Reviewbook"
+import { IBook } from "@/lib/type/book"
 
 interface EditBookProps {
+  book:IBook;
   books: BookDetails
   onBack: () => void
   onSave?: (updatedBook: BookDetails) => void
 }
 
-export function EditBook({ books, onBack, onSave }: EditBookProps) {
+export function EditBook({book, books, onBack, onSave }: EditBookProps) {
   const [editedBook, setEditedBook] = useState<BookDetails>({ ...books })
   const [isSaving, setIsSaving] = useState(false)
 
@@ -48,6 +50,7 @@ export function EditBook({ books, onBack, onSave }: EditBookProps) {
       setIsSaving(false)
     }
   }
+  console.log('book',book)
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-purple-50">
