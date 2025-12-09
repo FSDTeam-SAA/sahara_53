@@ -15,8 +15,8 @@ export default function MyProfileTab() {
   const { data: session, update } = useSession();
   const user = session?.user;
 
-  // Initialize form data from session
-  const [formData, setFormData] = useState({
+  // Only store user-edited values in state, not initial data
+  const [editedValues, setEditedValues] = useState({
     firstName: "",
     lastName: "",
     email: "",
@@ -24,56 +24,37 @@ export default function MyProfileTab() {
     address: "",
   });
 
-  // Initialize form data when session loads
-  useEffect(() => {
-    if (user) {
-      const nameParts = user.name?.split(" ") || ["", ""];
-      const newData = {
-        firstName: nameParts[0] || "",
-        lastName: nameParts[1] || "",
-        email: user.email || "",
-        phone: "+1234567890",
-        address: "2972 Westheimer Rd. Santa Ana, Illinois 85486",
-      };
-
-      // Defer the update to the next tick to avoid synchronous setState in effect
-      setTimeout(() => {
-        setFormData((prev) => {
-          try {
-            if (JSON.stringify(prev) !== JSON.stringify(newData)) {
-              return newData;
-            }
-          } catch {
-            // Fallback: if serialization fails, set directly
-            return newData;
-          }
-          return prev;
-        });
-      }, 0);
-    }
-  }, [user]);
+  // Derive display values: use edited values if present, otherwise derive from user
+  const displayValues = {
+    firstName: editedValues.firstName || user?.name?.split(" ")?.[0] || "",
+    lastName: editedValues.lastName || user?.name?.split(" ")?.[1] || "",
+    email: editedValues.email || user?.email || "",
+    phone: editedValues.phone || "+1234567890",
+    address:
+      editedValues.address || "2972 Westheimer Rd. Santa Ana, Illinois 85486",
+  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setEditedValues((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSave = async () => {
     try {
-      console.log("Saving profile:", formData);
+      console.log("Saving profile:", displayValues);
 
       // Call the update function
-      await userProfileUpdate(formData);
+      await userProfileUpdate(displayValues);
 
       // Update the session with new data if needed
       await update({
         ...session,
         user: {
           ...session?.user,
-          name: `${formData.firstName} ${formData.lastName}`.trim(),
-          email: formData.email,
-          phone: formData.phone,
-          address: formData.address,
+          name: `${displayValues.firstName} ${displayValues.lastName}`.trim(),
+          email: displayValues.email,
+          phone: displayValues.phone,
+          address: displayValues.address,
         },
       });
 
@@ -104,7 +85,7 @@ export default function MyProfileTab() {
               </label>
               <Input
                 name="firstName"
-                value={formData.firstName}
+                value={displayValues.firstName}
                 onChange={handleInputChange}
                 placeholder="First Name"
                 className="w-full"
@@ -116,7 +97,7 @@ export default function MyProfileTab() {
               </label>
               <Input
                 name="lastName"
-                value={formData.lastName}
+                value={displayValues.lastName}
                 onChange={handleInputChange}
                 placeholder="Last Name"
                 className="w-full"
@@ -132,7 +113,7 @@ export default function MyProfileTab() {
             <Input
               name="email"
               type="email"
-              value={formData.email}
+              value={displayValues.email}
               onChange={handleInputChange}
               placeholder="Email Address"
               className="w-full"
@@ -146,7 +127,7 @@ export default function MyProfileTab() {
             </label>
             <Input
               name="phone"
-              value={formData.phone}
+              value={displayValues.phone}
               onChange={handleInputChange}
               placeholder="Phone Number"
               className="w-full"
@@ -160,7 +141,7 @@ export default function MyProfileTab() {
             </label>
             <Input
               name="address"
-              value={formData.address}
+              value={displayValues.address}
               onChange={handleInputChange}
               placeholder="Shipping Address"
               className="w-full"
