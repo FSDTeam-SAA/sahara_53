@@ -7,6 +7,7 @@ import { ArrowLeft, Volume2, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface ReadListenBookProps {
+  id:string,
   bookTitle?: string;
   chapters?: Array<{
     id: string;
@@ -20,6 +21,7 @@ interface ReadListenBookProps {
 }
 
 export function ReadListenBook({
+  id,
   bookTitle = "Story Name Here",
   chapters = [],
   currentChapter = 1,
@@ -69,11 +71,12 @@ export function ReadListenBook({
     setIsReading(prev => !prev);
   };
 
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white flex flex-col justify-between gap-5">
       <div className="relative bg-[url('/images/readbg.jpg')] bg-cover bg-center w-screen h-[50vh]">
         <div className="p-4">
-          <Link href="/">
+          <a href={`/book/${id}`} className="cursor-pointer z-50!"  >
             <Button
               variant="ghost"
               className="gap-2 bg-gradient-to-r cursor-pointer from-pink-500 to-purple-600 text-white hover:opacity-90"
@@ -81,8 +84,8 @@ export function ReadListenBook({
               <ArrowLeft className="w-4 h-4" />
               Back to Book
             </Button>
-          </Link>
-          <div className="absolute inset-0 bg-black/20"></div>
+          </a>
+          {/* <div className="absolute inset-0 bg-black/20"></div> */}
         </div>
       </div>
 
