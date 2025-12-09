@@ -11,6 +11,11 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { useMutation } from "@tanstack/react-query";
+import { OrderCreate, paymentCreate } from "@/lib/api";
+import { toast } from "sonner";
+import { error } from "console";
+import { useSession } from "next-auth/react";
 
 export interface BookDetails {
   id: string;
@@ -31,6 +36,40 @@ interface ReviewBookProps {
 }
 
 export function ReviewBook({ book, onEdit, onListen }: ReviewBookProps) {
+  const userId = useSession().data?.user.id || "";
+  const paymentMutation = useMutation({
+    mutationKey: ["createorder"],
+    mutationFn: paymentCreate,
+    onSuccess: (data) => {
+      // toast.success(data?.message || "Payment created successfully!");
+      toast.success(data?.message || "Order created successfully!");
+      if (data?.url) {
+        window.location.href = data.url;
+      }
+    },
+    onError: (error) => {
+      toast.error(error?.message || "Payment failed");
+    },
+  });
+
+  const orderMutation = useMutation({
+    mutationKey: ["createorder"],
+    mutationFn: OrderCreate,
+    onSuccess: (data) => {
+      console.log("order Id", data);
+      paymentMutation.mutate({
+        userId,
+        orderId: data?.data?._id,
+        totalAmount: Number(book?.price),
+      });
+    },
+    onError: (error) => {
+      toast.error(error?.message || "Order failed");
+    },
+  });
+
+  console.log("books", book);
+
   if (!book) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-purple-50 flex items-center justify-center">
@@ -56,9 +95,12 @@ export function ReviewBook({ book, onEdit, onListen }: ReviewBookProps) {
   };
 
   const handleOrder = () => {
-    // Implement order functionality
-    console.log("Ordering book:", book.id);
-    // Redirect to checkout or open modal
+    orderMutation.mutate({
+      userId,
+      storyBookId: book.id,
+      formate: "ebook",
+      price: String(book?.price),
+    });
   };
 
   return (

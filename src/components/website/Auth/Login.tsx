@@ -159,7 +159,7 @@ export default function Login() {
 
             <Button 
               disabled={isPending} 
-              className="w-full bg-gradient-to-r from-pink-400 to-indigo-600 text-white hover:from-pink-500 hover:to-indigo-700 disabled:opacity-50"
+              className="w-full bg-gradient-to-r cursor-pointer from-pink-400 to-indigo-600 text-white hover:from-pink-500 hover:to-indigo-700 disabled:opacity-50"
               type="submit"
             >
               {isPending ? "Signing in..." : "Sign In"}
