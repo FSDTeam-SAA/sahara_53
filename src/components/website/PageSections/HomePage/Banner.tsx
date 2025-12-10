@@ -13,10 +13,10 @@ export default function Banner() {
     >
       <div className=" absolute inset-0 bg-black/30 "></div>
       {/* Content */}
-      <div className="relative w-4xl z-10 mx-auto    px-4 py-16 sm:px-6 sm:py-24 lg:px-8 lg:py-32">
+      <div className="relative w-7xl z-10 mx-auto    px-4 py-16 sm:px-6 sm:py-24 lg:px-8 lg:py-32">
         <div className=" text-start">
-          <h1 className="text-4xl  font-bold w-[60%] text-white sm:text-5xl lg:text-[60px] font-serif">
-            writing Stories 
+          <h1 className="text-4xl  font-bold w-[80%] text-white sm:text-5xl lg:text-[60px] font-serif">
+            Stories Built together , Shared forever
           </h1>
           {/* <p className="mt-4 text-base text-gray-200 w-[60%] sm:text-lg/relaxed">
             Explore our premium iron and steel products with custom cutting,
@@ -30,9 +30,14 @@ export default function Banner() {
               className="inline-block rounded border gap-2 border-gray-200 bg-white/10 px-7 py-2 font-medium text-gray-200 shadow-sm transition-colors hover:bg-transparent hover:text-white"
             >
               <p className="flex gap-2 w-full">
-
-              <Image src={'/icon/noinfo.svg'} width={20} height={20} alt="noinfo" className=" object-cover" />
-              How It works
+                <Image
+                  src={"/icon/noinfo.svg"}
+                  width={20}
+                  height={20}
+                  alt="noinfo"
+                  className=" object-cover"
+                />
+                How It works
               </p>
             </Link>
             <Link
@@ -45,8 +50,7 @@ export default function Banner() {
                 boxShadow: "0 6px 12px 0 rgba(0, 0, 0, 0.12)",
               }}
             >
-              
-             + Learn More
+              + Learn More
             </Link>
           </div>
         </div>

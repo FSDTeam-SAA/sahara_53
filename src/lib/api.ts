@@ -302,8 +302,8 @@ export async function myOrderFetch() {
   try {
     const res = await api.get(`/orders`);
     const data = await res.data;
-    console.log("respons data", data);
-    return res.data;
+ 
+    return data;
   } catch (err) {
     if (err instanceof Error) {
       throw new Error(err.message);
@@ -380,6 +380,22 @@ export async function OrderCreate(datas: {
     }
   }
 }
+
+//user order
+
+export async function UserOrderFetch(userId: string) {
+  try {
+    const res = await api.get(`/orders/user/${userId}`);
+    console.log('respos order data',res.data)
+    return res?.data?.data; 
+  } catch (err) {
+    if (err instanceof Error) {
+      throw new Error(err.message);
+    }
+    throw new Error("Unknown error");
+  }
+}
+
 
 
 export async function paymentCreate(datas: {
