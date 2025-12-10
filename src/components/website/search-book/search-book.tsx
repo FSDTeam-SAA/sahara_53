@@ -146,9 +146,9 @@ const SearchBar: React.FC<SearchBarProps> = ({
       {/* DROPDOWN */}
       {isOpen && (
         <>
-          <div className="fixed inset-0 bg-black/20 z-40 animate-fadeIn" />
 
-          <div className="absolute top-full mt-2 w-full bg-white rounded-xl shadow-2xl z-50 max-h-96 overflow-y-auto border animate-slideDown">
+
+          <div className="absolute top-full mt-2 w-full bg-white overflow-y-scroll max-h-80   rounded-xl shadow-2xl z-50 max-h-96 overflow-y-auto border animate-slideDown">
             {filteredStories.length > 0 ? (
               filteredStories.map((story) => (
                 <StoryListItem key={story._id} story={story} />
@@ -195,7 +195,7 @@ const StorySearchApp = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 p-8">
-      <div className="w-full mx-auto">
+      <div className="w-full mx-auto flex flex-col  ">
         {/* HEADER */}
         <div className="flex gap-6 mb-8 justify-center mx-auto  items-center">
           {/* <h1 className="text-4xl font-light text-gray-800">My Stories</h1> */}
@@ -204,7 +204,7 @@ const StorySearchApp = () => {
         </div>
 
         {/* CARD LIST */}
-        <div className=" gap-6">
+        <div className=" gap-6 ">
           {debouncedSearch.trim().length === 0 ? (
             <p className="text-gray-400 col-span-full text-center">
               Type to search stories...

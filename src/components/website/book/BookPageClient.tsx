@@ -29,14 +29,14 @@ export default function BookPageClient() {
   const bookDetails = {
     id: book._id,
     title: book.beginning,
-    description: book.generatedStory[0].text,
+    description: book.description || book.generatedStory[0].text,
     coverImage: book.generatedStory[0]?.chapterImage || "/images/no-image.jpg",
     language: book.language,
     type: book.style,
     chapters: book.chapterCount,
 
     status: "Completed" as const,
-    price: 12,
+    price: book.price || 12,
   };
 
   // Prepare chapters for ReadListenBook

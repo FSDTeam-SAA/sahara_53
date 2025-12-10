@@ -22,7 +22,7 @@ const RecentBooks = () => {
   // If user NOT logged in
 
   return (
-    <div className="w-full my-16   max-w-7xl mx-auto">
+    <div className="w-full px-2 my-16   max-w-7xl mx-auto">
       
       <div className="mb-6  text-center">
         <SectionHeader
@@ -32,7 +32,7 @@ const RecentBooks = () => {
         />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8 ">
+      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 mb-8  ">
         {!session && <div className=""></div>}
 
         {!session && <LoginRequired />}

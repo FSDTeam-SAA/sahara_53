@@ -31,7 +31,7 @@ export default function SideMenu({
   };
 
   return (
-    <nav className="static top-0 z-50 transition-all min-h-screen  duration-300  md:bg-[#EFEFFD] ">
+    <nav className=" top-0 z-2 transition-all md:min-h-screen  duration-300  md:bg-[#EFEFFD] ">
       <div className="container mx-auto px-4 flex flex-col justify-between  items-center py-4">
         {/* Logo */}
         <Link href="/">
@@ -45,62 +45,75 @@ export default function SideMenu({
         </Link>
 
         {/* Desktop Menu */}
- <div className="hidden md:flex md:flex-col h-[80vh] justify-between">
-  {/* Top menu items */}
-  <div className="flex flex-col space-y-6 font-medium transition-colors duration-300">
-    {menuItems.map((item: MenuItem) => {
-      const active = isItemActive(item.href);
+        <div className="hidden md:flex md:flex-col h-[80vh] justify-between">
+          {/* Top menu items */}
+          <div className="flex flex-col space-y-6 font-medium transition-colors duration-300">
+            {menuItems.map((item: MenuItem) => {
+              const active = isItemActive(item.href);
 
-      return (
-        <Link key={item.href} href={item.href}>
-          <div
-            className={`flex gap-2 items-center px-3 py-2 cursor-pointer transition-all duration-200 ${
-              active ? "text-white font-semibold" : "hover:text-primary/70 text-[#6C757D]"
-            }`}
-            style={
-              active
-                ? {
-                    borderRadius: "4px",
-                    background: "linear-gradient(90deg,#FF7CE5 0%,#5D5FEF 100%)",
-                  }
-                : {}
-            }
-          >
-            {item.icon && <Image src={item.icon} alt={item.label} width={22} height={22} className="text-[#6C757D]" />}
-            {item.label}
+              return (
+                <Link key={item.href} href={item.href}>
+                  <div
+                    className={`flex gap-2 items-center px-3 py-2 cursor-pointer transition-all duration-200 ${
+                      active
+                        ? "text-white font-semibold"
+                        : "hover:text-primary/70 text-[#6C757D]"
+                    }`}
+                    style={
+                      active
+                        ? {
+                            borderRadius: "4px",
+                            background:
+                              "linear-gradient(90deg,#FF7CE5 0%,#5D5FEF 100%)",
+                          }
+                        : {}
+                    }
+                  >
+                    {item.icon && (
+                      <Image
+                        src={item.icon}
+                        alt={item.label}
+                        width={22}
+                        height={22}
+                        className="text-[#6C757D]"
+                      />
+                    )}
+                    {item.label}
+                  </div>
+                </Link>
+              );
+            })}
           </div>
-        </Link>
-      );
-    })}
-  </div>
 
-  {/* Bottom section sticks here */}
-  {contactLink && (
-    <Link href={contactLink}>
-      <div
-        className="py-8 px-3 rounded-lg cursor-pointer m-2"
-        style={{
-          borderRadius: "8px",
-          background: "linear-gradient(90deg, #FF7CE5 0%, #5D5FEF 100%)",
-        }}
-      >
-        <h2 className="text-base md:text-2xl text-white mb-3 font-semibold font-serif">
-          Transform Memories
-        </h2>
-        <p className="text-[14px] leading-tight text-white">
-          Into beautiful Ai-illustrated books.
-        </p>
-      </div>
-    </Link>
-  )}
-</div>
-
-
+          {/* Bottom section sticks here */}
+          {contactLink && (
+            <Link href={contactLink}>
+              <div
+                className="py-8 px-3 rounded-lg cursor-pointer m-2"
+                style={{
+                  borderRadius: "8px",
+                  background:
+                    "linear-gradient(90deg, #FF7CE5 0%, #5D5FEF 100%)",
+                }}
+              >
+                <h2 className="text-base md:text-2xl text-white mb-3 font-semibold font-serif">
+                  Transform Memories
+                </h2>
+                <p className="text-[14px] leading-tight text-white">
+                  Into beautiful Ai-illustrated books.
+                </p>
+              </div>
+            </Link>
+          )}
+        </div>
 
         {/* Mobile Menu */}
         <div className="md:hidden">
           <Sheet open={open} onOpenChange={setOpen}>
-            <SheetTrigger className={`${open ? ' absolute right-16  top-3' : 'absolute -right-16  top-3'}`} asChild>
+            <SheetTrigger
+              className={`${open ? " absolute right-16  top-3" : "absolute -right-16  top-3"}`}
+              asChild
+            >
               <Button
                 aria-label="Toggle menu"
                 className="text-gray-500 bg-white"
