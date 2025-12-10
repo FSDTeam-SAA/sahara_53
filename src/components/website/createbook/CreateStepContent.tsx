@@ -10,9 +10,8 @@ import VoiceRecording from "./voiceRecording";
 import CreateBookMain from "./CreateBookMain";
 import CreatingYourBook from "./CreatingYourBook";
 import { useMutation } from "@tanstack/react-query";
-import {  createBook } from "@/lib/api"; 
+import { createBook } from "@/lib/api";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 
 // ------------------ Types ------------------
@@ -49,7 +48,6 @@ export interface VoiceData {
   blob: Blob;
 }
 
-
 interface StoryFormData {
   storyDetail: StoryDetailData;
   characters: Character[];
@@ -77,29 +75,29 @@ interface StoryFormData {
 // ------------------ Component ------------------
 export default function CreateStepContent() {
   const [step, setStep] = useState<number>(0);
-  const userId=useSession().data?.user.id
- const route=useRouter()
+  const userId = useSession().data?.user.id;
   const [formData, setFormData] = useState<StoryFormData>({
     storyDetail: {},
     characters: [],
     beginning: "",
     voice: null,
   });
-  let bookId:string=''
-const bookCreateMutation = useMutation({
-  mutationKey: ["createbook"],
-  mutationFn: (data: CreateBookPayload) => createBook(data),
+  let bookId: string = "";
+  const bookCreateMutation = useMutation({
+    mutationKey: ["createbook"],
+    mutationFn: (data: CreateBookPayload) => createBook(data),
 
-  onSuccess: (data) => {
-    toast.success("Book created successfully");
-    bookId= data._id
-  },
+    onSuccess: (data) => {
+      toast.success("Book created successfully");
+      bookId = data._id;
+    },
 
-  onError: (err: unknown) => {
-    const message = err instanceof Error ? err.message : "Failed to create book";
-    toast.error(message);
-  },
-});
+    onError: (err: unknown) => {
+      const message =
+        err instanceof Error ? err.message : "Failed to create book";
+      toast.error(message);
+    },
+  });
 
   // ------------------ Validation ------------------
   const validateStep = (): boolean => {
@@ -108,7 +106,7 @@ const bookCreateMutation = useMutation({
       return !!d.bookTitle && !!d.language && !!d.genre && !!d.writingStyle;
     }
     if (step === 1) return true;
-    if (step === 2) return formData.beginning?.length > 5;
+    if (step === 2) return true;
     if (step === 3) return true;
     return false;
   };
@@ -125,30 +123,29 @@ const bookCreateMutation = useMutation({
 
   // ------------------ Submit to backend ------------------
 
-
-  console.log('form data',formData)
+  console.log("form data", formData);
   // console.log('form data in 3 number step',formData)
-const handleSubmit = () => {
-  const characterObjects = formData.characters
-    .filter((c) => c.name && c.image)
-    .map((c) => ({
-      name: c.name || "",
-      image: c.image || "",
-    }));
+  const handleSubmit = () => {
+    const characterObjects = formData.characters
+      .filter((c) => c.name && c.image)
+      .map((c) => ({
+        name: c.name || "",
+        image: c.image || "",
+      }));
 
-  const payload = {
-    userId: userId || "", 
-    title: formData.storyDetail.bookTitle || "",
-    language: formData.storyDetail.language || "",
-    style: formData.storyDetail.writingStyle || "",
-    genre: formData.storyDetail.genre || "",
-    characters: characterObjects,
-    beginning: formData.beginning || "",
+    const payload = {
+      userId: userId || "",
+      title: formData.storyDetail.bookTitle || "",
+      language: formData.storyDetail.language || "",
+      style: formData.storyDetail.writingStyle || "",
+      genre: formData.storyDetail.genre || "",
+      characters: characterObjects,
+      beginning: formData.beginning || "",
+    };
+
+    console.log("Submitting payload:", payload);
+    bookCreateMutation.mutate(payload);
   };
-
-  console.log("Submitting payload:", payload);
-  bookCreateMutation.mutate(payload);
-};
 
   // ------------------ Render Steps ------------------
   const renderStep = () => {
@@ -200,7 +197,7 @@ const handleSubmit = () => {
       step={step}
       next={next}
       back={back}
-      handelcall={handleSubmit} // Calls backend
+      handelcall={handleSubmit}
     >
       {renderStep()}
     </CreateBookMain>

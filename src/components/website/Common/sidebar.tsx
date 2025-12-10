@@ -55,7 +55,7 @@ export default function SideMenu({
         <Link key={item.href} href={item.href}>
           <div
             className={`flex gap-2 items-center px-3 py-2 cursor-pointer transition-all duration-200 ${
-              active ? "text-white font-semibold" : "hover:text-primary/70"
+              active ? "text-white font-semibold" : "hover:text-primary/70 text-[#6C757D]"
             }`}
             style={
               active
@@ -66,7 +66,7 @@ export default function SideMenu({
                 : {}
             }
           >
-            {item.icon && <Image src={item.icon} alt={item.label} width={22} height={22} />}
+            {item.icon && <Image src={item.icon} alt={item.label} width={22} height={22} className="text-[#6C757D]" />}
             {item.label}
           </div>
         </Link>

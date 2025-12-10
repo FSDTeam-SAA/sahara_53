@@ -91,8 +91,8 @@ const RecentBooks = () => {
   const displayedBooks = showAll ? SAMPLE_BOOKS : SAMPLE_BOOKS.slice(0, 6);
 
   return (
-    <div className="w-full max-w-7xl mx-auto">
-      <div className="mb-12 text-center">
+    <div className="w-full my-16   max-w-7xl mx-auto">
+      <div className="mb-12  text-center">
         <SectionHeader
           title1="Recent"
           title2=" Books"
@@ -101,9 +101,26 @@ const RecentBooks = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-        {data?.map((book: BackendBook) => (
-          <BookCard key={book._id} item={book} />
-        ))}
+        {/* Loading state */}
+        {isLoading && (
+          <div className="col-span-full text-center py-10 text-gray-500">
+            Loading...
+          </div>
+        )}
+
+        {/* Empty state */}
+        {!isLoading && data?.length === 0 && (
+          <div className="col-span-full text-center py-10 text-gray-500">
+            <h2>You have no data</h2>
+          </div>
+        )}
+
+        {/* Books */}
+        {!isLoading &&
+          data?.length > 0 &&
+          data.map((book: BackendBook) => (
+            <BookCard key={book._id} item={book} />
+          ))}
       </div>
 
       {!showAll && SAMPLE_BOOKS.length > 6 && (
