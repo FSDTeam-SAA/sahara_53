@@ -10,19 +10,12 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12 ">
           {/* Left Section - Logo and Description */}
           <div className="md:col-span-1">
-            <div className="mb-4">
-              {/* <h2 className="text-2xl font-bold">
-                <span className="text-purple-600">Build a</span>
-                <br />
-                <span className="text-orange-500">Story</span>
-                <br />
-                <span className="text-yellow-500">Time</span>
-              </h2> */}
-
+            <div className="">
+       
               <Image
                 src={"/images/logo.png"}
                 alt="logo"
-                width={56}
+                width={96}
                 height={80}
                 className=" object-cover"
               />
@@ -41,7 +34,7 @@ const Footer = () => {
             <ul className="space-y-3">
               <li>
                 <Link
-                  href="#"
+                  href="/"
                   className="text-gray-600 hover:text-purple-600 transition text-sm"
                 >
                   My Books
@@ -49,7 +42,7 @@ const Footer = () => {
               </li>
               <li>
                 <Link
-                  href="#"
+                  href="/create-book"
                   className="text-gray-600 hover:text-purple-600 transition text-sm"
                 >
                   Create Book
@@ -57,7 +50,7 @@ const Footer = () => {
               </li>
               <li>
                 <Link
-                  href="#"
+                  href="/myorder"
                   className="text-gray-600 hover:text-purple-600 transition text-sm"
                 >
                   My Orders
@@ -65,7 +58,7 @@ const Footer = () => {
               </li>
               <li>
                 <Link
-                  href="#"
+                  href="/profile"
                   className="text-gray-600 hover:text-purple-600 transition text-sm"
                 >
                   Profile
@@ -82,7 +75,7 @@ const Footer = () => {
             <ul className="space-y-3">
               <li>
                 <Link
-                  href="#"
+                  href="/how-it-work"
                   className="text-gray-600 hover:text-purple-600 transition text-sm"
                 >
                   How It Works
@@ -90,7 +83,7 @@ const Footer = () => {
               </li>
               <li>
                 <Link
-                  href="#"
+                  href="/contact-us"
                   className="text-gray-600 hover:text-purple-600 transition text-sm"
                 >
                   Contact Us
@@ -125,7 +118,7 @@ const Footer = () => {
         {/* Bottom Section */}
         <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-600">
           <p>© 2025 Build a Story Time. All rights reserved.</p>
-          <div className="flex gap-6">
+          {/* <div className="flex gap-6">
             <Link
               href="#"
               className="hover:text-purple-600 transition font-medium"
@@ -138,7 +131,7 @@ const Footer = () => {
             >
               Privacy
             </Link>
-          </div>
+          </div> */}
         </div>
       </div>
     </footer>

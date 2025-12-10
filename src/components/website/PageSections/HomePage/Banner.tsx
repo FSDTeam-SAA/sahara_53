@@ -1,13 +1,13 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
+
 import Image from "next/image";
 import Link from "next/link";
 
 export default function Banner() {
   return (
     <section
-      className="relative lg:grid lg:h-[70vh] m-6 lg:place-content-center
+      className="relative overflow-hidden rounded-xl lg:grid lg:h-[70vh] m-6 lg:place-content-center
                  bg-[url('/images/hero.png')]
                  bg-cover bg-center"
     >
@@ -35,7 +35,7 @@ export default function Banner() {
                   width={20}
                   height={20}
                   alt="noinfo"
-                  className=" object-cover"
+                  className=" object-cover "
                 />
                 How It works
               </p>
@@ -50,7 +50,7 @@ export default function Banner() {
                 boxShadow: "0 6px 12px 0 rgba(0, 0, 0, 0.12)",
               }}
             >
-              + Learn More
+              + Create Your Book
             </Link>
           </div>
         </div>

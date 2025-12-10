@@ -34,7 +34,7 @@ export function CreateBookHeader({
         <h2 className="text-2xl font-bold tracking-tight text-gray-900 md:text-3xl">
           {title} <span className="text-violet-600">{highlightedWord}</span>
         </h2>
-        <p className="max-w-md text-sm text-gray-600 md:text-base">{subtitle}</p>
+        <p className="max-2xl-md text-sm text-gray-600 md:text-base">{subtitle}</p>
       </div>
     </section>
   )

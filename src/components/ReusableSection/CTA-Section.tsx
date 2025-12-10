@@ -1,14 +1,17 @@
+import Link from "next/link"
+
+
 export function CTA() {
   return (
     <div
-      className="relative p-[2px] rounded-lg bg-gradient-to-r from-[#FF7CE5] to-[#5D5FEF]"
+      className="relative p-0.5 rounded-lg bg-linear-to-r from-[#FF7CE5] to-[#5D5FEF]"
       style={{
         boxShadow: "0 6px 12px rgba(0, 0, 0, 0.12)",
         borderRadius: "8px",
       }}
     >
       <div
-        className="bg-white flex flex-col items-center justify-center"
+        className="bg-white flex flex-col items-center justify-center font-serif"
         style={{
           width: "full",
           height: "264px",
@@ -25,25 +28,27 @@ export function CTA() {
             marginBottom: "8px",
           }}
         >
-          Repurpose any content with AI
+        Ready to Create Your Story?
         </h1>
         <p
           className="text-center"
           style={{
-            fontSize: "14px",
+            fontSize: "18px",
             lineHeight: "20px",
             color: "#6b7280",
-            maxWidth: "520px",
+    
             marginBottom: "32px",
           }}
         >
-          Start with a link or plain text to instantly transform into new content formats.
+          Start turning your memories into a beautiful book today. It only takes a few minutes!
         </p>
 
         <div className="flex items-center" style={{ gap: "24px" }}>
           {/* Generate Content button: 237x48px, 6px radius */}
+          <Link href={'/create-book'}>
+          
           <button
-            className="flex items-center justify-center bg-gradient-to-r from-[#FF7CE5] to-[#5D5FEF] text-white font-medium"
+            className="flex items-center cursor-pointer justify-center bg-linear-to-r from-[#FF7CE5] to-[#5D5FEF] text-white font-medium"
             style={{
               width: "237px",
               height: "48px",
@@ -55,11 +60,14 @@ export function CTA() {
             <SparkleIcon />
             Generate Content
           </button>
+          </Link>
 
           {/* How it works button: 201x46px inner, 2px border, 5px radius */}
-          <div className="p-[2px]">
+          <div className="p-0.5">
+            <Link href={'/how-it-work'}>
+            
             <button
-              className="bg-white font-medium border-primary-gradient border-2 rounded-2xl"
+              className="bg-white cursor-pointer font-medium border-primary-gradient border-2 rounded-2xl"
               style={{
                 width: "197px",
                 height: "42px",
@@ -68,6 +76,7 @@ export function CTA() {
             >
               How it works
             </button>
+            </Link>
           </div>
         </div>
       </div>
