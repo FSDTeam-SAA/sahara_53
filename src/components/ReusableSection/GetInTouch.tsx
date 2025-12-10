@@ -29,9 +29,9 @@ const formSchema = z.object({
   email: z.string().email("Invalid email address"),
   phoneNumber: z.string().min(10, "Phone number must be at least 10 digits"),
   message: z.string().min(1, "Message is required"),
-  agree: z.boolean().refine((val) => val === true, {
-    message: "You must agree to the terms and conditions",
-  }),
+  // agree: z.boolean().refine((val) => val === true, {
+  //   message: "You must agree to the terms and conditions",
+  // }),
 });
 
 const SentMessage = () => {
@@ -45,7 +45,7 @@ const SentMessage = () => {
       email: "",
       phoneNumber: "",
       message: "",
-      agree: false,
+      // agree: false,
     },
   });
 
@@ -202,7 +202,7 @@ function onSubmit(values: z.infer<typeof formSchema>) {
                 />
 
                 {/* Agree Checkbox */}
-                <FormField
+                {/* <FormField
                   control={form.control}
                   name="agree"
                   render={({ field }) => (
@@ -235,7 +235,7 @@ function onSubmit(values: z.infer<typeof formSchema>) {
                       <FormMessage />
                     </FormItem>
                   )}
-                />
+                /> */}
 
                 {/* Submit */}
                 <Button

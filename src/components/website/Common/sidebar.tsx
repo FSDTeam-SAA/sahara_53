@@ -32,7 +32,7 @@ export default function SideMenu({
 
   return (
     <nav className="static top-0 z-50 transition-all min-h-screen  duration-300  md:bg-[#EFEFFD] ">
-      <div className="container mx-auto px-8 flex flex-col justify-between  items-center py-4">
+      <div className="container mx-auto px-4 flex flex-col justify-between  items-center py-4">
         {/* Logo */}
         <Link href="/">
           <Image
@@ -78,13 +78,13 @@ export default function SideMenu({
   {contactLink && (
     <Link href={contactLink}>
       <div
-        className="p-4 rounded-lg cursor-pointer m-2"
+        className="py-8 px-3 rounded-lg cursor-pointer m-2"
         style={{
           borderRadius: "8px",
           background: "linear-gradient(90deg, #FF7CE5 0%, #5D5FEF 100%)",
         }}
       >
-        <h2 className="text-base md:text-2xl text-white font-semibold">
+        <h2 className="text-base md:text-2xl text-white mb-3 font-semibold font-serif">
           Transform Memories
         </h2>
         <p className="text-[14px] leading-tight text-white">

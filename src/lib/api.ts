@@ -245,7 +245,10 @@ export async function createContact(data: {
     const response = await api.post("/contact-us", data);
     return response.data;
   } catch (error) {
-    throw new Error("Fail to Send Message");
+    if(error instanceof Error){
+
+      throw new Error(error.message || "Fail to Send Message");
+    }
   }
 }
 
