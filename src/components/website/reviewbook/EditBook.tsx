@@ -6,70 +6,72 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion"
+import { IBook, IGeneratedChapter } from "@/lib/type/book"
+import { useMutation } from "@tanstack/react-query"
+import { storyUpdate } from "@/lib/api"
 import { BookDetails } from "./Reviewbook"
-import { IBook } from "@/lib/type/book"
 
 interface EditBookProps {
-  book:IBook;
-  books: BookDetails
+  book: IBook
+  books?: BookDetails // keeping this as optional/unused if not needed strictly for logic, or remove if truly unused
   onBack: () => void
-  onSave?: (updatedBook: BookDetails) => void
+  onSave?: (updatedBook: IBook) => void
 }
 
-export function EditBook({book, books, onBack, onSave }: EditBookProps) {
-  const [editedBook, setEditedBook] = useState<BookDetails>({ ...books })
-  const [isSaving, setIsSaving] = useState(false)
+export function EditBook({ book, onBack, onSave }: EditBookProps) {
+  // Initialize state with the full book object
+  const [editedBook, setEditedBook] = useState<IBook>({ ...book })
 
-  const handleChange = (field: keyof BookDetails, value: string | number) => {
-    setEditedBook(prev => ({ ...prev, [field]: value }))
-  }
-
-  const handleSave = async () => {
-    setIsSaving(true)
-    try {
-      // Here you would make an API call to save the changes
-      console.log("Saving book:", editedBook)
-      
-      if (onSave) {
-        onSave(editedBook)
-      }
-      
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      
-      onBack()
-    } catch (error) {
-      console.error("Failed to save book:", error)
-    } finally {
-      setIsSaving(false)
+  const mutation = useMutation({
+    mutationFn: (data: Partial<IBook>) => storyUpdate(data, book._id),
+    onSuccess: (data) => {
+       if (onSave) onSave(data)
+       onBack()
+    },
+    onError: (error) => {
+      console.error("Failed to update book:", error)
     }
+  })
+
+  // Handler for top-level book metadata (Title, Description, Price)
+  const handleMetadataChange = (field: keyof IBook, value: string | number) => {
+    setEditedBook((prev) => ({ ...prev, [field]: value }))
   }
-  console.log('book',book)
+
+  // Handler for specific chapter updates
+  const handleChapterChange = (chapterId: string, field: keyof IGeneratedChapter, value: string) => {
+    setEditedBook((prev) => {
+      const updatedChapters = prev.generatedStory.map((chapter) =>
+        chapter._id === chapterId ? { ...chapter, [field]: value } : chapter
+      )
+      return { ...prev, generatedStory: updatedChapters }
+    })
+  }
+
+  const handleSave = () => {
+    // Basic validation or data preparation can go here
+    mutation.mutate(editedBook)
+  }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-purple-50">
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-purple-50 mt-20 md:mt-0">
       {/* Header */}
-      <div className="flex items-center justify-between p-6 border-b border-gray-200">
-        <Button 
-          onClick={onBack}
-          variant="ghost" 
-          className="gap-2"
-        >
+      <div className="flex items-center justify-between p-6 border-b border-gray-200 sticky top-0 bg-white/80 backdrop-blur-sm z-10">
+        <Button onClick={onBack} variant="ghost" className="gap-2">
           <ArrowLeft className="w-4 h-4" />
           Cancel Edit
         </Button>
-        <Button 
+        <Button
           onClick={handleSave}
-          disabled={isSaving}
+          disabled={mutation.isPending}
           className="bg-green-600 hover:bg-green-700 text-white gap-2"
         >
-          {isSaving ? (
+          {mutation.isPending ? (
             <>
               <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
               Saving...
@@ -83,133 +85,100 @@ export function EditBook({book, books, onBack, onSave }: EditBookProps) {
         </Button>
       </div>
 
-      <div className="max-w-4xl mx-auto p-6">
-        <h1 className="text-3xl font-bold text-orange-600 mb-8">Edit Book Details</h1>
-        
-        <div className="space-y-6">
-          {/* Book Title */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Book Title *
-            </label>
-            <Input
-              value={editedBook.title}
-              onChange={(e) => handleChange('title', e.target.value)}
-              placeholder="Enter book title"
-              className="w-full"
-            />
-          </div>
+      <div className="max-w-4xl mx-auto p-6 space-y-6">
+        <h1 className="text-3xl font-bold text-orange-600">Edit Book Details</h1>
 
-          {/* Description */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Description *
-            </label>
-            <Textarea
-              value={editedBook.description}
-              onChange={(e) => handleChange('description', e.target.value)}
-              placeholder="Enter book description"
-              className="w-full min-h-[150px]"
-            />
-          </div>
+        <Accordion type="single" collapsible defaultValue="book-info" className="w-full space-y-4">
+          
+          {/* Section 1: Book Information */}
+          <AccordionItem value="book-info" className="bg-white border rounded-lg px-4">
+            <AccordionTrigger className="text-lg font-semibold hover:no-underline">
+              Book Information
+            </AccordionTrigger>
+            <AccordionContent className="flex flex-col gap-6 p-4">
+              {/* Book Title */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Book Title *
+                </label>
+                <Input
+                  value={editedBook.title}
+                  onChange={(e) => handleMetadataChange("title", e.target.value)}
+                  placeholder="Enter book title"
+                  className="w-full"
+                />
+              </div>
 
-          {/* Language and Type */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Language *
-              </label>
-              <Select
-                value={editedBook.language}
-                onValueChange={(value) => handleChange('language', value)}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select language" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="English">English</SelectItem>
-                  <SelectItem value="Spanish">Spanish</SelectItem>
-                  <SelectItem value="French">French</SelectItem>
-                  <SelectItem value="German">German</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+              {/* Description */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Description *
+                </label>
+                <Textarea
+                  value={editedBook.description || ""}
+                  onChange={(e) => handleMetadataChange("description", e.target.value)}
+                  placeholder="Enter book description"
+                  className="w-full min-h-[120px]"
+                />
+              </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Type *
-              </label>
-              <Select
-                value={editedBook.type}
-                onValueChange={(value) => handleChange('type', value)}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select type" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Children">Children</SelectItem>
-                  <SelectItem value="Adventure">Adventure</SelectItem>
-                  <SelectItem value="Fantasy">Fantasy</SelectItem>
-                  <SelectItem value="Sci-Fi">Science Fiction</SelectItem>
-                  <SelectItem value="Mystery">Mystery</SelectItem>
-                  <SelectItem value="Romance">Romance</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
+              {/* Price */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Price ($)
+                </label>
+                <Input
+                  type="number"
+                  step="0.01"
+                  value={editedBook.price || ""}
+                  onChange={(e) => handleMetadataChange("price", parseFloat(e.target.value) || 0)}
+                  placeholder="Enter price"
+                  className="w-full"
+                />
+              </div>
+            </AccordionContent>
+          </AccordionItem>
 
-          {/* Chapters and Status */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Chapters *
-              </label>
-              <Input
-                type="number"
-                value={editedBook.chapters}
-                onChange={(e) => handleChange('chapters', parseInt(e.target.value) || 0)}
-                placeholder="Number of chapters"
-                className="w-full"
-              />
-            </div>
+          {/* Section 2: Chapters */}
+          {editedBook.generatedStory.map((chapter) => (
+            <AccordionItem 
+              key={chapter._id} 
+              value={`chapter-${chapter._id}`} 
+              className="bg-white border rounded-lg px-4"
+            >
+              <AccordionTrigger className="text-lg font-semibold hover:no-underline text-left">
+                Chapter {chapter.chapter}: {chapter.title}
+              </AccordionTrigger>
+              <AccordionContent className="flex flex-col gap-6 p-4">
+                {/* Chapter Title */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Chapter Title
+                  </label>
+                  <Input
+                    value={chapter.title}
+                    onChange={(e) => handleChapterChange(chapter._id, "title", e.target.value)}
+                    placeholder="Enter chapter title"
+                    className="w-full"
+                  />
+                </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Status *
-              </label>
-              <Select
-                value={editedBook.status}
-                onValueChange={(value: "Completed" | "In Progress" | "Draft") => 
-                  handleChange('status', value)
-                }
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Draft">Draft</SelectItem>
-                  <SelectItem value="In Progress">In Progress</SelectItem>
-                  <SelectItem value="Completed">Completed</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-
-          {/* Price */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Price ($)
-            </label>
-            <Input
-              type="number"
-              step="0.01"
-              value={editedBook.price || ""}
-              onChange={(e) => handleChange('price', parseFloat(e.target.value) || 0)}
-              placeholder="Enter price"
-              className="w-full"
-            />
-          </div>
-        </div>
+                {/* Chapter Content */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Chapter Content
+                  </label>
+                  <Textarea
+                    value={chapter.text}
+                    onChange={(e) => handleChapterChange(chapter._id, "text", e.target.value)}
+                    placeholder="Enter chapter text"
+                    className="w-full min-h-[300px] font-serif leading-relaxed"
+                  />
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+          ))}
+        </Accordion>
       </div>
     </div>
   )

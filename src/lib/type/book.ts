@@ -20,6 +20,8 @@ export interface IBook {
   genre: string;
   language: string;
   style: string;
+  description?: string;
+  price?: number;
   chapterCount: number;
   characters: ICharacter[];
   generatedStory: IGeneratedChapter[];

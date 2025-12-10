@@ -14,6 +14,7 @@ import type {
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 import { getSession } from "next-auth/react";
+import { IBook } from "./type/book";
 
 
 
@@ -417,6 +418,22 @@ export async function paymentCreate(datas: {
   }
 }
 
+
+//story update
+
+export async function storyUpdate(
+  datas: Partial<IBook>,  
+  id: string
+) {
+  try {
+    const res = await api.put(`/story/${id}`, datas)
+    return res.data
+  } catch (err) {
+    if (err instanceof Error) {
+      throw new Error(err.message || 'Update failed')
+    }
+  }
+}
 
 
 const generateBooks = (count: number): Book[] => {
