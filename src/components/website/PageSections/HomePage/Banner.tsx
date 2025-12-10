@@ -1,21 +1,20 @@
 "use client";
 
-
 import Image from "next/image";
 import Link from "next/link";
 
 export default function Banner() {
   return (
     <section
-      className="relative overflow-hidden rounded-xl lg:grid lg:h-[70vh] m-6 lg:place-content-center
+      className="relative overflow-hidden  rounded-xl lg:grid xl:h-[70vh] md:m-6 m-2 lg:place-content-center
                  bg-[url('/images/hero.png')]
                  bg-cover bg-center"
     >
       <div className=" absolute inset-0 bg-black/30 "></div>
       {/* Content */}
-      <div className="relative w-7xl z-10 mx-auto    px-4 py-16 sm:px-6 sm:py-24 lg:px-8 lg:py-32">
+      <div className="relative xl:w-7xl z-10 mx-auto    px-4 py-16 lg:px-6 lg:py-24 xl:px-8 xl:py-32">
         <div className=" text-start">
-          <h1 className="text-4xl  font-bold w-[80%] text-white sm:text-5xl lg:text-[60px] font-serif">
+          <h1 className=" text-2xl xl:text-4xl  font-bold w-[80%] text-white sm:text-5xl lg:text-[60px] font-serif">
             Stories Built together , Shared forever
           </h1>
           {/* <p className="mt-4 text-base text-gray-200 w-[60%] sm:text-lg/relaxed">
@@ -24,7 +23,7 @@ export default function Banner() {
             with industrial precision, and tailored to your exact
             specifications.
           </p> */}
-          <div className="mt-6 flex justify-start gap-4 flex-wrap">
+          <div className="mt-6 flex flex-col md:flex-row justify-start gap-4 flex-wrap ">
             <Link
               href="/how-it-work"
               className="inline-block rounded border gap-2 border-gray-200 bg-white/10 px-7 py-2 font-medium text-gray-200 shadow-sm transition-colors hover:bg-transparent hover:text-white"

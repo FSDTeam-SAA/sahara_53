@@ -68,7 +68,7 @@ const AmazingFeatures = () => {
 
   return (
     <section className="w-full bg-background py-12 md:py-16 lg:py-20">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto xl:max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="mb-12 text-center">
           <SectionHeader
             title1="Amazing"
@@ -77,7 +77,7 @@ const AmazingFeatures = () => {
           />
         </div>
 
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-6 lg:grid-cols-2 xl:grid-cols-3">
           {displayedFeatures.map((feature) => (
             <FeaturesCard
               key={feature.id}
