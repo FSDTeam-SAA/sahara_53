@@ -16,18 +16,32 @@ import { useSession } from "next-auth/react";
 import { useUserOrders } from "@/hooks/use-orders";
 import { Order } from "@/lib/type/order";
 import { UserDetailModal } from "./UserOrdermodal";
+import { UserOrderFetch } from "@/lib/api";
+import { useQuery } from "@tanstack/react-query";
+import { handleDownloadEpub } from "../reviewbook/epub";
+import { IBook } from "@/lib/type/book";
 
 export default function MyOrder() {
   const [open, setOpen] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const { data: session } = useSession();
-  const userId = session?.user?.id;
+  const userId = session?.user?.id || "";
 
-  const { data: orders = [], isLoading } = useUserOrders(userId);
+  const { data: orders = [], isLoading } = useQuery({
+    queryKey: ["userorder", userId],
+    queryFn: () => UserOrderFetch(userId),
+    enabled: !!userId,
+  });
 
   const handleViewOrder = (order: Order) => {
     setSelectedOrder(order);
     setOpen(true);
+  };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const handleDownload = async (id: string) => {
+    const book = orders.filter((item: IBook) => id === item._id);
+    console.log('book data',book)
+    handleDownloadEpub(book[0].storyBookId);
   };
 
   const columns: ColumnDef<Order>[] = useMemo(
@@ -83,20 +97,23 @@ export default function MyOrder() {
           <div className="flex gap-2">
             <button
               onClick={() => handleViewOrder(row.original)}
-              className="p-1 rounded hover:bg-gray-100"
+              className="p-1 rounded hover:bg-gray-100 cursor-pointer"
             >
               <Eye className="w-4 h-4 text-gray-500" />
             </button>
-            <button className="p-1 rounded hover:bg-gray-100">
+            <button
+              onClick={() => handleDownload(row.original._id)}
+              className="p-1 cursor-pointer rounded hover:bg-gray-100"
+            >
               <Download className="w-4 h-4 text-purple-500" />
             </button>
           </div>
         ),
       },
     ],
-    [],
+    [handleDownload],
   );
-
+  console.log("order data ", orders);
   const table = useReactTable({
     data: orders,
     columns,
@@ -120,7 +137,10 @@ export default function MyOrder() {
                   {table.getHeaderGroups().map((headerGroup) => (
                     <tr key={headerGroup.id}>
                       {headerGroup.headers.map((header) => (
-                        <th key={header.id} className="px-4 py-2 text-left bg-gray-50">
+                        <th
+                          key={header.id}
+                          className="px-4 py-2 text-left bg-gray-50"
+                        >
                           {flexRender(
                             header.column.columnDef.header,
                             header.getContext(),
@@ -137,8 +157,14 @@ export default function MyOrder() {
                       className="border-b border-gray-100 hover:bg-gray-50"
                     >
                       {row.getVisibleCells().map((cell) => (
-                        <td key={cell.id} className="px-4 py-2 text-sm text-gray-700">
-                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        <td
+                          key={cell.id}
+                          className="px-4 py-2 text-sm text-gray-700"
+                        >
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext(),
+                          )}
                         </td>
                       ))}
                     </tr>

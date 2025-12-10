@@ -9,7 +9,7 @@ interface SectionHeaderProps {
 const SectionHeader = ({ title1, title2, dis }: SectionHeaderProps) => {
   return (
     <div className="space-y-2">
-      <h2 className="text-[32px] font-bold leading-tight">
+      <h2 className="text-[32px] font-bold leading-tight font-serif">
         {title1}{" "}
         <span
           className="px-2 bg-gradient-to-r from-[#FF7CE5] to-[#5D5FEF] bg-clip-text text-transparent font-serif"
