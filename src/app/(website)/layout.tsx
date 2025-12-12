@@ -18,7 +18,7 @@ export default function RootLayout({
 }>) {
   return (
     <>
-      <div className="grid grid-cols-12 relative">
+      <div className="grid grid-cols-12 relativez">
         {/* Sidebar / Navbar */}
         <div className=" absolute  md:fixed top-5  left-5 md:top-0 md:left-0 md:col-span-2 z-50 w-[312px]">
           <SideBar />
