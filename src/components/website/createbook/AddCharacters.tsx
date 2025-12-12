@@ -22,58 +22,71 @@ interface AddCharactersProps {
 
 // ✅ Camera Modal Component - MOVED OUTSIDE
 // ✅ Fix: Update interface to accept nullable refs
+// ✅ Fix: Update interface to accept stream
 interface CameraModalProps {
   onClose: () => void;
   onCapture: () => void;
   cameraPreviewRef: React.RefObject<HTMLVideoElement | null>;
   cameraCanvasRef: React.RefObject<HTMLCanvasElement | null>;
+  stream: MediaStream | null;
 }
 
 const CameraModal: React.FC<CameraModalProps> = ({ 
   onClose, 
   onCapture, 
   cameraPreviewRef, 
-  cameraCanvasRef 
-}) => (
-  <div className="fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center justify-center p-4">
-    <div className="bg-white rounded-lg w-full max-w-md">
-      <div className="p-4 border-b flex justify-between items-center">
-        <h3 className="text-lg font-semibold">Take Photo</h3>
-        <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
-          <X size={24} />
-        </button>
-      </div>
-      
-      <div className="p-4">
-        <div className="relative bg-black rounded-lg overflow-hidden">
-          <video
-            ref={cameraPreviewRef}
-            autoPlay
-            playsInline
-            className="w-full h-96 object-cover"
-          />
-          <canvas ref={cameraCanvasRef} className="hidden" />
+  cameraCanvasRef,
+  stream
+}) => {
+  // Attach stream to video element when component mounts and stream is available
+  useEffect(() => {
+    if (cameraPreviewRef.current && stream) {
+      cameraPreviewRef.current.srcObject = stream;
+    }
+  }, [stream, cameraPreviewRef]);
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center justify-center p-4">
+      <div className="bg-white rounded-lg w-full max-w-md">
+        <div className="p-4 border-b flex justify-between items-center">
+          <h3 className="text-lg font-semibold">Take Photo</h3>
+          <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
+            <X size={24} />
+          </button>
         </div>
         
-        <div className="flex justify-center gap-4 mt-6">
-          <Button
-            variant="outline"
-            onClick={onClose}
-            className="flex-1"
-          >
-            Cancel
-          </Button>
-          <Button
-            onClick={onCapture}
-            className="flex-1 bg-gradient-to-r from-orange-500 to-pink-500 text-white"
-          >
-            Capture
-          </Button>
+        <div className="p-4">
+          <div className="relative bg-black rounded-lg overflow-hidden">
+            <video
+              ref={cameraPreviewRef}
+              autoPlay
+              playsInline
+              muted
+              className="w-full h-96 object-cover"
+            />
+            <canvas ref={cameraCanvasRef} className="hidden" />
+          </div>
+          
+          <div className="flex justify-center gap-4 mt-6">
+            <Button
+              variant="outline"
+              onClick={onClose}
+              className="flex-1"
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={onCapture}
+              className="flex-1 bg-gradient-to-r from-orange-500 to-pink-500 text-white"
+            >
+              Capture
+            </Button>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 // ✅ Now AddCharacters component starts here
 const AddCharacters: React.FC<AddCharactersProps> = ({ data, onChange }) => {
@@ -144,30 +157,48 @@ const AddCharacters: React.FC<AddCharactersProps> = ({ data, onChange }) => {
   };
 
   // Start camera
+  // Start camera with fallback
   const startCamera = async () => {
     try {
       if (characters.length > 0) {
         toast.info(
-          "Only one character allowed. Please remove existing character first.",
+          "Only one character allowed. Please remove existing character first."
         );
         return;
       }
 
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: "environment" },
-      });
+      let stream: MediaStream;
+      try {
+        // First try: User facing camera
+        stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: "user" },
+        });
+      } catch (err) {
+        console.warn("User camera failed, trying any camera...", err);
+        // Second try: Any video camera
+        stream = await navigator.mediaDevices.getUserMedia({
+          video: true,
+        });
+      }
 
       setCameraStream(stream);
       setIsCameraActive(true);
-
-      if (cameraPreviewRef.current) {
-        cameraPreviewRef.current.srcObject = stream;
-      }
     } catch (error) {
       console.error("Error accessing camera:", error);
-      toast.error("Unable to access camera. Please check permissions.");
+      if (error instanceof DOMException) {
+        if (error.name === 'NotAllowedError') {
+          toast.error("Camera access denied. Please allow permissions in your browser settings.");
+        } else if (error.name === 'NotFoundError') {
+          toast.error("No camera found on your device.");
+        } else {
+          toast.error(`Camera error: ${error.name}`);
+        }
+      } else {
+        toast.error("Unable to access camera. Please check permissions.");
+      }
     }
   };
+
 
   // Stop camera
   const stopCamera = () => {
@@ -176,6 +207,20 @@ const AddCharacters: React.FC<AddCharactersProps> = ({ data, onChange }) => {
       setCameraStream(null);
       setIsCameraActive(false);
     }
+  };
+
+  // Unified function to add character
+  const addCharacter = (imageData: string) => {
+    const newCharacter: Character = {
+      name: session.data?.user?.name || "User",
+      image: imageData,
+    };
+
+    setCharacters([newCharacter]);
+    toast.success("Character image added!");
+
+    // Try to generate Ghibli image
+    generateGhibliImage(imageData);
   };
 
   // Capture photo
@@ -196,18 +241,8 @@ const AddCharacters: React.FC<AddCharactersProps> = ({ data, onChange }) => {
 
     const imageData = canvas.toDataURL("image/jpeg", 0.8);
 
-    // Create character with captured photo
-    const newCharacter: Character = {
-      name: session.data?.user?.name || "User",
-      image: imageData,
-    };
-
-    setCharacters([newCharacter]);
+    addCharacter(imageData);
     stopCamera();
-    toast.success("Photo captured!");
-
-    // Try to generate Ghibli image
-    generateGhibliImage(imageData);
   };
 
   // Handle file upload
@@ -239,17 +274,11 @@ const AddCharacters: React.FC<AddCharactersProps> = ({ data, onChange }) => {
 
     const reader = new FileReader();
     reader.onload = (e) => {
-      const newCharacter: Character = {
-        name: session.data?.user?.name || "User",
-        image: e.target?.result as string,
-      };
-
-      setCharacters([newCharacter]);
+      const result = e.target?.result as string;
+      if (result) {
+        addCharacter(result);
+      }
       setIsUploading(false);
-      toast.success("Image uploaded!");
-
-      // Try to generate Ghibli image
-      generateGhibliImage(e.target?.result as string);
     };
 
     reader.onerror = () => {
@@ -307,6 +336,7 @@ const AddCharacters: React.FC<AddCharactersProps> = ({ data, onChange }) => {
           onCapture={capturePhoto}
           cameraPreviewRef={cameraPreviewRef}
           cameraCanvasRef={cameraCanvasRef}
+          stream={cameraStream}
         />
       )}
 
@@ -462,20 +492,21 @@ const AddCharacters: React.FC<AddCharactersProps> = ({ data, onChange }) => {
         </Button>
 
         {/* Take Photo Button */}
-        <Button
-          variant="outline"
-          className="w-full flex cursor-pointer items-center justify-center gap-2 py-8 border-2 border-dashed"
-          onClick={startCamera}
-          disabled={
-            isUploading ||
-            isCameraActive ||
-            characters.length > 0 ||
-            imageGenerateMutation.isPending
-          }
-        >
-          <Camera size={20} />
-          Take Photo
-        </Button>
+<Button
+  variant="outline"
+  className="w-full flex cursor-pointer items-center justify-center gap-2 py-8 border-2 border-dashed"
+  onClick={startCamera}
+  disabled={
+    isUploading ||
+    isCameraActive ||
+    characters.length > 0 ||
+    imageGenerateMutation.isPending
+  }
+>
+  <Camera size={20} />
+  Take Photo
+</Button>
+
       </div>
     </div>
   );
