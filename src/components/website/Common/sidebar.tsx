@@ -111,7 +111,7 @@ export default function SideMenu({
         <div className="md:hidden">
           <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger
-              className={`${open ? " absolute right-16  top-3" : "absolute -right-16  top-3"}`}
+              className={`${open ? " absolute right-16  top-3" : "absolute -right-6  top-3"}`}
               asChild
             >
               <Button
