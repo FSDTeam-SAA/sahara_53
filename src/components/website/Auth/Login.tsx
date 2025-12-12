@@ -54,7 +54,7 @@ export default function Login() {
         email: values.email,
         password: values.password,
         
-        redirect: false,
+        redirect: true,
       });
 
       console.log('SignIn Result:', result);
