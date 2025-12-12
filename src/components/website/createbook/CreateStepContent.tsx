@@ -38,9 +38,9 @@ interface StoryDetailData {
 }
 
 interface Character {
-  // id: string;
+
   name: string;
-  image: string | null; // This will store the URL or base64 string
+  image: string | null; 
 }
 
 export interface VoiceData {
