@@ -1,81 +1,89 @@
 "use client";
 
 import type React from "react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { signOut, useSession } from "next-auth/react";
 import { LogIn } from "lucide-react";
-import { toast } from "sonner"; // Optional: for notifications
+import { toast } from "sonner";
 import { userProfileUpdate } from "@/lib/api";
 
-// (Using `userProfileUpdate` from `lib/api` for profile updates)
+// Define the shape of the user session
+interface SessionUser {
+  name?: string | null;
+  email?: string | null;
+  phone?: string;
+  address?: string;
+}
+
+// Define the shape of the data we manage in the form state
+interface ProfileData {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  address: string;
+}
+
+// Helper function to initialize state from the user session data
+const initializeEditedValues = (user: SessionUser | undefined): ProfileData => {
+  // Split name for first and last, handling cases where 'name' is null or undefined
+  const [firstName = "", lastName = ""] = user?.name?.split(" ") || [];
+
+  return {
+    firstName: firstName,
+    lastName: lastName,
+    email: user?.email || "",
+    // Fallback/Placeholder values if session data is missing
+    phone: user?.phone || "+1234567890",
+    address: user?.address || "2972 Westheimer Rd. Santa Ana, Illinois 85486",
+  };
+};
 
 export default function MyProfileTab() {
   const { data: session, update } = useSession();
-  const user = session?.user;
+  const user = session?.user as SessionUser | undefined;
 
-  // Initialize form data from session
-  const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    phone: "",
-    address: "",
-  });
-
-  // Initialize form data when session loads
-  useEffect(() => {
-    if (user) {
-      const nameParts = user.name?.split(" ") || ["", ""];
-      const newData = {
-        firstName: nameParts[0] || "",
-        lastName: nameParts[1] || "",
-        email: user.email || "",
-        phone: "+1234567890",
-        address: "2972 Westheimer Rd. Santa Ana, Illinois 85486",
-      };
-
-      // Defer the update to the next tick to avoid synchronous setState in effect
-      setTimeout(() => {
-        setFormData((prev) => {
-          try {
-            if (JSON.stringify(prev) !== JSON.stringify(newData)) {
-              return newData;
-            }
-          } catch {
-            // Fallback: if serialization fails, set directly
-            return newData;
-          }
-          return prev;
-        });
-      }, 0);
-    }
-  }, [user]);
+  // 1. Initialize state with current user data.
+  // This state now holds ALL current form data (initial data + user edits).
+  const [editedValues, setEditedValues] = useState<ProfileData>(() =>
+    initializeEditedValues(user),
+  );
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    // Update the state with the new value (including an empty string if cleared)
+    setEditedValues((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSave = async () => {
     try {
-      console.log("Saving profile:", formData);
+      console.log("Saving profile:", editedValues);
+
+      // 3. Prepare data for the API call
+      const dataToSave = {
+        ...editedValues,
+        // The API expects a full name, so combine first and last name from state
+        name: `${editedValues.firstName} ${editedValues.lastName}`.trim(),
+      };
 
       // Call the update function
-      await userProfileUpdate(formData);
+      await userProfileUpdate(dataToSave);
 
-      // Update the session with new data if needed
+      // 4. Update the NextAuth session with the new state values
       await update({
         ...session,
         user: {
           ...session?.user,
-          name: `${formData.firstName} ${formData.lastName}`.trim(),
-          email: formData.email,
-          phone: formData.phone,
-          address: formData.address,
+          name: dataToSave.name,
+          email: dataToSave.email,
+          phone: dataToSave.phone,
+          address: dataToSave.address,
         },
       });
+
+      // After a successful save and session update, re-sync state (though update() should handle it)
 
       toast.success("Profile updated successfully!");
     } catch (error) {
@@ -104,7 +112,8 @@ export default function MyProfileTab() {
               </label>
               <Input
                 name="firstName"
-                value={formData.firstName}
+                // 5. Bind directly to the mutable state
+                value={editedValues.firstName}
                 onChange={handleInputChange}
                 placeholder="First Name"
                 className="w-full"
@@ -116,7 +125,8 @@ export default function MyProfileTab() {
               </label>
               <Input
                 name="lastName"
-                value={formData.lastName}
+                // 5. Bind directly to the mutable state
+                value={editedValues.lastName}
                 onChange={handleInputChange}
                 placeholder="Last Name"
                 className="w-full"
@@ -132,7 +142,8 @@ export default function MyProfileTab() {
             <Input
               name="email"
               type="email"
-              value={formData.email}
+              // 5. Bind directly to the mutable state
+              value={editedValues.email}
               onChange={handleInputChange}
               placeholder="Email Address"
               className="w-full"
@@ -146,7 +157,8 @@ export default function MyProfileTab() {
             </label>
             <Input
               name="phone"
-              value={formData.phone}
+              // 5. Bind directly to the mutable state
+              value={editedValues.phone}
               onChange={handleInputChange}
               placeholder="Phone Number"
               className="w-full"
@@ -160,7 +172,8 @@ export default function MyProfileTab() {
             </label>
             <Input
               name="address"
-              value={formData.address}
+              // 5. Bind directly to the mutable state
+              value={editedValues.address}
               onChange={handleInputChange}
               placeholder="Shipping Address"
               className="w-full"
@@ -200,6 +213,7 @@ export default function MyProfileTab() {
               Member Since
             </label>
             <div className="p-3 bg-gray-50 rounded border border-gray-200 text-gray-700">
+              {/* Note: This is still hardcoded for now, you might want to pull this from the session/user object */}
               14 August, 2025
             </div>
           </div>
@@ -217,4 +231,5 @@ export default function MyProfileTab() {
   );
 }
 
+// Assuming the API function and component imports are available in your environment
 // Updated API function that accepts an object instead of FormData

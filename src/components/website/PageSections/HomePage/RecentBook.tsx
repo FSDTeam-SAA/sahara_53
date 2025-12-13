@@ -7,92 +7,24 @@ import SectionHeader from "../../Common/SectionHeader";
 import { useSession } from "next-auth/react";
 import { useMyOrder } from "@/hooks/useMyorder";
 import { BackendBook } from "@/lib/type/order";
-
-interface BookItem {
-  id: string;
-  image: string;
-  status: "Completed" | "Reading" | "In Progress" | "Draft";
-  category: string;
-  chapter: string;
-  title: string;
-  description: string;
-}
-
-export const SAMPLE_BOOKS: BookItem[] = [
-  {
-    id: "1",
-    image: "/images/book.jpg",
-    status: "Completed",
-    category: "Children",
-    chapter: "Chapter: 10",
-    title: "Story Name Here",
-    description:
-      "Discover vibrant, fun, and personalized stories brought to life with your own voice and favorite characters...",
-  },
-  {
-    id: "2",
-    image: "/images/book1.jpg",
-    status: "Reading",
-    category: "Adventure",
-    chapter: "Chapter: 5",
-    title: "The Great Adventure",
-    description:
-      "Embark on an epic journey through mystical lands and discover hidden treasures...",
-  },
-  {
-    id: "3",
-    image: "/images/book2.jpg",
-    status: "Completed",
-    category: "Fantasy",
-    chapter: "Chapter: 15",
-    title: "Magic Realm",
-    description:
-      "Step into a world of magic, mystery, and enchantment where anything is possible...",
-  },
-  {
-    id: "4",
-    image: "/images/book.jpg",
-    status: "Reading",
-    category: "Sci-Fi",
-    chapter: "Chapter: 8",
-    title: "Space Explorer",
-    description:
-      "Journey through the cosmos and encounter extraordinary civilizations and wonders...",
-  },
-  {
-    id: "5",
-    image: "/images/book2.jpg",
-    status: "Completed",
-    category: "Mystery",
-    chapter: "Chapter: 12",
-    title: "The Secret Detective",
-    description:
-      "Unravel complex mysteries and solve puzzling cases with our brilliant detective...",
-  },
-  {
-    id: "6",
-    image: "/images/book2.jpg",
-    status: "Reading",
-    category: "Romance",
-    chapter: "Chapter: 9",
-    title: "Hearts Connect",
-    description:
-      "A touching tale of love, friendship, and personal growth across beautiful landscapes...",
-  },
-];
+import RecentSkeleton from "./RecentSkeleton";
+import LoginRequired from "../../Common/LoginRequired";
 
 const RecentBooks = () => {
   const [showAll, setShowAll] = useState(false);
-  const userId = useSession().data?.user?.id;
+  const { data: session } = useSession();
+  const userId = session?.user?.id;
 
   const { data, isLoading } = useMyOrder(userId);
 
-  console.log("recent data", data);
-  const displayedBooks = showAll ? SAMPLE_BOOKS : SAMPLE_BOOKS.slice(0, 6);
+  const displayedBooks = showAll ? data : data?.slice(0, 6);
+
+  // If user NOT logged in
 
   return (
-    <div className="w-full max-w-7xl mx-auto">
-      <div className="mb-12 text-center">
+    <div className="w-full px-2 my-16   max-w-7xl mx-auto">
+      
+      <div className="mb-6  text-center">
         <SectionHeader
           title1="Recent"
           title2=" Books"
@@ -100,13 +32,34 @@ const RecentBooks = () => {
         />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-        {data?.map((book: BackendBook) => (
-          <BookCard key={book._id} item={book} />
-        ))}
+      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 mb-8  ">
+        {!session && <div className=""></div>}
+
+        {!session && <LoginRequired />}
+
+        {/* Loading state */}
+        {isLoading && (
+          <div className="col-span-full text-center py-10 text-gray-500">
+            <RecentSkeleton />
+          </div>
+        )}
+
+        {/* Empty state */}
+        {!isLoading && session && (!displayedBooks || displayedBooks.length === 0) && (
+          <div className="col-span-full text-center py-10">
+            <h2>You have no data</h2>
+          </div>
+        )}
+
+        {/* Books */}
+        {!isLoading &&
+          displayedBooks?.length > 0 &&
+          displayedBooks.map((book: BackendBook) => (
+            <BookCard key={book._id} item={book} />
+          ))}
       </div>
 
-      {!showAll && SAMPLE_BOOKS.length > 6 && (
+      {!showAll && displayedBooks?.length > 6 && (
         <div className="flex justify-center">
           <Button
             onClick={() => setShowAll(true)}

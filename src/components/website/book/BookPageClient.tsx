@@ -9,7 +9,6 @@ import { useQuery } from "@tanstack/react-query";
 import { SingleBookFetch } from "@/lib/api";
 import { IBook } from "@/lib/type/book";
 
-
 export default function BookPageClient() {
   const [edit, setEdit] = useState(false);
   const [listen, setListen] = useState(false);
@@ -30,14 +29,14 @@ export default function BookPageClient() {
   const bookDetails = {
     id: book._id,
     title: book.beginning,
-    description: book.generatedStory[0].text,
-    coverImage: book.generatedStory[0]?.chapterImage || "/placeholder.svg",
+    description: book.description || book.generatedStory[0].text,
+    coverImage: book.generatedStory[0]?.chapterImage || "/images/no-image.jpg",
     language: book.language,
     type: book.style,
     chapters: book.chapterCount,
-    
+
     status: "Completed" as const,
-    price: 12,
+    price: book.price || 12,
   };
 
   // Prepare chapters for ReadListenBook
@@ -46,23 +45,29 @@ export default function BookPageClient() {
     title: ch.title,
     content: ch.text,
     number: ch.chapter,
-    audio:ch.audioUrl || "",
+    audio: ch.audioUrl || "",
   }));
 
-  console.log('1',book)
+  console.log("1", book);
   return (
     <div>
       {listen ? (
         <ReadListenBook
+        id={bookId}
           bookTitle={book.title}
           chapters={chapters}
           currentChapter={currentChapter}
           onChapterChange={setCurrentChapter}
         />
       ) : edit ? (
-        <EditBook book={book} books={bookDetails} onBack={() => setEdit(false)} />
+        <EditBook
+          book={book}
+          books={bookDetails}
+          onBack={() => setEdit(false)}
+        />
       ) : (
         <ReviewBook
+          books={book}
           book={bookDetails}
           onEdit={() => setEdit(true)}
           onListen={() => setListen(true)}

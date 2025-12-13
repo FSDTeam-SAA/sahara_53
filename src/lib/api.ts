@@ -14,6 +14,7 @@ import type {
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 import { getSession } from "next-auth/react";
+import { IBook } from "./type/book";
 
 
 
@@ -245,7 +246,10 @@ export async function createContact(data: {
     const response = await api.post("/contact-us", data);
     return response.data;
   } catch (error) {
-    throw new Error("Fail to Send Message");
+    if(error instanceof Error){
+
+      throw new Error(error.message || "Fail to Send Message");
+    }
   }
 }
 
@@ -302,8 +306,8 @@ export async function myOrderFetch() {
   try {
     const res = await api.get(`/orders`);
     const data = await res.data;
-    console.log("respons data", data);
-    return res.data;
+ 
+    return data;
   } catch (err) {
     if (err instanceof Error) {
       throw new Error(err.message);
@@ -323,6 +327,9 @@ export async function SearchFetch(userId: string, search: string) {
     }
   }
 }
+
+
+
 //user update
 
 export async function userProfileUpdate(formData: {
@@ -357,6 +364,77 @@ export async function userProfileUpdate(formData: {
     throw new Error("Failed to update profile");
   }
 }
+
+
+// order create
+
+export async function OrderCreate(datas: {
+  userId: string;
+  storyBookId: string;
+  formate: string;
+  price: string;
+}) {
+  try {
+    const res = await api.post(`/orders`, datas);
+    return res.data;
+  } catch (err) {
+    if(err instanceof Error){
+
+      throw new Error(err.message || 'Create Fail');
+    }
+  }
+}
+
+//user order
+
+export async function UserOrderFetch(userId: string) {
+  try {
+    const res = await api.get(`/orders/user/${userId}`);
+    console.log('respos order data',res.data)
+    return res?.data?.data; 
+  } catch (err) {
+    if (err instanceof Error) {
+      throw new Error(err.message);
+    }
+    throw new Error("Unknown error");
+  }
+}
+
+
+
+export async function paymentCreate(datas: {
+  userId: string;
+  orderId: string;
+  totalAmount: number;
+}) {
+  try {
+    const res = await api.post(`/payments/create-checkout`, datas);
+    return res.data;
+  } catch (err) {
+    if(err instanceof Error){
+
+      throw new Error(err.message || 'Create Fail');
+    }
+  }
+}
+
+
+//story update
+
+export async function storyUpdate(
+  datas: Partial<IBook>,  
+  id: string
+) {
+  try {
+    const res = await api.put(`/story/${id}`, datas)
+    return res.data
+  } catch (err) {
+    if (err instanceof Error) {
+      throw new Error(err.message || 'Update failed')
+    }
+  }
+}
+
 
 const generateBooks = (count: number): Book[] => {
   const images = [
