@@ -528,7 +528,6 @@ export const apiFunction = {
   getBooks: async (
     filters: ApiFilters = {},
   ): Promise<PaginatedResponse<Book>> => {
-    // await delay(300);
     const { page = 1, pageSize = 10, search } = filters;
 
     try {
