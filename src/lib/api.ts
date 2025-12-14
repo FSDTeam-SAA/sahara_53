@@ -435,6 +435,25 @@ export async function storyUpdate(
   }
 }
 
+// voice cloneing
+
+
+export async function voiceClone(
+  datas: Blob,  
+  id: string
+) {
+  try {
+    const res = await api.post(`/voice/clone/${id}`, datas)
+    return res.data
+  } catch (err) {
+    if (err instanceof Error) {
+      throw new Error(err.message || 'Update failed')
+    }
+  }
+}
+
+
+
 
 const generateBooks = (count: number): Book[] => {
   const images = [
