@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/immutability */
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 
 import StoryDetail from "./StoryDetail";
 import AddCharacters from "./AddCharacters";
@@ -10,7 +10,7 @@ import VoiceRecording from "./voiceRecording";
 import CreateBookMain from "./CreateBookMain";
 import CreatingYourBook from "./CreatingYourBook";
 import { useMutation } from "@tanstack/react-query";
-import { createBook } from "@/lib/api";
+import { createBook, voiceClone } from "@/lib/api";
 import { toast } from "sonner";
 import { useSession } from "next-auth/react";
 
@@ -38,7 +38,6 @@ interface StoryDetailData {
 }
 
 interface Character {
-
   name: string;
   image: string | null; 
 }
@@ -55,22 +54,8 @@ interface StoryFormData {
   voice: VoiceData | null;
 }
 
-// ------------------ API ------------------
-// const createBook = async (data: {
-//   title: string;
-//   language: string;
-//   style: string;
-//   genre: string;
-//   characters: string[];
-//   beginning: string;
-// }) => {
-//   try {
-//     const res = await api.post("/story/generate", data);
-//     return res.data;
-//   } catch (err) {
-//     throw new Error(err?.message || "Unknown error occurred");
-//   }
-// };
+
+
 
 // ------------------ Component ------------------
 export default function CreateStepContent() {
@@ -82,14 +67,19 @@ export default function CreateStepContent() {
     beginning: "",
     voice: null,
   });
-  let bookId: string = "";
+  
+  const [bookId, setBookId] = useState<string>("");
+  const [isGeneratingImage, setIsGeneratingImage] = useState(false);
+
   const bookCreateMutation = useMutation({
     mutationKey: ["createbook"],
     mutationFn: (data: CreateBookPayload) => createBook(data),
 
     onSuccess: (data) => {
       toast.success("Book created successfully");
-      bookId = data._id;
+      console.log('create data check for book id',)
+      setBookId(data?.saved._id);
+      setStep(3); // Go to Voice Recording step
     },
 
     onError: (err: unknown) => {
@@ -98,6 +88,23 @@ export default function CreateStepContent() {
       toast.error(message);
     },
   });
+ 
+  const VoiceMutation = useMutation({
+    mutationKey: ["voiceClone"],
+    mutationFn: ({ blob, id }: { blob: Blob; id: string }) => voiceClone(blob, id),
+
+    onSuccess: () => { // Removed 'data' param as it might not be needed for next step
+      toast.success("Voice added successfully");
+      setStep(4); // Go to Completion step
+    },
+
+    onError: (err: unknown) => {
+      const message =
+        err instanceof Error ? err.message : "Failed to add voice";
+      toast.error(message);
+    },
+  });
+ 
 
   // ------------------ Validation ------------------
   const validateStep = (): boolean => {
@@ -126,12 +133,15 @@ export default function CreateStepContent() {
   console.log("form data", formData);
   // console.log('form data in 3 number step',formData)
   const handleSubmit = () => {
-    const characterObjects = formData.characters
-      .filter((c) => c.name && c.image)
-      .map((c) => ({
-        name: c.name || "",
-        image: c.image || "",
-      }));
+    // Step 2: Create Book
+    if (step === 2) {
+      const characterObjects = formData.characters
+        .filter((c) => c.name && c.image)
+        .map((c) => ({
+          name: c.name || "",
+          image: c.image || "",
+        }));
+
 
     const payload = {
       userId: userId || "",
@@ -143,9 +153,43 @@ export default function CreateStepContent() {
       beginning: formData.beginning || "",
     };
 
-    console.log("Submitting payload:", payload);
-    bookCreateMutation.mutate(payload);
+
+      console.log("Submitting book payload:", payload);
+      bookCreateMutation.mutate(payload);
+    }
+    
+    // Step 3: Voice Clone
+    if (step === 3) {
+      const blob = formData.voice?.blob || new Blob([]);
+      if (!bookId) {
+        toast.error("Book ID is missing. Cannot add voice.");
+        return;
+      }
+      
+      console.log("Submitting voice payload for book:", bookId);
+      VoiceMutation.mutate({ blob, id: bookId });
+    }
   };
+
+  
+
+  // ------------------ Handlers ------------------
+  // Memoize these handlers to prevent infinite render loops in children
+  const handleStoryDetailChange = useCallback((d: StoryDetailData) => {
+    setFormData((prev) => ({ ...prev, storyDetail: d }));
+  }, []);
+
+  const handleCharactersChange = useCallback((list: Character[]) => {
+    setFormData((prev) => ({ ...prev, characters: list }));
+  }, []);
+
+  const handleBeginningChange = useCallback((txt: string) => {
+    setFormData((prev) => ({ ...prev, beginning: txt }));
+  }, []);
+
+  const handleVoiceChange = useCallback((voiceData: VoiceData | null) => {
+    setFormData((prev) => ({ ...prev, voice: voiceData }));
+  }, []);
 
   // ------------------ Render Steps ------------------
   const renderStep = () => {
@@ -154,27 +198,22 @@ export default function CreateStepContent() {
         return (
           <StoryDetail
             data={formData.storyDetail}
-            onChange={(d: StoryDetailData) =>
-              setFormData((prev) => ({ ...prev, storyDetail: d }))
-            }
+            onChange={handleStoryDetailChange}
           />
         );
       case 1:
         return (
           <AddCharacters
             data={formData.characters}
-            onChange={(list: Character[]) =>
-              setFormData((prev) => ({ ...prev, characters: list }))
-            }
+            onChange={handleCharactersChange}
+            onLoadingChange={setIsGeneratingImage}
           />
         );
       case 2:
         return (
           <YourStoryBeginning
             data={formData.beginning}
-            onChange={(txt: string) =>
-              setFormData((prev) => ({ ...prev, beginning: txt }))
-            }
+            onChange={handleBeginningChange}
           />
         );
       case 3:
@@ -182,9 +221,7 @@ export default function CreateStepContent() {
           <VoiceRecording
             data={formData.voice}
             bookid={bookId}
-            onChange={(voiceData: VoiceData | null) =>
-              setFormData((prev) => ({ ...prev, voice: voiceData }))
-            }
+            onChange={handleVoiceChange}
           />
         );
       default:
@@ -198,6 +235,7 @@ export default function CreateStepContent() {
       next={next}
       back={back}
       handelcall={handleSubmit}
+      isNextDisabled={isGeneratingImage || bookCreateMutation.isPending || VoiceMutation.isPending}
     >
       {renderStep()}
     </CreateBookMain>

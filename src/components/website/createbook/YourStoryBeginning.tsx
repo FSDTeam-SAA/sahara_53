@@ -14,15 +14,12 @@ const YourStoryBeginning: React.FC<YourStoryBeginningProps> = ({
   const [story, setStory] = useState<string>(data || "");
 
   // Update parent only when local story changes (not on every onChange ref change)
+  // Update parent only when local story changes (not on every onChange ref change)
   useEffect(() => {
-    const timer = setTimeout(() => {
-      if (story !== data) {
-        onChange(story);
-      }
-    }, 300); // Debounce to avoid rapid updates
-
-    return () => clearTimeout(timer);
-  }, [story, data, onChange]);
+    if (story !== data) {
+      onChange(story);
+    }
+  }, [story, onChange]); // Removed 'data' from dependency to avoid loop if parent updates 'data' back to us
 
   return (
     <div className="w-full max-w-2xl mx-auto">

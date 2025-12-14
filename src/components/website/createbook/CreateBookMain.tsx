@@ -9,10 +9,11 @@ interface createbookmainprops{
   step:number,
   next:()=>void,
   back:()=>void,
-  handelcall:()=>void
+  handelcall:()=>void,
+  isNextDisabled?: boolean;
 }
 
-const CreateBookMain = ({ children, step, next, back,handelcall }:createbookmainprops) => {
+const CreateBookMain = ({ children, step, next, back,handelcall, isNextDisabled }:createbookmainprops) => {
   // console.log('step',step,next,back)
   return (
     <section className="space-y-10 ">
@@ -40,10 +41,10 @@ const CreateBookMain = ({ children, step, next, back,handelcall }:createbookmain
 
           <Button
             className="bg-linear-to-r cursor-pointer from-[#FF7CE5] to-[#5D5FEF] text-white py-6"
-
-            onClick={step==2? handelcall : next}
+            disabled={isNextDisabled}
+            onClick={step==2|| step==3 ? handelcall : next }
           >
-            {step==3 ?'Generate Book':'Next Step'
+            {step==3 ?'Generate Book':'Next Step' 
 
             }
             
