@@ -5,19 +5,21 @@ const nextConfig = {
       {
         protocol: "https",
         hostname: "img.freepik.com",
-        port: "",
         pathname: "/**",
       },
       {
         protocol: "https",
         hostname: "placeholder.com",
-        port: "",
         pathname: "/**",
       },
       {
         protocol: "https",
         hostname: "imgen.x.ai",
-        port: "",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "res.cloudinary.com",
         pathname: "/**",
       },
     ],
