@@ -18,6 +18,7 @@ interface Character {
 interface AddCharactersProps {
   data: Character[];
   onChange: (characters: Character[]) => void;
+  onLoadingChange?: (loading: boolean) => void;
 }
 
 // ✅ Camera Modal Component - MOVED OUTSIDE
@@ -89,7 +90,7 @@ const CameraModal: React.FC<CameraModalProps> = ({
 };
 
 // ✅ Now AddCharacters component starts here
-const AddCharacters: React.FC<AddCharactersProps> = ({ data, onChange }) => {
+const AddCharacters: React.FC<AddCharactersProps> = ({ data, onChange, onLoadingChange }) => {
   const session = useSession();
   const [characters, setCharacters] = useState<Character[]>(data || []);
   const [isUploading, setIsUploading] = useState(false);
@@ -104,14 +105,14 @@ const AddCharacters: React.FC<AddCharactersProps> = ({ data, onChange }) => {
     mutationKey: ["generateImage"],
     mutationFn: (data: FormData) => imageGenerate(data),
     onSuccess: (response) => {
-      if (response?.url && characters.length > 0) {
+      if (response?.imageUrl && characters.length > 0) {
         // Update character with Ghibli image
         setCharacters((prev) => {
           const updated = [...prev];
           if (updated[0]) {
             updated[0] = {
               ...updated[0],
-              image: response.url, // Replace with Ghibli image
+              image: response.imageUrl, 
             };
           }
           return updated;
@@ -122,7 +123,7 @@ const AddCharacters: React.FC<AddCharactersProps> = ({ data, onChange }) => {
         // Pass updated character to parent
         onChange(
           characters.map((char, index) =>
-            index === 0 ? { ...char, image: response.url } : char,
+            index === 0 ? { ...char, image: response.imageUrl } : char,
           ),
         );
       } else {
@@ -135,6 +136,14 @@ const AddCharacters: React.FC<AddCharactersProps> = ({ data, onChange }) => {
       console.error("Ghibli image generation error:", error);
     },
   });
+
+  // Notify parent component about loading state
+  useEffect(() => {
+    if (onLoadingChange) {
+      const isLoading = isUploading || imageGenerateMutation.isPending;
+      onLoadingChange(isLoading);
+    }
+  }, [isUploading, imageGenerateMutation.isPending, onLoadingChange]);
 
   // Clean up camera stream
   useEffect(() => {
