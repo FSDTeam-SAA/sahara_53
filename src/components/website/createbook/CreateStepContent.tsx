@@ -89,6 +89,7 @@ export default function CreateStepContent() {
     },
   });
 
+
   const VoiceMutation = useMutation({
     mutationKey: ["voiceClone"],
     mutationFn: ({ blob, id }: { blob: Blob; id: string }) =>
@@ -132,7 +133,7 @@ export default function CreateStepContent() {
 
   // ------------------ Submit to backend ------------------
 
-  console.log("form data", formData);
+  // console.log("form data", formData);
   // console.log('form data in 3 number step',formData)
   const handleSubmit = () => {
     // Step 2: Create Book
@@ -154,7 +155,7 @@ export default function CreateStepContent() {
         beginning: formData.beginning || "",
       };
 
-      console.log("Submitting book payload:", payload);
+      // console.log("Submitting book payload:", payload);
       bookCreateMutation.mutate(payload);
     }
 
@@ -167,6 +168,7 @@ export default function CreateStepContent() {
       }
 
       console.log("Submitting voice payload for book:", bookId);
+         console.log('blob check',blob)
       VoiceMutation.mutate({ blob, id: bookId });
     }
   };
@@ -262,7 +264,7 @@ export default function CreateStepContent() {
       next={next}
       back={back}
       handelcall={handleSubmit}
-      isNextDisabled={isGeneratingImage || isProcessing}
+      isNextDisabled={isGeneratingImage || isProcessing }
       isLoading={isProcessing}
     >
       <AnimatePresence mode="wait">{renderStep()}</AnimatePresence>

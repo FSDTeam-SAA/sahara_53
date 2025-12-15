@@ -2,6 +2,7 @@ import type React from "react"
 import { Card } from "@/components/ui/card"
 import Image from "next/image"
 
+
 interface FeatureCardProps {
   icon: string
   title: string
@@ -22,6 +23,7 @@ const FeaturesCard = ({ icon, title, description, gradientFrom, gradientTo }: Fe
         
         <Image src={icon} alt="icon" width={28} height={28} className=" object-cover" />
       </p>
+     
       <div>
 
       <h3 className=" text-2xl font-semibold text-foreground font-serif mb-1">{title}</h3>
