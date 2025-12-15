@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import {
   ArrowLeft,
+  ChevronDown,
   Download,
   Headphones,
   ShoppingCart,
@@ -16,7 +17,13 @@ import { OrderCreate, paymentCreate } from "@/lib/api";
 import { toast } from "sonner";
 import { useSession } from "next-auth/react";
 import { IBook } from "@/lib/type/book";
-import { handleDownloadEpub } from "./epub";
+import { handleDownloadHtml, handleDownloadPdf } from "./epub";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export interface BookDetails {
   id: string;
@@ -89,57 +96,6 @@ export function ReviewBook({ books, book, onEdit, onListen }: ReviewBookProps) {
       </div>
     );
   }
-
-  const handleDownload = async () => {
-    // if (!books) return;
-
-    // try {
-    //   const epubOptions = {
-    //     title: books.title,
-    //     author: books.characters?.[0]?.name || "Unknown",
-    //     language: books.language || "en",
-    //     content: books.generatedStory.map((ch: any) => ({
-    //       title: ch.title,
-    //       data: `
-    //         <h2>${ch.title}</h2>
-    //         <p>${ch.text.replace(/\n/g, "<br/>")}</p>
-
-    //         ${
-    //           ch.audioUrl
-    //             ? `<p><b>Audio Version:</b> <a href="${ch.audioUrl}">Click to listen</a></p>`
-    //             : ""
-    //         }
-
-    //         ${
-    //           ch.chapterImage
-    //             ? `<img src="${ch.chapterImage}" style="width:100%;margin-top:10px;" />`
-    //             : ""
-    //         }
-    //       `,
-    //     })),
-    //   };
-
-    //   // Generate EPUB file in-memory
-    //   const epubFile = await epub(epubOptions);
-
-    //   // Trigger browser download
-    //   const blob = new Blob([epubFile], { type: "application/epub+zip" });
-    //   const url = URL.createObjectURL(blob);
-
-    //   const a = document.createElement("a");
-    //   a.href = url;
-    //   a.download = `${books.title}.epub`;
-    //   a.click();
-
-    //   URL.revokeObjectURL(url);
-
-    //   console.log("EPUB downloaded");
-    // } catch (err) {
-    //   console.error("EPUB error:", err);
-    // }
-
-    handleDownloadEpub(books);
-  };
 
   const handleOrder = () => {
     orderMutation.mutate({
@@ -244,13 +200,33 @@ export function ReviewBook({ books, book, onEdit, onListen }: ReviewBookProps) {
             {/* Action Buttons */}
             <div className="space-y-3">
               <div className="grid grid-cols-2 gap-8">
-                <Button
-                  onClick={handleDownload}
-                  className="w-full border-2 bg-transparent cursor-pointer border-purple-600 text-purple-600 hover:bg-purple-50 gap-2"
-                >
-                  <Download className="w-5 h-5" />
-                  Download E-Book
-                </Button>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className="w-full border-2 bg-transparent cursor-pointer border-purple-600 text-purple-600 hover:bg-purple-50 gap-2"
+                    >
+                      <Download className="w-5 h-5" />
+                      Download E-Book
+                      <ChevronDown className="w-4 h-4 ml-2" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="w-56">
+                    <DropdownMenuItem
+                      onClick={() => handleDownloadPdf(books)}
+                      className="cursor-pointer"
+                    >
+                      Download as PDF
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => handleDownloadHtml(books)}
+                      className="cursor-pointer"
+                    >
+                      Download as HTML
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+
                 {onListen && (
                   <Button
                     onClick={onListen}

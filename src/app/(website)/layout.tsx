@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
 import "../globals.css";
-import Navbar from "@/components/website/Common/sidebar";
-import Footer from "@/components/website/Common/Footer";
 import SideBar from "@/components/website/PageSections/HomePage/SideBar";
 import LayoutVisibilityWrapper from "@/Providers/visibilityWraper";
 
@@ -17,21 +15,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <>
-      <div className="grid grid-cols-12 relative">
-        {/* Sidebar / Navbar */}
-        <div className=" absolute  md:fixed top-5  left-5 md:top-0 md:left-0 md:col-span-2 z-50 w-[312px]">
-          <SideBar />
-        </div>
+    <div className="flex flex-col md:flex-row min-h-screen relative bg-[#EFEFFD]">
+      {/* Sidebar / Navbar */}
+      {/* Mobile: Sticky top, Full width. Desktop: Fixed left, specific width */}
+      <aside className="w-full md:w-[280px] lg:w-[312px] md:fixed md:top-0 md:left-0 md:h-screen z-50">
+        <SideBar />
+      </aside>
 
-        {/* Main Content */}
-        <div className="col-span-12 md:col-span-10 md:ml-[322px] min-h-screen flex flex-col justify-between  w-full">
-          <LayoutVisibilityWrapper>
-            {children}
-            {/* <Footer /> */}
-          </LayoutVisibilityWrapper>
-        </div>
-      </div>
-    </>
+      {/* Main Content */}
+      <main className="flex-1 w-full md:ml-[280px] lg:ml-[312px] min-h-screen transition-all duration-300">
+        <LayoutVisibilityWrapper>
+          <div className="w-full">{children}</div>
+        </LayoutVisibilityWrapper>
+      </main>
+    </div>
   );
 }
