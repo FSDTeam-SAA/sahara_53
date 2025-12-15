@@ -92,6 +92,8 @@ const StoryDetail: React.FC<StoryDetailProps> = ({ data, onChange }) => {
     { value: "hindi", label: "Hindi" },
     { value: "chinese", label: "Chinese" },
     { value: "japanese", label: "Japanese" },
+    { value: "Banglish", label: "Bangla" },
+
   ];
 
   const writingStyleOptions = [

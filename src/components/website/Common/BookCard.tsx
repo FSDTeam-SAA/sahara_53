@@ -1,14 +1,20 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { useDelete } from "@/hooks/storydelete";
 import { BackendBook } from "@/lib/type/order";
+import { Trash } from "lucide-react";
 import Image from "next/image";
 
-
 const BookCard = ({ item }: { item: BackendBook }) => {
+const { mutate } = useDelete()
+
+const handleDelete = (id: string) => {
+  mutate(id)
+}
+
   return (
     <Card className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer pt-0">
-
       {/* Book Cover */}
       <div className="relative w-full aspect-video bg-muted overflow-hidden">
         <Image
@@ -19,9 +25,10 @@ const BookCard = ({ item }: { item: BackendBook }) => {
           className="w-full h-full object-cover"
         />
         <button className=" absolute top-5 right-5 bg-[#D9D9D9] text-[#5D5FEF] text-xs font-normal leading-[150%] rounded-sm px-7 py-1">
-          {
-            item.language
-          }
+          {item.language}
+        </button>
+        <button onClick={()=>handleDelete(item._id)} className=" absolute top-5 left-5 text-gray-500 opacity-50 hover:opacity-100 hover:text-red-500 hover:bg-red-300 bg-red-200 p-2 rounded-full cursor-pointer">
+          <Trash />
         </button>
       </div>
 
@@ -45,15 +52,14 @@ const BookCard = ({ item }: { item: BackendBook }) => {
         <p className="text-sm md:base font-medium text-[#6C757D] line-clamp-3 mb-2">
           {item.beginning || item.generatedStory?.[0]?.text?.slice(0, 120)}
 
-        <a
-          href={`/book/${item._id}`}
-          className="text-sm font-medium text-primary hover:underline pl-2"
-        >
-          Read More
-        </a>
+          <a
+            href={`/book/${item._id}`}
+            className="text-sm font-medium text-primary hover:underline pl-2"
+          >
+            Read More
+          </a>
         </p>
       </div>
-
     </Card>
   );
 };

@@ -16,9 +16,6 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL;
 import { getSession } from "next-auth/react";
 import { IBook } from "./type/book";
 
-
-
-
 const axiosInstance = axios.create({
   baseURL: API_URL,
 });
@@ -33,14 +30,13 @@ axiosInstance.interceptors.request.use(
     }
     return config;
   },
-  (error) => Promise.reject(error)
+  (error) => Promise.reject(error),
 );
 
 // Add Authorization header automatically
 axiosInstance.interceptors.request.use((config) => {
-  const token = typeof window !== "undefined" 
-    ? localStorage.getItem("accessToken")
-    : null;
+  const token =
+    typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
 
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
@@ -48,7 +44,6 @@ axiosInstance.interceptors.request.use((config) => {
 
   return config;
 });
-
 
 // Export API methods wrapper
 export const api = {
@@ -246,8 +241,7 @@ export async function createContact(data: {
     const response = await api.post("/contact-us", data);
     return response.data;
   } catch (error) {
-    if(error instanceof Error){
-
+    if (error instanceof Error) {
       throw new Error(error.message || "Fail to Send Message");
     }
   }
@@ -306,7 +300,7 @@ export async function myOrderFetch() {
   try {
     const res = await api.get(`/orders`);
     const data = await res.data;
- 
+
     return data;
   } catch (err) {
     if (err instanceof Error) {
@@ -327,8 +321,6 @@ export async function SearchFetch(userId: string, search: string) {
     }
   }
 }
-
-
 
 //user update
 
@@ -365,7 +357,6 @@ export async function userProfileUpdate(formData: {
   }
 }
 
-
 // order create
 
 export async function OrderCreate(datas: {
@@ -378,9 +369,8 @@ export async function OrderCreate(datas: {
     const res = await api.post(`/orders`, datas);
     return res.data;
   } catch (err) {
-    if(err instanceof Error){
-
-      throw new Error(err.message || 'Create Fail');
+    if (err instanceof Error) {
+      throw new Error(err.message || "Create Fail");
     }
   }
 }
@@ -390,8 +380,8 @@ export async function OrderCreate(datas: {
 export async function UserOrderFetch(userId: string) {
   try {
     const res = await api.get(`/orders/user/${userId}`);
-    console.log('respos order data',res.data)
-    return res?.data?.data; 
+    console.log("respos order data", res.data);
+    return res?.data?.data;
   } catch (err) {
     if (err instanceof Error) {
       throw new Error(err.message);
@@ -399,8 +389,6 @@ export async function UserOrderFetch(userId: string) {
     throw new Error("Unknown error");
   }
 }
-
-
 
 export async function paymentCreate(datas: {
   userId: string;
@@ -411,48 +399,56 @@ export async function paymentCreate(datas: {
     const res = await api.post(`/payments/create-checkout`, datas);
     return res.data;
   } catch (err) {
-    if(err instanceof Error){
-
-      throw new Error(err.message || 'Create Fail');
+    if (err instanceof Error) {
+      throw new Error(err.message || "Create Fail");
     }
   }
 }
 
-
 //story update
 
-export async function storyUpdate(
-  datas: Partial<IBook>,  
-  id: string
-) {
+export async function storyUpdate(datas: Partial<IBook>, id: string) {
   try {
-    const res = await api.put(`/story/${id}`, datas)
-    return res.data
+    const res = await api.put(`/story/${id}`, datas);
+    return res.data;
   } catch (err) {
     if (err instanceof Error) {
-      throw new Error(err.message || 'Update failed')
+      throw new Error(err.message || "Update failed");
     }
   }
 }
 
 // voice cloneing
 
-
-export async function voiceClone(
-  datas: Blob,  
-  id: string
-) {
+export async function voiceClone(datas: Blob, id: string) {
   try {
-    const res = await api.post(`/voice/clone/${id}`, datas)
-    return res.data
+    console.log("2", datas);
+    const formData = new FormData();
+    // Use .webm as it's the standard container for MediaRecorder.
+    // Even if the backend expects mp3, it likely uses ffmpeg which detects format by header,
+    // but the extension should match the container to be safe.
+    formData.append("file", datas, "recording.webm");
+
+    const res = await api.post(`/voice/clone/${id}`, formData);
+    return res.data;
   } catch (err) {
     if (err instanceof Error) {
-      throw new Error(err.message || 'Update failed')
+      throw new Error(err.message || "Update failed");
     }
   }
 }
 
-
+//sotry delete
+export async function storyDelete(id: string) {
+  try {
+    const res = await api.delete(`/story/${id}`)
+    return res.data
+  } catch (err) {
+    if (err instanceof Error) {
+      throw new Error(err.message || "Delete failed")
+    }
+  }
+}
 
 
 const generateBooks = (count: number): Book[] => {
