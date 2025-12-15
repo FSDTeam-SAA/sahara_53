@@ -46,6 +46,7 @@ export default function BookPageClient() {
     content: ch.text,
     number: ch.chapter,
     audio: ch.audioUrl || "",
+    image: ch.chapterImage || "",
   }));
 
   console.log("1", book);
@@ -53,7 +54,7 @@ export default function BookPageClient() {
     <div>
       {listen ? (
         <ReadListenBook
-        id={bookId}
+          id={bookId}
           bookTitle={book.title}
           chapters={chapters}
           currentChapter={currentChapter}

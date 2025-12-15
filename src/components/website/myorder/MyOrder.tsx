@@ -18,7 +18,7 @@ import { Order } from "@/lib/type/order";
 import { UserDetailModal } from "./UserOrdermodal";
 import { UserOrderFetch } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
-import { handleDownloadEpub } from "../reviewbook/epub";
+import { handleDownloadPdf } from "../reviewbook/epub";
 import { IBook } from "@/lib/type/book";
 
 export default function MyOrder() {
@@ -40,8 +40,8 @@ export default function MyOrder() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const handleDownload = async (id: string) => {
     const book = orders.filter((item: IBook) => id === item._id);
-    console.log('book data',book)
-    handleDownloadEpub(book[0].storyBookId);
+    console.log("book data", book);
+    handleDownloadPdf(book[0].storyBookId);
   };
 
   const columns: ColumnDef<Order>[] = useMemo(

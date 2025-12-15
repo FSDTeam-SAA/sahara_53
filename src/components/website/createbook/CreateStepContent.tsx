@@ -2,6 +2,7 @@
 "use client";
 
 import React, { useState, useCallback } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
 import StoryDetail from "./StoryDetail";
 import AddCharacters from "./AddCharacters";
@@ -13,6 +14,7 @@ import { useMutation } from "@tanstack/react-query";
 import { createBook, voiceClone } from "@/lib/api";
 import { toast } from "sonner";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 // ------------------ Types ------------------
 interface CharacterPayload {
@@ -39,7 +41,7 @@ interface StoryDetailData {
 
 interface Character {
   name: string;
-  image: string | null; 
+  image: string | null;
 }
 
 export interface VoiceData {
@@ -54,11 +56,9 @@ interface StoryFormData {
   voice: VoiceData | null;
 }
 
-
-
-
 // ------------------ Component ------------------
 export default function CreateStepContent() {
+  const router = useRouter();
   const [step, setStep] = useState<number>(0);
   const userId = useSession().data?.user.id;
   const [formData, setFormData] = useState<StoryFormData>({
@@ -67,7 +67,7 @@ export default function CreateStepContent() {
     beginning: "",
     voice: null,
   });
-  
+
   const [bookId, setBookId] = useState<string>("");
   const [isGeneratingImage, setIsGeneratingImage] = useState(false);
 
@@ -77,7 +77,7 @@ export default function CreateStepContent() {
 
     onSuccess: (data) => {
       toast.success("Book created successfully");
-      console.log('create data check for book id',)
+      console.log("create data check for book id");
       setBookId(data?.saved._id);
       setStep(3); // Go to Voice Recording step
     },
@@ -88,14 +88,17 @@ export default function CreateStepContent() {
       toast.error(message);
     },
   });
- 
+
   const VoiceMutation = useMutation({
     mutationKey: ["voiceClone"],
-    mutationFn: ({ blob, id }: { blob: Blob; id: string }) => voiceClone(blob, id),
+    mutationFn: ({ blob, id }: { blob: Blob; id: string }) =>
+      voiceClone(blob, id),
 
-    onSuccess: () => { // Removed 'data' param as it might not be needed for next step
+    onSuccess: () => {
       toast.success("Voice added successfully");
-      setStep(4); // Go to Completion step
+      if (bookId) {
+        router.push(`/book/${bookId}`);
+      }
     },
 
     onError: (err: unknown) => {
@@ -104,7 +107,6 @@ export default function CreateStepContent() {
       toast.error(message);
     },
   });
- 
 
   // ------------------ Validation ------------------
   const validateStep = (): boolean => {
@@ -142,22 +144,20 @@ export default function CreateStepContent() {
           image: c.image || "",
         }));
 
-
-    const payload = {
-      userId: userId || "",
-      title: formData.storyDetail.bookTitle || "",
-      language: formData.storyDetail.language || "",
-      style: formData.storyDetail.writingStyle || "",
-      genre: formData.storyDetail.genre || "",
-      characters: characterObjects,
-      beginning: formData.beginning || "",
-    };
-
+      const payload = {
+        userId: userId || "",
+        title: formData.storyDetail.bookTitle || "",
+        language: formData.storyDetail.language || "",
+        style: formData.storyDetail.writingStyle || "",
+        genre: formData.storyDetail.genre || "",
+        characters: characterObjects,
+        beginning: formData.beginning || "",
+      };
 
       console.log("Submitting book payload:", payload);
       bookCreateMutation.mutate(payload);
     }
-    
+
     // Step 3: Voice Clone
     if (step === 3) {
       const blob = formData.voice?.blob || new Blob([]);
@@ -165,13 +165,11 @@ export default function CreateStepContent() {
         toast.error("Book ID is missing. Cannot add voice.");
         return;
       }
-      
+
       console.log("Submitting voice payload for book:", bookId);
       VoiceMutation.mutate({ blob, id: bookId });
     }
   };
-
-  
 
   // ------------------ Handlers ------------------
   // Memoize these handlers to prevent infinite render loops in children
@@ -191,42 +189,71 @@ export default function CreateStepContent() {
     setFormData((prev) => ({ ...prev, voice: voiceData }));
   }, []);
 
+  const isProcessing = bookCreateMutation.isPending || VoiceMutation.isPending;
+
   // ------------------ Render Steps ------------------
   const renderStep = () => {
-    switch (step) {
-      case 0:
-        return (
-          <StoryDetail
-            data={formData.storyDetail}
-            onChange={handleStoryDetailChange}
-          />
-        );
-      case 1:
-        return (
-          <AddCharacters
-            data={formData.characters}
-            onChange={handleCharactersChange}
-            onLoadingChange={setIsGeneratingImage}
-          />
-        );
-      case 2:
-        return (
-          <YourStoryBeginning
-            data={formData.beginning}
-            onChange={handleBeginningChange}
-          />
-        );
-      case 3:
-        return (
-          <VoiceRecording
-            data={formData.voice}
-            bookid={bookId}
-            onChange={handleVoiceChange}
-          />
-        );
-      default:
-        return <CreatingYourBook />;
+    if (isProcessing) {
+      const mode = VoiceMutation.isPending ? "voice" : "book";
+      return (
+        <motion.div
+          key="loading"
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 1.05 }}
+          transition={{ duration: 0.3 }}
+        >
+          <CreatingYourBook mode={mode} />
+        </motion.div>
+      );
     }
+
+    return (
+      <motion.div
+        key={step}
+        initial={{ x: 20, opacity: 0 }}
+        animate={{ x: 0, opacity: 1 }}
+        exit={{ x: -20, opacity: 0 }}
+        transition={{ duration: 0.3, ease: "easeInOut" }}
+      >
+        {(() => {
+          switch (step) {
+            case 0:
+              return (
+                <StoryDetail
+                  data={formData.storyDetail}
+                  onChange={handleStoryDetailChange}
+                />
+              );
+            case 1:
+              return (
+                <AddCharacters
+                  data={formData.characters}
+                  onChange={handleCharactersChange}
+                  onLoadingChange={setIsGeneratingImage}
+                />
+              );
+            case 2:
+              return (
+                <YourStoryBeginning
+                  data={formData.beginning}
+                  onChange={handleBeginningChange}
+                />
+              );
+            case 3:
+              return (
+                <VoiceRecording
+                  data={formData.voice}
+                  bookid={bookId}
+                  onChange={handleVoiceChange}
+                />
+              );
+            default:
+              return <CreatingYourBook />;
+          }
+        })()}
+      </motion.div>
+    );
   };
 
   return (
@@ -235,9 +262,10 @@ export default function CreateStepContent() {
       next={next}
       back={back}
       handelcall={handleSubmit}
-      isNextDisabled={isGeneratingImage || bookCreateMutation.isPending || VoiceMutation.isPending}
+      isNextDisabled={isGeneratingImage || isProcessing}
+      isLoading={isProcessing}
     >
-      {renderStep()}
+      <AnimatePresence mode="wait">{renderStep()}</AnimatePresence>
     </CreateBookMain>
   );
 }

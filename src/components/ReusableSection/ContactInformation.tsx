@@ -43,14 +43,11 @@ export default function ContactInformation() {
             </h3>
 
             <p className="text-sm text-[#5D5FEF] mb-5">
-              Mon–Fri from 8am to 5pm.
+              Mon–Fri from 10 AM to 4 PM.
             </p>
 
-            <Link
-              href="tel:+15550000000"
-              className="text-[#5D5FEF]"
-            >
-              +1 (555) 000-0000
+            <Link href="tel:+15550000000" className="text-[#5D5FEF]">
+              0421963588
             </Link>
           </Card>
         </div>
