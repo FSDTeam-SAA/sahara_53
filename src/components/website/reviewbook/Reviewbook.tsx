@@ -149,8 +149,8 @@ export function ReviewBook({ books, book, onEdit, onListen }: ReviewBookProps) {
       price: String(book?.price),
     });
   };
- 
-console.log('single book image ',book)
+
+  console.log("single book image ", book);
 
   return (
     <div className="min-h-screen bg-linear-to-br from-orange-50 via-white to-purple-50">
@@ -257,7 +257,7 @@ console.log('single book image ',book)
                     className="w-full bg-transparent cursor-pointer border-2 border-purple-600 text-purple-600 hover:bg-purple-50 gap-2"
                   >
                     <Headphones className="w-5 h-5" />
-                    Listen to Story
+                    Read & Listen
                   </Button>
                 )}
               </div>

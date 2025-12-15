@@ -33,6 +33,42 @@
   - **Management**: Manage users, orders, and content.
   - **Revenue Tracking**: Visual charts and data tables to monitor business performance.
 
+## 📖 Create Your Book Feature Deep Dive
+
+The core of the platform is the **Create Your Book** feature, a sophisticated multi-step wizard that leverages AI to generate personalized storybooks.
+
+### Workflow Architecture
+
+1.  **Story Configuration**
+    - Users define the **Title**, **Language**, **Genre**, and **Writing Style**.
+    - These parameters guide the LLM in generating a culturally and stylistically appropriate narrative.
+
+2.  **Character Design & Visualization**
+    - Users add characters to the story.
+    - **Reference Image**: Users can upload a photo of themselves or a loved one.
+    - **Vision Analysis**: The backend uses **Grok Vision** (`/image/ghibli` endpoint) to analyze the uploaded photo and extract facial features, hair style, and clothing.
+    - **Generative AI**: A custom prompt is built to preserve identity while applying a **Ghibli-inspired art style**, ensuring characters look consistent and magical.
+
+3.  **Story Generation**
+    - **Endpoint**: `POST /story/generate`
+    - The backend accepts the configuration and character list.
+    - **LLM Integration**: An LLM generates the full story text.
+    - **Chapter Splitting**: The system automatically parses the generated text into distinct chapters (default: 4 chapters) for pagination.
+
+4.  **Automated Illustration (Async)**
+    - Once the story is saved, a background process triggers image generation for each chapter.
+    - **Contextual Prompts**: Prompts are dynamically constructed using the chapter summary and character descriptions to ensure scene consistency.
+    - **Style consistency**: The "Ghibli" style token is enforced across all illustrations.
+
+5.  **Voice Cloning & Narration (Optional)**
+    - **Endpoint**: `POST /voice/clone` (implied)
+    - Users can record a short sample of their voice.
+    - The system clones the voice and generates audio narration for each chapter, allowing the book to be "read" by the user even when they aren't there.
+
+6.  **Final Compilation**
+    - The book is compiled into an interactive digital format.
+    - Users can also generate an **EPUB** file for download.
+
 ## 🛠️ Tech Stack
 
 This project is built with a modern, high-performance technology stack:

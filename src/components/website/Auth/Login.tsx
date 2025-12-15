@@ -29,12 +29,11 @@ type FormValues = z.infer<typeof formSchema>;
 
 export default function Login() {
   const [isPending, setIsPending] = useState(false);
-  const [showPassword,setShowPassword]=useState(false)
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  
   const callbackUrl = searchParams.get("callbackUrl") || "/";
 
   const form = useForm<FormValues>({
@@ -53,14 +52,14 @@ export default function Login() {
       const result = await signIn("credentials", {
         email: values.email,
         password: values.password,
-        
+
         redirect: false,
       });
 
-      console.log('SignIn Result:', result);
+      console.log("SignIn Result:", result);
 
       if (result?.error) {
-        setError("Invalid email or password");
+        setError(result.error);
         return;
       }
 
@@ -68,9 +67,9 @@ export default function Login() {
         router.push(callbackUrl);
         router.refresh();
       }
-      console.log('user data',result)
+      console.log("user data", result);
     } catch (error) {
-      console.error('Login error:', error);
+      console.error("Login error:", error);
       setError("Something went wrong. Please try again.");
     } finally {
       setIsPending(false);
@@ -94,9 +93,9 @@ export default function Login() {
                 <FormItem>
                   <FormLabel>Email Address</FormLabel>
                   <FormControl>
-                    <Input 
-                      placeholder="example@example.com" 
-                      {...field} 
+                    <Input
+                      placeholder="example@example.com"
+                      {...field}
                       disabled={isPending}
                     />
                   </FormControl>
@@ -113,20 +112,22 @@ export default function Login() {
                   <FormLabel>Password</FormLabel>
                   <FormControl>
                     <div className=" relative">
-
-                    <Input 
-                      type={showPassword? "text":"password"} 
-                      {...field} 
-                      disabled={isPending}
-                    />
-                  <button type="button" 
-                  onClick={()=> setShowPassword(!showPassword)}
-                  className=" absolute right-3 top-1/2 -translate-y-1/2 text-shadow-gray-600"
-                  >
-                    {
-                      showPassword ? <EyeOff size={20} /> :<Eye size={20} />
-                    }
-                  </button>
+                      <Input
+                        type={showPassword ? "text" : "password"}
+                        {...field}
+                        disabled={isPending}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className=" absolute right-3 top-1/2 -translate-y-1/2 text-shadow-gray-600"
+                      >
+                        {showPassword ? (
+                          <EyeOff size={20} />
+                        ) : (
+                          <Eye size={20} />
+                        )}
+                      </button>
                     </div>
                   </FormControl>
                   <FormMessage />
@@ -136,8 +137,8 @@ export default function Login() {
 
             <div className="flex justify-between items-center">
               <div className="flex items-center space-x-2">
-                <input 
-                  type="checkbox" 
+                <input
+                  type="checkbox"
                   id="remember"
                   className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
                   disabled={isPending}
@@ -146,7 +147,10 @@ export default function Login() {
                   Remember me
                 </label>
               </div>
-              <a href="/reset-your-password" className="text-[#5D5FEF] text-sm hover:underline">
+              <a
+                href="/reset-your-password"
+                className="text-[#5D5FEF] text-sm hover:underline"
+              >
                 Forget Password
               </a>
             </div>
@@ -157,8 +161,8 @@ export default function Login() {
               </div>
             )}
 
-            <Button 
-              disabled={isPending} 
+            <Button
+              disabled={isPending}
               className="w-full bg-gradient-to-r cursor-pointer from-pink-400 to-indigo-600 text-white hover:from-pink-500 hover:to-indigo-700 disabled:opacity-50"
               type="submit"
             >
@@ -169,8 +173,8 @@ export default function Login() {
 
         <p className="text-center mt-4 text-gray-600 text-sm">
           Don&apos;t have an account?
-          <a 
-            href="/create-your-account" 
+          <a
+            href="/create-your-account"
             className="text-indigo-600 font-semibold ml-1 hover:underline"
           >
             Sign up
