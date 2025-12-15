@@ -1,11 +1,20 @@
 import { IBook } from "@/lib/type/book";
 
-export const handleDownloadEpub = async (books: IBook) => {
-  if (!books) return;
+// Helper to ensure URLs are absolute
+const toAbsoluteUrl = (url: string) => {
+  if (!url) return "";
+  if (url.startsWith("http://") || url.startsWith("https://")) return url;
+  if (url.startsWith("data:")) return url; // Base64
+  // If running in browser/client
+  if (typeof window !== "undefined") {
+    return `${window.location.origin}${url.startsWith("/") ? "" : "/"}${url}`;
+  }
+  return url;
+};
 
-  try {
-    // Create HTML content for download
-    const htmlContent = `
+// Helper to generate the HTML content for the book
+const generateBookHtmlContent = (books: IBook) => {
+  return `
 <!DOCTYPE html>
 <html>
   <head>
@@ -13,87 +22,136 @@ export const handleDownloadEpub = async (books: IBook) => {
     <title>${books.title}</title>
     <link href="https://fonts.googleapis.com/css2?family=Merriweather&family=Roboto&display=swap" rel="stylesheet">
     <style>
+      @import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700&family=Roboto:wght@300;400;500&display=swap');
+      
+      @page {
+        margin: 20mm;
+        size: A4;
+      }
+      
       body {
         font-family: 'Merriweather', serif;
-        margin: 30px;
+        margin: 40px;
         line-height: 1.8;
-        background: #f7f7f7;
+        background: #fff;
         color: #333;
+        max-width: 800px;
+        margin-left: auto;
+        margin-right: auto;
       }
+
+      @media print {
+        body {
+          margin: 0;
+          max-width: 100%;
+          -webkit-print-color-adjust: exact;
+          print-color-adjust: exact;
+        }
+        .no-print {
+          display: none;
+        }
+      }
+
       h1 {
         text-align: center;
         font-size: 3em;
         color: #4B0082;
-        margin-bottom: 5px;
+        margin-bottom: 2em;
+        margin-top: 30vh;
+        page-break-after: always;
       }
+
       h2 {
         font-size: 2em;
         color: #6A5ACD;
-        margin-top: 40px;
+        margin-top: 2em;
+        margin-bottom: 1em;
         border-bottom: 2px solid #ddd;
-        padding-bottom: 5px;
+        padding-bottom: 10px;
+        page-break-after: avoid;
+        page-break-before: always;
       }
+
       p {
-        font-size: 1.1em;
-        margin: 15px 0;
+        font-size: 12pt;
+        margin: 1em 0;
+        text-align: justify;
+        orphans: 3;
+        widows: 3;
       }
+
       .chapter {
-        background: #fff;
-        padding: 20px;
         margin-bottom: 30px;
-        border-radius: 12px;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        page-break-inside: auto;
       }
-img {
-  max-width: 50%;
-  aspect-ratio: 5 / 3;
-  object-fit: cover;
-  margin: 10px 0;
-  border-radius: 8px;
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
-}
+
+      img {
+        max-width: 100%;
+        max-height: 50vh;
+        width: auto;
+        height: auto;
+        display: block;
+        margin: 2em auto;
+        border-radius: 4px;
+        page-break-inside: avoid;
+        box-shadow: none;
+      }
 
       audio {
         display: block;
-        margin: 15px auto;
+        margin: 20px auto;
+        width: 100%;
       }
-      hr {
-        margin: 40px 0;
-        border: 0;
-        height: 1px;
-        background: #ccc;
-      }
+
       .meta {
         text-align: center;
         font-style: italic;
-        margin-bottom: 20px;
+        margin-bottom: 40px;
+        color: #555;
+        page-break-after: always;
+      }
+
+      .book-cover {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        page-break-after: always;
+        text-align: center;
       }
     </style>
   </head>
   <body>
-    <h1>${books.title}</h1>
-    <p class="meta"><strong>Author:</strong> ${books.characters?.[0]?.name || "Unknown"} | <strong>Language:</strong> ${books.language || "English"}</p>
-    <hr>
+    <!-- Title Page -->
+    <div class="book-cover">
+      <h1>${books.title}</h1>
+      <p style="text-align: center; font-size: 1.4em;"><strong>Author:</strong> ${books.characters?.[0]?.name || "Unknown"}</p>
+      <p style="text-align: center;"><strong>Language:</strong> ${books.language || "English"}</p>
+
+    </div>
+
     ${books.generatedStory
       .map(
         (ch) => `
       <div class="chapter">
         <h2>${ch.title}</h2>
+        ${ch.chapterImage ? `<img src="${toAbsoluteUrl(ch.chapterImage)}" alt="Chapter image" />` : ""}
         <p>${ch.text.replace(/\n/g, "<br/>")}</p>
         ${
           ch.audioUrl
             ? `
-          <p>🎧 Listen to chapter:</p>
-          <audio controls>
-            <source src="${ch.audioUrl}" type="audio/mpeg" />
-            Your browser does not support the audio element.
-          </audio>
+          <div class="no-print">
+            <p>🎧 Listen to chapter:</p>
+            <audio controls>
+              <source src="${toAbsoluteUrl(ch.audioUrl)}" type="audio/mpeg" />
+              Your browser does not support the audio element.
+            </audio>
+          </div>
         `
             : ""
         }
-        ${ch.chapterImage ? `<img src="${ch.chapterImage}" alt="Chapter image" />` : `<img src="/home/habib/Web/sahara_53/public/images/no-image.jpg" alt="Chapter" />`}
       </div>
     `,
       )
@@ -101,6 +159,14 @@ img {
   </body>
 </html>
 `;
+};
+
+// Handle HTML Download
+export const handleDownloadHtml = async (books: IBook) => {
+  if (!books) return;
+
+  try {
+    const htmlContent = generateBookHtmlContent(books);
 
     // Trigger browser download as HTML
     const blob = new Blob([htmlContent], { type: "text/html" });
@@ -108,7 +174,7 @@ img {
 
     const a = document.createElement("a");
     a.href = url;
-    a.download = `${books.title}.html`;
+    a.download = `${books.title.replace(/\s+/g, "_")}.html`;
     a.click();
 
     URL.revokeObjectURL(url);
@@ -116,5 +182,34 @@ img {
     console.log("Book downloaded as HTML");
   } catch (err) {
     console.error("Download error:", err);
+  }
+};
+
+// Handle PDF Download (via Print)
+export const handleDownloadPdf = async (books: IBook) => {
+  if (!books) return;
+
+  try {
+    const htmlContent = generateBookHtmlContent(books);
+
+    // Open a new window
+    const printWindow = window.open("", "_blank");
+    if (!printWindow) {
+      alert("Please allow popups to download PDF");
+      return;
+    }
+
+    printWindow.document.write(htmlContent);
+    printWindow.document.close();
+
+    // Wait for content to load then print
+    printWindow.onload = () => {
+      printWindow.focus();
+      setTimeout(() => {
+        printWindow.print();
+      }, 500); // Small delay to ensure styles/images load
+    };
+  } catch (err) {
+    console.error("PDF Download error:", err);
   }
 };

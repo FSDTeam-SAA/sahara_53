@@ -4,10 +4,17 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+  SheetTitle,
+  SheetDescription,
+} from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { MenuItem, ResponsiveMenuProps } from "@/lib/type/navbar";
 import { usePathname } from "next/navigation";
+import * as VisuallyHidden from "@radix-ui/react-visually-hidden";
 
 export default function SideMenu({
   menuItems,
@@ -15,6 +22,7 @@ export default function SideMenu({
   contactLink,
 }: ResponsiveMenuProps) {
   const [open, setOpen] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [scrolled, setScrolled] = useState(false);
 
   const pathname = usePathname(); // <-- reliable current path
@@ -31,75 +39,95 @@ export default function SideMenu({
   };
 
   return (
-    <nav className=" top-0 z-2 transition-all md:min-h-screen  duration-300  md:bg-[#EFEFFD] ">
-      <div className="container mx-auto px-4 flex flex-col justify-between  items-center py-4">
-        {/* Logo */}
-        <Link href="/">
-          <Image
-            src={logo}
-            alt="logo"
-            width={96}
-            height={80}
-            className=" object-cover hidden md:block"
-          />
-        </Link>
+    <nav className="relative md:h-screen md:bg-[#EFEFFD] transition-all duration-300">
+      <div className="container mx-auto px-4 md:px-0 flex flex-col justify-between items-center py-4 md:py-8 h-full">
+        {/* Logo - Desktop */}
+        <div className="hidden md:block mb-8">
+          <Link href="/">
+            <Image
+              src={logo}
+              alt="logo"
+              width={120}
+              height={100}
+              className="object-contain"
+              priority
+            />
+          </Link>
+        </div>
+
+        {/* Logo - Mobile (Optional, currently hidden based on design) */}
+        <div className="md:hidden w-full flex justify-between items-center">
+          <Link href="/">
+            <Image
+              src={logo}
+              alt="logo"
+              width={80}
+              height={60}
+              className="object-contain"
+            />
+          </Link>
+        </div>
 
         {/* Desktop Menu */}
-        <div className="hidden md:flex md:flex-col h-[80vh] justify-between">
+        <div className="hidden md:flex flex-col flex-1 w-full px-4 gap-4">
           {/* Top menu items */}
-          <div className="flex flex-col space-y-6 font-medium transition-colors duration-300">
+          <div className="flex flex-col space-y-2 font-medium">
             {menuItems.map((item: MenuItem) => {
               const active = isItemActive(item.href);
 
               return (
                 <Link key={item.href} href={item.href}>
                   <div
-                    className={`flex gap-2 items-center px-3 py-2 cursor-pointer transition-all duration-200 ${
+                    className={`flex gap-3 items-center px-4 py-3 cursor-pointer rounded-lg transition-all duration-200 ${
                       active
-                        ? "text-white font-semibold"
-                        : "hover:text-primary/70 text-[#6C757D]"
+                        ? "text-white font-semibold shadow-md"
+                        : "hover:bg-white/50 text-gray-600 hover:text-primary"
                     }`}
                     style={
                       active
                         ? {
-                            borderRadius: "4px",
                             background:
-                              "linear-gradient(90deg,#FF7CE5 0%,#5D5FEF 100%)",
+                              "linear-gradient(90deg, #FF7CE5 0%, #5D5FEF 100%)",
                           }
                         : {}
                     }
                   >
                     {item.icon && (
-                      <Image
-                        src={item.icon}
-                        alt={item.label}
-                        width={22}
-                        height={22}
-                        className="text-[#6C757D]"
-                      />
+                      <div
+                        className={`relative w-5 h-5 ${active ? "brightness-0 invert" : ""}`}
+                      >
+                        <Image
+                          src={item.icon}
+                          alt={item.label}
+                          fill
+                          className="object-contain"
+                        />
+                      </div>
                     )}
-                    {item.label}
+                    <span>{item.label}</span>
                   </div>
                 </Link>
               );
             })}
           </div>
 
-          {/* Bottom section sticks here */}
+          {/* Spacer */}
+          <div className="flex-1"></div>
+
+          {/* Bottom section (Contact) */}
           {contactLink && (
             <Link href={contactLink}>
               <div
-                className="py-8 px-3 rounded-lg cursor-pointer m-2"
+                className="py-6 px-4 rounded-xl cursor-pointer mt-4 transform hover:scale-[1.02] transition-transform"
                 style={{
-                  borderRadius: "8px",
                   background:
                     "linear-gradient(90deg, #FF7CE5 0%, #5D5FEF 100%)",
                 }}
               >
-                <h2 className="text-base md:text-2xl text-white mb-3 font-semibold font-serif">
+                <h2 className="text-xl md:text-2xl text-white mb-2 font-bold font-serif leading-tight">
                   Transform Memories
                 </h2>
-                <p className="text-[14px] leading-tight text-white">
+                <p className="text-sm text-white/90">
                   Into beautiful Ai-illustrated books.
                 </p>
               </div>
@@ -107,76 +135,113 @@ export default function SideMenu({
           )}
         </div>
 
-        {/* Mobile Menu */}
-        <div className="md:hidden">
+        {/* Mobile Menu Trigger */}
+        <div className="md:hidden absolute top-4 right-4 z-50">
           <Sheet open={open} onOpenChange={setOpen}>
-            <SheetTrigger
-              className={`${open ? " absolute right-16  top-3" : "absolute -right-2  top-3"}`}
-              asChild
-            >
+            <SheetTrigger asChild>
               <Button
+                size="icon"
+                variant="outline"
                 aria-label="Toggle menu"
-                className="text-gray-500 bg-white"
+                className="border-primary/20 bg-white/80 backdrop-blur-sm"
               >
-                {open ? <X size={28} /> : <Menu size={28} />}
+                {open ? (
+                  <X className="w-6 h-6 text-primary" />
+                ) : (
+                  <Menu className="w-6 h-6 text-primary" />
+                )}
               </Button>
             </SheetTrigger>
 
             <SheetContent
-              side="right"
-              className="w-[300px] flex justify-between sm:w-[400px] md:hidden"
+              side="left"
+              className="w-[300px] sm:w-[350px] p-0 border-r-0"
             >
-              <nav className="flex flex-col  space-y-6 mt-20">
-                {menuItems.map((item: MenuItem) => {
-                  const active = isItemActive(item.href);
+              <VisuallyHidden.Root>
+                <SheetTitle>Menu</SheetTitle>
+                <SheetDescription>Navigation Menu</SheetDescription>
+              </VisuallyHidden.Root>
 
-                  return (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      onClick={() => setOpen(false)}
-                    >
-                      <div
-                        className="text-gray-700 px-5 py-2 font-medium text-lg transition-all duration-200 hover:text-primary hover:underline rounded-md"
-                        style={
-                          active
-                            ? {
-                                borderRadius: "4px",
-                                background:
-                                  "linear-gradient(90deg,#FF7CE5 0%,#5D5FEF 100%)",
-                                color: "white",
-                              }
-                            : {}
-                        }
+              <div className="flex flex-col h-full bg-[#EFEFFD] overflow-y-auto">
+                <div className="p-6 flex justify-center">
+                  <Link href="/" onClick={() => setOpen(false)}>
+                    <Image
+                      src={logo}
+                      alt="logo"
+                      width={100}
+                      height={80}
+                      className="object-contain"
+                    />
+                  </Link>
+                </div>
+
+                <nav className="flex-1 px-4 space-y-2">
+                  {menuItems.map((item: MenuItem) => {
+                    const active = isItemActive(item.href);
+
+                    return (
+                      <Link
+                        key={item.href}
+                        href={item.href}
+                        onClick={() => setOpen(false)}
                       >
-                        {item.label}
+                        <div
+                          className={`flex gap-3 items-center px-4 py-3 rounded-lg font-medium transition-all ${
+                            active
+                              ? "text-white shadow-md"
+                              : "text-gray-700 hover:bg-white/50"
+                          }`}
+                          style={
+                            active
+                              ? {
+                                  background:
+                                    "linear-gradient(90deg, #FF7CE5 0%, #5D5FEF 100%)",
+                                }
+                              : {}
+                          }
+                        >
+                          {item.icon && (
+                            <div
+                              className={`relative w-5 h-5 ${active ? "brightness-0 invert" : ""}`}
+                            >
+                              <Image
+                                src={item.icon}
+                                alt={item.label}
+                                fill
+                                className="object-contain"
+                              />
+                            </div>
+                          )}
+                          {item.label}
+                        </div>
+                      </Link>
+                    );
+                  })}
+                </nav>
+
+                {contactLink && (
+                  <div className="p-4 mt-4">
+                    <Link href={contactLink} onClick={() => setOpen(false)}>
+                      <div
+                        className="p-6 rounded-xl text-center"
+                        style={{
+                          background:
+                            "linear-gradient(90deg, #FF7CE5 0%, #5D5FEF 100%)",
+                        }}
+                      >
+                        <h2 className="text-xl font-bold text-white mb-1">
+                          Transform Memories
+                        </h2>
+                        <p className="text-sm text-white/90">
+                          Into beautiful Ai-illustrated books.
+                        </p>
                       </div>
                     </Link>
-                  );
-                })}
-              </nav>
-              {contactLink && (
-                <Link href={contactLink}>
-                  <div
-                    className="p-4 rounded-lg cursor-pointer mb-15 mx-5"
-                    style={{
-                      borderRadius: "8px",
-                      background:
-                        "linear-gradient(90deg, #FF7CE5 0%, #5D5FEF 100%)",
-                    }}
-                  >
-                    <h2 className="text-base md:text-2xl text-white font-semibold">
-                      Transform Memories
-                    </h2>
-                    <p className="text-[14px] leading-tight text-white">
-                      Into beautiful Ai-illustrated books.
-                    </p>
                   </div>
-                </Link>
-              )}
+                )}
+              </div>
             </SheetContent>
           </Sheet>
-          {/* Contact Button */}
         </div>
       </div>
     </nav>

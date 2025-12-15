@@ -10,7 +10,7 @@ const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 // ⭐ Create proper interface for decoded JWT payload
 // ------------------------------------------------------
 interface DecodedToken {
-  sub: string;   // user ID
+  sub: string; // user ID
   role: string;
   name: string;
   iat: number;
@@ -63,9 +63,18 @@ const handler = NextAuth({
       },
 
       async authorize(credentials) {
+        if (!baseUrl) {
+          throw new Error(
+            "NEXT_PUBLIC_API_URL is not defined in environment variables",
+          );
+        }
+
         if (!credentials?.email || !credentials?.password) return null;
 
         try {
+          // Log the URL we're trying to hit for debugging
+          console.log(`Attempting login at: ${baseUrl}/auth/login`);
+
           const res = await fetch(`${baseUrl}/auth/login`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -79,11 +88,12 @@ const handler = NextAuth({
           console.log("auth login data:", data);
 
           if (!res.ok) {
-            throw new Error(data.message || "Login failed");
+            // Forward the actual error message from backend
+            throw new Error(data.message || data.error || "Login failed");
           }
 
           const token = data.data?.token;
-          if (!token) throw new Error("No token received");
+          if (!token) throw new Error("No token received from backend");
 
           // ⭐ Decode token using the typed interface
           const decoded = jwtDecode<DecodedToken>(token);
@@ -95,9 +105,10 @@ const handler = NextAuth({
             name: decoded.name,
             token: token,
           };
-        } catch (error) {
-          console.error("Authorize error:", error);
-          throw new Error("Invalid email or password");
+        } catch (error: any) {
+          console.error("Authorize error:", error.message);
+          // Throw the specific error so NextAuth passes it to the client
+          throw new Error(error.message || "Authentication failed");
         }
       },
     }),
@@ -136,7 +147,7 @@ const handler = NextAuth({
     error: "/auth/error",
   },
 
-  debug: process.env.NODE_ENV === "development",
+  debug: true, // Always enable debug to see what's happening
   secret: process.env.NEXTAUTH_SECRET,
 });
 
