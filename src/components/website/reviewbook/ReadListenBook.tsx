@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import Image from "next/image";
 
 interface Chapter {
   id: string;
@@ -163,7 +164,9 @@ export function ReadListenBook({
                 className="gap-2 text-gray-600 hover:text-orange-600 p-0 hover:bg-transparent"
               >
                 <ArrowLeft className="w-5 h-5" />
-                <span className="hidden sm:inline">Back to Book</span>
+                <a href={`/book/${id}`} className="hidden sm:inline">
+                  Back to Book
+                </a>
               </Button>
             </Link>
           </div>
@@ -181,7 +184,9 @@ export function ReadListenBook({
         <section className="flex flex-col md:flex-row gap-8 items-start animate-fade-in-up">
           <div className="w-full md:w-1/2 rounded-2xl overflow-hidden shadow-lg bg-gray-200 aspect-video md:aspect-[4/3] relative">
             {chapter.image ? (
-              <img
+              <Image
+                width={400}
+                height={400}
                 src={chapter.image}
                 alt={`Chapter ${chapter.number} illustration`}
                 className="w-full h-full object-cover transform hover:scale-105 transition-transform duration-700"
