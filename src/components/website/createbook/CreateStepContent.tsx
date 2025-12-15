@@ -14,6 +14,7 @@ import { useMutation } from "@tanstack/react-query";
 import { createBook, voiceClone } from "@/lib/api";
 import { toast } from "sonner";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 // ------------------ Types ------------------
 interface CharacterPayload {
@@ -57,6 +58,7 @@ interface StoryFormData {
 
 // ------------------ Component ------------------
 export default function CreateStepContent() {
+  const router = useRouter();
   const [step, setStep] = useState<number>(0);
   const userId = useSession().data?.user.id;
   const [formData, setFormData] = useState<StoryFormData>({
@@ -93,9 +95,10 @@ export default function CreateStepContent() {
       voiceClone(blob, id),
 
     onSuccess: () => {
-      // Removed 'data' param as it might not be needed for next step
       toast.success("Voice added successfully");
-      setStep(4); // Go to Completion step
+      if (bookId) {
+        router.push(`/book/${bookId}`);
+      }
     },
 
     onError: (err: unknown) => {
