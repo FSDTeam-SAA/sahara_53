@@ -77,7 +77,7 @@ export default function CreateStepContent() {
 
     onSuccess: (data) => {
       toast.success("Book created successfully");
-      console.log("create data check for book id");
+      // console.log("create data check for book id");
       setBookId(data?.saved._id);
       setStep(3); // Go to Voice Recording step
     },
@@ -167,8 +167,8 @@ export default function CreateStepContent() {
         return;
       }
 
-      console.log("Submitting voice payload for book:", bookId);
-         console.log('blob check',blob)
+      // console.log("Submitting voice payload for book:", bookId);
+        //  console.log('blob check',blob)
       VoiceMutation.mutate({ blob, id: bookId });
     }
   };

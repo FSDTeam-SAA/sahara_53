@@ -9,11 +9,11 @@ import {
 } from "@tanstack/react-table";
 import { Card, CardContent } from "@/components/ui/card";
 import { StatusBadge } from "@/components/ui/status-badge";
-import { Eye, Download, ChevronLeft, ChevronRight } from "lucide-react";
+import { Eye, Download,  } from "lucide-react";
 import Image from "next/image";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useSession } from "next-auth/react";
-import { useUserOrders } from "@/hooks/use-orders";
+
 import { Order } from "@/lib/type/order";
 import { UserDetailModal } from "./UserOrdermodal";
 import { UserOrderFetch } from "@/lib/api";
@@ -40,7 +40,7 @@ export default function MyOrder() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const handleDownload = async (id: string) => {
     const book = orders.filter((item: IBook) => id === item._id);
-    console.log("book data", book);
+    // console.log("book data", book);
     handleDownloadPdf(book[0].storyBookId);
   };
 
@@ -56,7 +56,7 @@ export default function MyOrder() {
         header: "Book Name",
         cell: ({ row }) => (
           <div className="flex gap-2 items-center">
-            <div className="relative w-12 h-12 flex-shrink-0">
+            <div className="relative w-12 h-12 shrink-0">
               <Image
                 src={
                   row.original.storyBookId?.generatedStory?.[0]?.chapterImage ??
@@ -113,7 +113,7 @@ export default function MyOrder() {
     ],
     [handleDownload],
   );
-  console.log("order data ", orders);
+  // console.log("order data ", orders);
   const table = useReactTable({
     data: orders,
     columns,
