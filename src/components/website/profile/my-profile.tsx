@@ -59,7 +59,7 @@ export default function MyProfileTab() {
 
   const handleSave = async () => {
     try {
-      console.log("Saving profile:", editedValues);
+      // console.log("Saving profile:", editedValues);
 
       // 3. Prepare data for the API call
       const dataToSave = {

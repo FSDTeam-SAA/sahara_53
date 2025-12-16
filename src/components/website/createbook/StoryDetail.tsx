@@ -81,7 +81,9 @@ const StoryDetail: React.FC<StoryDetailProps> = ({ data, onChange }) => {
 
   // Form submission handler
   const onSubmit = (data: StoryFormValues) => {
+    
     console.log("Form submitted:", data);
+
   };
 
   const languageOptions = [
