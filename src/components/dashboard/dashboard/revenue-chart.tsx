@@ -21,7 +21,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export function RevenueChart() {
   const { revenueData, isLoading } = useRevenueData();
-  console.log(revenueData);
+  // console.log(revenueData);
   if (isLoading) {
     return <Skeleton className="h-[400px] rounded-xl" />;
   }

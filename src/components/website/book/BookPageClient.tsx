@@ -49,7 +49,7 @@ export default function BookPageClient() {
     image: ch.chapterImage || "",
   }));
 
-  console.log("1", book);
+  // console.log("1", book);
   return (
     <div>
       {listen ? (

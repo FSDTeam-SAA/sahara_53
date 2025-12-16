@@ -113,8 +113,11 @@ export async function getAllReview(page = 1, limit = 10) {
     const res = await api.get(`/reviews/all?page=${page}&limit=${limit}`);
     return res.data;
   } catch (err) {
-    console.error("Error fetching reviewss:", err);
-    throw new Error("Failed to fetch all reviews with pagination");
+    // console.error("Error fetching reviewss:", err);
+    if(err instanceof Error){
+
+      throw new Error(err.message || "Failed to fetch all reviews with pagination");
+    }
   }
 }
 
@@ -272,8 +275,8 @@ export async function recentBookFetch(id: string) {
   try {
     const res = await api.get(`/story/user/${id}`);
     const data = await res.data;
-    console.log("respons data", data);
-    return res.data;
+    // console.log("respons data", data);
+    return data;
   } catch (err) {
     if (err instanceof Error) {
       throw new Error(err.message);
@@ -285,8 +288,9 @@ export async function SingleBookFetch(id: string) {
   try {
     const res = await api.get(`/story/${id}`);
     const data = await res.data;
-    console.log("respons data", data);
-    return res.data;
+    // console.log("respons data", data);
+    
+    return data;
   } catch (err) {
     if (err instanceof Error) {
       throw new Error(err.message);
@@ -333,7 +337,7 @@ export async function userProfileUpdate(formData: {
   avatar?: string;
 }) {
   try {
-    console.log("Updating profile...");
+    // console.log("Updating profile...");
 
     // Convert to the format your API expects
     const apiData = {
@@ -346,10 +350,10 @@ export async function userProfileUpdate(formData: {
 
     const res = await api.patch(`/user/me`, apiData);
     const data = await res.data;
-    console.log("Response data", data);
+    // console.log("Response data", data);
     return data;
   } catch (err) {
-    console.error("Update failed:", err);
+    // console.error("Update failed:", err);
     if (err instanceof Error) {
       throw new Error(err.message);
     }
@@ -422,7 +426,7 @@ export async function storyUpdate(datas: Partial<IBook>, id: string) {
 
 export async function voiceClone(datas: Blob, id: string) {
   try {
-    console.log("2", datas);
+    // console.log("2", datas);
     const formData = new FormData();
     // Use .webm as it's the standard container for MediaRecorder.
     // Even if the backend expects mp3, it likely uses ffmpeg which detects format by header,

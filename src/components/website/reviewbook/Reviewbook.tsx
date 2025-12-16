@@ -65,7 +65,7 @@ export function ReviewBook({ books, book, onEdit, onListen }: ReviewBookProps) {
     mutationKey: ["createorder"],
     mutationFn: OrderCreate,
     onSuccess: (data) => {
-      console.log("order Id", data);
+      // console.log("order Id", data);
       paymentMutation.mutate({
         userId,
         orderId: data?.data?._id,
@@ -77,7 +77,7 @@ export function ReviewBook({ books, book, onEdit, onListen }: ReviewBookProps) {
     },
   });
 
-  console.log("books", book);
+  // console.log("books", book);
 
   if (!book) {
     return (
@@ -106,7 +106,7 @@ export function ReviewBook({ books, book, onEdit, onListen }: ReviewBookProps) {
     });
   };
 
-  console.log("single book image ", book);
+  // console.log("single book image ", book);
 
   return (
     <div className="min-h-screen bg-linear-to-br from-orange-50 via-white to-purple-50">
