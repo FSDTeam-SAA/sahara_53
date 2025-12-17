@@ -31,6 +31,7 @@ interface ReadListenBookProps {
   chapters?: Array<Chapter>;
   currentChapter?: number;
   onChapterChange?: (chapter: number) => void;
+  onlistenChange?: (listen: boolean) => void;
 }
 
 export function ReadListenBook({
@@ -39,6 +40,7 @@ export function ReadListenBook({
   chapters = [],
   currentChapter = 1,
   onChapterChange,
+  onlistenChange,
 }: ReadListenBookProps) {
   const [isReading, setIsReading] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -158,17 +160,14 @@ export function ReadListenBook({
             >
               <Menu className="w-6 h-6" />
             </Button>
-            <Link href={`/book/${id}`}>
-              <Button
-                variant="ghost"
-                className="gap-2 text-gray-600 hover:text-orange-600 p-0 hover:bg-transparent"
-              >
-                <ArrowLeft className="w-5 h-5" />
-                <a href={`/book/${id}`} className="hidden sm:inline">
-                  Back to Book
-                </a>
-              </Button>
-            </Link>
+            <Button
+              variant="ghost"
+              className="gap-2 text-gray-600 hover:text-orange-600 p-0 hover:bg-transparent"
+              onClick={() => onlistenChange?.(false)}
+            >
+              <ArrowLeft className="w-5 h-5" />
+              <span className="hidden sm:inline">Back to Book</span>
+            </Button>
           </div>
           <div className="flex items-center gap-4">
             <h1 className="text-sm md:text-lg font-semibold text-gray-800 truncate max-w-[150px] md:max-w-md">

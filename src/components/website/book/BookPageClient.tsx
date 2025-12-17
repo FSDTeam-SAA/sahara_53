@@ -57,6 +57,7 @@ export default function BookPageClient() {
           id={bookId}
           bookTitle={book.title}
           chapters={chapters}
+          onlistenChange={setListen}
           currentChapter={currentChapter}
           onChapterChange={setCurrentChapter}
         />
