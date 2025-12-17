@@ -79,7 +79,7 @@ function onSubmit(values: z.infer<typeof formSchema>) {
 
   return (
     <section>
-      <div className="container mx-auto my-16 md:my-20">
+      <div className="container mx-auto lg:max-w-[80%] my-16 md:my-20">
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 mx-8 py-16 px-4 items-center">
           {/* Image */}
           <div>

@@ -38,7 +38,7 @@ export function StepCard({
 
   return (
     <div className="bg-white rounded-2xl overflow-hidden shadow-sm">
-      <div className="grid grid-cols-1 md:grid-cols-2">
+      <div className="grid grid-cols-1 lg:grid-cols-2">
         {reversed ? (
           <>
             {iconSection}

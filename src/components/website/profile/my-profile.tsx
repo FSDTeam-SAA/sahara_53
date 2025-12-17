@@ -17,7 +17,7 @@ interface SessionUser {
   address?: string;
 }
 
-// Define the shape of the data we manage in the form state
+
 interface ProfileData {
   firstName: string;
   lastName: string;
@@ -26,16 +26,16 @@ interface ProfileData {
   address: string;
 }
 
-// Helper function to initialize state from the user session data
+
 const initializeEditedValues = (user: SessionUser | undefined): ProfileData => {
-  // Split name for first and last, handling cases where 'name' is null or undefined
+
   const [firstName = "", lastName = ""] = user?.name?.split(" ") || [];
 
   return {
     firstName: firstName,
     lastName: lastName,
     email: user?.email || "",
-    // Fallback/Placeholder values if session data is missing
+
     phone: user?.phone || "+1234567890",
     address: user?.address || "2972 Westheimer Rd. Santa Ana, Illinois 85486",
   };
@@ -45,33 +45,27 @@ export default function MyProfileTab() {
   const { data: session, update } = useSession();
   const user = session?.user as SessionUser | undefined;
 
-  // 1. Initialize state with current user data.
-  // This state now holds ALL current form data (initial data + user edits).
   const [editedValues, setEditedValues] = useState<ProfileData>(() =>
     initializeEditedValues(user),
   );
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    // Update the state with the new value (including an empty string if cleared)
+
     setEditedValues((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSave = async () => {
     try {
-      // console.log("Saving profile:", editedValues);
 
-      // 3. Prepare data for the API call
       const dataToSave = {
         ...editedValues,
-        // The API expects a full name, so combine first and last name from state
+     
         name: `${editedValues.firstName} ${editedValues.lastName}`.trim(),
       };
 
-      // Call the update function
       await userProfileUpdate(dataToSave);
 
-      // 4. Update the NextAuth session with the new state values
       await update({
         ...session,
         user: {
@@ -83,7 +77,6 @@ export default function MyProfileTab() {
         },
       });
 
-      // After a successful save and session update, re-sync state (though update() should handle it)
 
       toast.success("Profile updated successfully!");
     } catch (error) {
@@ -205,7 +198,7 @@ export default function MyProfileTab() {
               Account Role
             </label>
             <div className="p-3 bg-gray-50 rounded border border-gray-200 text-gray-700">
-              User
+              {session?.user?.role}
             </div>
           </div>
           <div>
@@ -213,7 +206,7 @@ export default function MyProfileTab() {
               Member Since
             </label>
             <div className="p-3 bg-gray-50 rounded border border-gray-200 text-gray-700">
-              {/* Note: This is still hardcoded for now, you might want to pull this from the session/user object */}
+  
               14 August, 2025
             </div>
           </div>
@@ -231,5 +224,3 @@ export default function MyProfileTab() {
   );
 }
 
-// Assuming the API function and component imports are available in your environment
-// Updated API function that accepts an object instead of FormData
