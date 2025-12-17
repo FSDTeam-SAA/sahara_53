@@ -122,7 +122,7 @@ export default function MyOrder() {
 
   return (
     <div className="space-y-4">
-      <Card className="bg-white shadow-sm border-0 overflow-hidden">
+      <Card className="bg-white max-w-md lg:max-w-[98%] mx-auto shadow-sm border-0 overflow-hidden">
         <CardContent className="p-0">
           {isLoading ? (
             <div className="p-4 space-y-3">

@@ -102,7 +102,7 @@ const iconMap: Record<string, React.ReactNode> = {
 export function HowItWorksSection() {
   return (
     <section className="py-8 sm:py-10 md:py-12 lg:py-16 px-3 sm:px-4 md:px-6 lg:px-8">
-      <div className="max-w-4xl mx-auto space-y-4 sm:space-y-5 md:space-y-6 w-auto">
+      <div className=" w-[95%] lg:max-w-[80%] mx-auto space-y-4 sm:space-y-5 md:space-y-6 ">
         {steps.map((step) => (
           <StepCard
             key={step.stepNumber}
