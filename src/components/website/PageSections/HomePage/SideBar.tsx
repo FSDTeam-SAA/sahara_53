@@ -14,7 +14,7 @@ const SideBar = () => {
     <div>
         <SideBarMenu
       menuItems={menuItems}
-      logo="/images/alogo.png"
+      logo="/logo.png"
       contactLink="/contact-us"
     />
     </div>

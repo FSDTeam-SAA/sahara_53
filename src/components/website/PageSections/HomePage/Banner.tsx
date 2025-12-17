@@ -14,7 +14,7 @@ export default function Banner() {
       {/* Content */}
       <div className="relative xl:w-7xl z-10 mx-auto    px-4 py-16 lg:px-6 lg:py-24 xl:px-8 xl:py-32">
         <div className=" text-start">
-          <h1 className=" text-2xl xl:text-4xl  font-bold w-[80%] text-white sm:text-5xl lg:text-[60px] font-serif">
+          <h1 className=" text-2xl md:text-2xl    font-bold w-[80%] text-white  xl:text-3xl font-serif">
             Stories Built together , Shared forever
           </h1>
           {/* <p className="mt-4 text-base text-gray-200 w-[60%] sm:text-lg/relaxed">
