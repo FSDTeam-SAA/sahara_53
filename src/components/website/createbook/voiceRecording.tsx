@@ -12,12 +12,20 @@ interface VoiceRecordingProps {
   bookid?: string;
 }
 
-export default function StoryAudio({ data, onChange, bookid }: VoiceRecordingProps) {
+export default function StoryAudio({
+  data,
+  onChange,
+  bookid,
+}: VoiceRecordingProps) {
   const [recording, setRecording] = useState(false);
   // Local state for preview before confirmation
-  const [audioBlob, setAudioBlob] = useState<Blob | null>(() => data?.blob || null);
-  const [audioURL, setAudioURL] = useState<string | null>(() => data?.audioUrl || null);
-  
+  const [audioBlob, setAudioBlob] = useState<Blob | null>(
+    () => data?.blob || null,
+  );
+  const [audioURL, setAudioURL] = useState<string | null>(
+    () => data?.audioUrl || null,
+  );
+
   const [recordingTime, setRecordingTime] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -96,7 +104,9 @@ export default function StoryAudio({ data, onChange, bookid }: VoiceRecordingPro
   const stopRecording = useCallback(() => {
     if (mediaRecorderRef.current && recording) {
       mediaRecorderRef.current.stop();
-      mediaRecorderRef.current.stream.getTracks().forEach(track => track.stop());
+      mediaRecorderRef.current.stream
+        .getTracks()
+        .forEach((track) => track.stop());
       setRecording(false);
     }
   }, [recording]);
@@ -146,11 +156,11 @@ export default function StoryAudio({ data, onChange, bookid }: VoiceRecordingPro
   // -----------------------------
   const handleVoiceButton = () => {
     if (!showvoice) {
-        setShowVoice(true);
+      setShowVoice(true);
     } else {
-        // If we close the panel, should we stop recording? Yes.
-        if (recording) stopRecording();
-        setShowVoice(false);
+      // If we close the panel, should we stop recording? Yes.
+      if (recording) stopRecording();
+      setShowVoice(false);
     }
   };
 
@@ -159,21 +169,22 @@ export default function StoryAudio({ data, onChange, bookid }: VoiceRecordingPro
       <div className="flex flex-col items-center">
         {/* VOICE OPEN/CLOSE BUTTON */}
         <Button
-            onClick={handleVoiceButton}
-            className="flex items-center gap-2 px-6 py-3 rounded-full text-white font-semibold shadow-lg transition-transform hover:scale-105"
-            style={{
-            background: "var(--Gr, linear-gradient(90deg, #FF7CE5 0%, #5D5FEF 100%))",
-            }}
+          onClick={handleVoiceButton}
+          className="flex items-center gap-2 px-6 py-3 rounded-full text-white font-semibold shadow-lg transition-transform hover:scale-105"
+          style={{
+            background:
+              "var(--Gr, linear-gradient(90deg, #FF7CE5 0%, #5D5FEF 100%))",
+          }}
         >
-            <Mic className="w-5 h-5" />
-            {showvoice ? "Close Recorder" : "Record Your Voice"}
+          <Mic className="w-5 h-5" />
+          {showvoice ? "Close Recorder" : "Record Your Voice"}
         </Button>
 
         {isConfirmed && (
-             <div className="mt-4 flex items-center gap-2 text-green-600 font-medium">
-                <Check className="w-5 h-5" />
-                <span>Voice Confirmed! Ready to generate book.</span>
-             </div>
+          <div className="mt-4 flex items-center gap-2 text-green-600 font-medium">
+            <Check className="w-5 h-5" />
+            <span>Voice Confirmed! Ready to generate book.</span>
+          </div>
         )}
       </div>
 
@@ -182,6 +193,23 @@ export default function StoryAudio({ data, onChange, bookid }: VoiceRecordingPro
         <div className="mt-6 p-6 border rounded-xl bg-white shadow-xl space-y-6 w-full max-w-md mx-auto animate-in fade-in slide-in-from-top-4">
           {recording && (
             <div className="text-center">
+              <h2 className="flex items-center text-lg font-semibold text-red-600 bg-red-100 p-3 rounded-md border border-red-300">
+                <svg
+                  className="w-5 h-5 mr-2"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+                Voice recording (minimum 1.5 minutes) is required
+              </h2>
+
               <div className="text-red-500 font-bold text-2xl animate-pulse">
                 {formatTime(recordingTime)}
               </div>
@@ -191,62 +219,95 @@ export default function StoryAudio({ data, onChange, bookid }: VoiceRecordingPro
 
           <div className="flex items-center justify-center gap-6">
             {/* START / STOP BUTTON */}
-             {!recorded && (
-                 <Button
-                 onClick={recording ? stopRecording : startRecording}
-                 className={`w-16 h-16 rounded-full flex items-center justify-center transition-all ${
-                   recording ? "bg-red-500 hover:bg-red-600" : "bg-blue-600 hover:bg-blue-700"
-                 }`}
-               >
-                 {recording ? <Pause className="w-8 h-8 text-white" /> : <Mic className="w-8 h-8 text-white" />}
-               </Button>
-             )}
+            {!recorded && (
+              <Button
+                onClick={recording ? stopRecording : startRecording}
+                className={`w-16 h-16 rounded-full flex items-center justify-center transition-all ${
+                  recording
+                    ? "bg-red-500 hover:bg-red-600"
+                    : "bg-blue-600 hover:bg-blue-700"
+                }`}
+              >
+                {recording ? (
+                  <Pause className="w-8 h-8 text-white" />
+                ) : (
+                  <Mic className="w-8 h-8 text-white" />
+                )}
+              </Button>
+            )}
 
             {/* If recorded, user can re-record (which deletes current) */}
             {recorded && !recording && (
-                 <Button onClick={() => { deleteRecording(); startRecording(); }} variant="outline" className="rounded-full px-4 text-xs h-10 border-gray-300">
-                    Re-record
-                 </Button>
+              <Button
+                onClick={() => {
+                  deleteRecording();
+                  startRecording();
+                }}
+                variant="outline"
+                className="rounded-full px-4 text-xs h-10 border-gray-300"
+              >
+                Re-record
+              </Button>
             )}
           </div>
 
           {/* AUDIO PLAYER & ACTIONS */}
           {audioURL && (
             <div className="bg-gray-50 p-4 rounded-lg">
-                <div className="flex items-center justify-between gap-3 mb-4">
-                    <Button onClick={togglePlay} variant="ghost" className="p-2 h-10 w-10 rounded-full hover:bg-gray-200">
-                         {isPlaying ? <Pause className="w-6 h-6 text-gray-700" /> : <Play className="w-6 h-6 text-gray-700" />}
-                    </Button>
-                     {/* Hidden audio element */}
-                    <audio
-                        ref={audioRef}
-                        src={audioURL}
-                        onEnded={() => setIsPlaying(false)}
-                        className="hidden"
-                    />
-                    
-                    {/* Visualizer placeholder or progress bar could go here */}
-                    <div className="flex-1 h-1 bg-gray-200 rounded-full overflow-hidden">
-                        <div className="h-full bg-blue-500 transition-all duration-200" style={{ width: isPlaying ? '100%' : '0%', transitionDuration: isPlaying ? '30s' : '0s' }}></div>
-                    </div>
+              <div className="flex items-center justify-between gap-3 mb-4">
+                <Button
+                  onClick={togglePlay}
+                  variant="ghost"
+                  className="p-2 h-10 w-10 rounded-full hover:bg-gray-200"
+                >
+                  {isPlaying ? (
+                    <Pause className="w-6 h-6 text-gray-700" />
+                  ) : (
+                    <Play className="w-6 h-6 text-gray-700" />
+                  )}
+                </Button>
+                {/* Hidden audio element */}
+                <audio
+                  ref={audioRef}
+                  src={audioURL}
+                  onEnded={() => setIsPlaying(false)}
+                  className="hidden"
+                />
 
-                    <Button onClick={deleteRecording} variant="ghost" className="p-2 h-10 w-10 rounded-full hover:bg-red-100 text-red-500">
-                        <Trash2 className="w-5 h-5" />
-                    </Button>
+                {/* Visualizer placeholder or progress bar could go here */}
+                <div className="flex-1 h-1 bg-gray-200 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-blue-500 transition-all duration-200"
+                    style={{
+                      width: isPlaying ? "100%" : "0%",
+                      transitionDuration: isPlaying ? "30s" : "0s",
+                    }}
+                  ></div>
                 </div>
 
-                {/* Confirm Button */}
-                <Button 
-                    onClick={confirmVoice} 
-                    disabled={isConfirmed}
-                    className={`w-full py-6 text-lg font-semibold ${isConfirmed ? "bg-green-500 hover:bg-green-600 text-white" : "bg-black hover:bg-gray-800 text-white"}`}
+                <Button
+                  onClick={deleteRecording}
+                  variant="ghost"
+                  className="p-2 h-10 w-10 rounded-full hover:bg-red-100 text-red-500"
                 >
-                    {isConfirmed ? (
-                        <>
-                            <Check className="mr-2 h-5 w-5" /> Confirmed
-                        </>
-                    ) : "Confirm Voice"}
+                  <Trash2 className="w-5 h-5" />
                 </Button>
+              </div>
+
+              {/* Confirm Button */}
+              <Button
+                onClick={confirmVoice}
+                disabled={isConfirmed}
+                className={`w-full py-6 text-lg font-semibold ${isConfirmed ? "bg-green-500 hover:bg-green-600 text-white" : "bg-black hover:bg-gray-800 text-white"}`}
+              >
+                {isConfirmed ? (
+                  <>
+                    <Check className="mr-2 h-5 w-5" /> Confirmed
+                  </>
+                ) : (
+                  "Confirm Voice"
+                )}
+              </Button>
             </div>
           )}
         </div>

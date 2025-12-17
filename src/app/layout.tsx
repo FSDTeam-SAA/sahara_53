@@ -17,7 +17,7 @@ const fredoka = Fredoka({
 });
 
 export const metadata: Metadata = {
-  title: "Build Story Time",
+  title: "Build A Story Time",
   description:
     "Build your story with ai, create your own book by using your custom voice and reference image.",
 };

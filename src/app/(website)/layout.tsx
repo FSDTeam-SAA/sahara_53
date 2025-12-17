@@ -4,7 +4,7 @@ import SideBar from "@/components/website/PageSections/HomePage/SideBar";
 import LayoutVisibilityWrapper from "@/Providers/visibilityWraper";
 
 export const metadata: Metadata = {
-  title: "Services",
+  title: "Build A Story Time",
   description:
     "Elite craftsmanship in custom stone, tile, and masonry for homes & businesses across the Valley.",
 };
