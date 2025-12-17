@@ -11,6 +11,8 @@ import {
   LogOut,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import Image from "next/image";
+import { signOut } from "next-auth/react";
 
 const navItems = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -27,7 +29,7 @@ export function Sidebar() {
     <aside className="fixed left-0 top-0 z-40 h-screen w-[220px] bg-[#f3ecff] flex flex-col">
       {/* Logo */}
       <div className="flex items-center gap-2 px-6 py-6">
-        <div className="relative">
+        {/* <div className="relative">
           <span className="text-3xl">📚</span>
           <span className="absolute -top-1 -right-1 text-xs">✨</span>
         </div>
@@ -36,7 +38,17 @@ export function Sidebar() {
             Build
           </span>
           <span className="text-purple-400 text-sm italic">A Story Time</span>
-        </div>
+        </div> */}
+        <Link href="/">
+          <Image
+            src={"/logo.png"}
+            alt="logo"
+            width={120}
+            height={100}
+            className="object-contain"
+            priority
+          />
+        </Link>
       </div>
 
       {/* Navigation */}
@@ -68,7 +80,10 @@ export function Sidebar() {
 
         {/* Logout */}
         <div className="mt-4">
-          <button className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-600 hover:bg-purple-100 w-full transition-all">
+          <button
+            onClick={() => signOut({ callbackUrl: "/login" })}
+            className="flex items-center gap-3 px-4 py-3 cursor-pointer rounded-xl text-sm font-medium text-gray-600 hover:bg-purple-100 w-full transition-all"
+          >
             <LogOut className="h-5 w-5" />
             Log Out
           </button>

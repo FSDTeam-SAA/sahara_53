@@ -11,6 +11,7 @@ import { useBooks } from "@/hooks/use-books";
 import { api } from "@/lib/api";
 import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useDelete } from "@/hooks/storydelete";
 
 // const statusOptions = [
 //   { value: "all", label: "All Status" },
@@ -31,6 +32,7 @@ export function BooksGrid() {
   // const [statusFilter, setStatusFilter] = useState("all");
   const [sortBy, setSortBy] = useState("title");
   const [page, setPage] = useState(1);
+const { mutate:deleteBook } = useDelete()
 
   const { books, totalPages, isLoading, mutate } = useBooks({
     search: searchQuery,
@@ -47,9 +49,9 @@ export function BooksGrid() {
 
   const handleDelete = async (id: string) => {
     try {
-      await api.deleteBook(id);
+      // await api.deleteBook(id);
       toast.success("Book deleted successfully");
-      mutate();
+      deleteBook(id)
     } catch {
       toast.error("Failed to delete book");
     }

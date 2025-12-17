@@ -23,7 +23,7 @@ export function BookCard({ book, onDelete }: BookCardProps) {
         />
         <button
           onClick={() => onDelete(book._id)}
-          className="absolute top-3 right-3 p-2 bg-red-500 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
+          className="absolute top-3 right-3 p-2 cursor-pointer bg-red-500 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
         >
           <Trash2 className="h-4 w-4" />
         </button>
@@ -43,9 +43,11 @@ export function BookCard({ book, onDelete }: BookCardProps) {
         <h3 className="font-semibold text-gray-900 mb-2">{book.title}</h3>
         <p className="text-sm text-gray-500 line-clamp-2">
           {book.beginning}
-          <button className="text-purple-600 hover:underline ml-1">
+          <a   href={`/book/${book._id}`}>
+          <button className="text-purple-600 hover:underline ml-1 cursor-pointer">
             Read More
           </button>
+          </a>
         </p>
       </CardContent>
     </Card>
