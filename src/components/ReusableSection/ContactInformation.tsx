@@ -1,6 +1,6 @@
 // components/ContactInformation.tsx
 
-import Image from "next/image";
+// import Image from "next/image";
 import { Card } from "../ui/card";
 import Link from "next/link";
 import { Globe, Phone } from "lucide-react";

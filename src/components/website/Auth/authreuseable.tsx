@@ -8,27 +8,37 @@ interface AuthReusableProps {
 
 export default function AuthReusable({ children }: AuthReusableProps) {
   return (
-   <section className='relative min-h-screen overflow-hidden w-full   bg-cover bg-center  flex justify-center'>
-  
+    <section className="relative min-h-screen w-full flex items-center justify-center overflow-hidden">
+      
+      {/* Background */}
+      <div className="absolute inset-0 opacity-20 -z-10">
+        <Image
+          src="/images/auth.jpg"
+          alt="bg-image"
+          width={3000}
+          height={1500}
+          className="object-cover w-full h-full"
+        />
+      </div>
 
-  <div className="absolute inset-0 w-full min-h-screen opacity-20">
-   <Image src={'/images/auth.jpg'} alt="bg-image" width={3000} height={1500} className=" object-cover bg-center w-full h-full"/>
-  </div>
+      {/* Content */}
+      <div className="flex flex-col items-center gap-4">
+        
+        {/* Logo */}
+        <Image
+          src="/logo.png"
+          alt="logo"
+          width={220}
+          height={120}
+          className="object-contain"
+        />
 
-  {/* Content (children) */}
-  <div className="flex flex-col justify-evenly items-center">
+        {/* Form */}
+        <div className="w-[80%] md:w-full max-w-xl">
+          {children}
+        </div>
 
-  <div className="">
-
-      <Image  src={'/images/authlogo.svg'} alt="logo" width={120} height={100} className=" object-cover "/>
-  </div>
-
-  <div className="relative w-[80%] mx-auto md:w-full max-w-xl z-10">
-    {children}
-  </div>
-  </div>
-</section>
-
-
+      </div>
+    </section>
   );
 }
