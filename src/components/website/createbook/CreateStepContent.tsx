@@ -30,6 +30,7 @@ export interface CreateBookPayload {
   genre: string;
   characters: CharacterPayload[];
   beginning: string;
+  chapterCount?:number;
 }
 
 interface StoryDetailData {
@@ -37,6 +38,7 @@ interface StoryDetailData {
   language?: string;
   genre?: string;
   writingStyle?: string;
+  chapterCount?:number;
 }
 
 interface Character {
@@ -74,11 +76,15 @@ export default function CreateStepContent() {
   const bookCreateMutation = useMutation({
     mutationKey: ["createbook"],
     mutationFn: (data: CreateBookPayload) => createBook(data),
-
     onSuccess: (data) => {
       toast.success("Book created successfully");
       // console.log("create data check for book id");
-      setBookId(data?.saved._id);
+      const storyId=data?.data?.storyId;
+      console.log(storyId)
+      if(!storyId){
+        throw new Error("someting is Wrong please check everyting..")
+      }
+      setBookId(storyId);
       setStep(3); // Go to Voice Recording step
     },
 
@@ -153,6 +159,7 @@ export default function CreateStepContent() {
         genre: formData.storyDetail.genre || "",
         characters: characterObjects,
         beginning: formData.beginning || "",
+        chapterCount:formData.storyDetail.chapterCount,
       };
 
       // console.log("Submitting book payload:", payload);
@@ -163,7 +170,7 @@ export default function CreateStepContent() {
     if (step === 3) {
       const blob = formData.voice?.blob || new Blob([]);
       if (!bookId) {
-        toast.error("Book ID is missing. Cannot add voice.");
+        toast.error("someting is missing check carefully. Cannot add voice. check ");
         return;
       }
 
