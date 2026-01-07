@@ -27,7 +27,7 @@ interface StoryFormValues {
   language: string;
   writingStyle: string;
   genre: string;
-  chapterCount:number;
+  chapterCount: number;
 }
 
 // Define props interface
@@ -43,7 +43,7 @@ const StoryDetail: React.FC<StoryDetailProps> = ({ data, onChange }) => {
       language: "",
       writingStyle: "",
       genre: "",
-      chapterCount:undefined,
+      chapterCount: undefined,
       ...data, // Spread existing data if any
     },
   });
@@ -63,7 +63,7 @@ const StoryDetail: React.FC<StoryDetailProps> = ({ data, onChange }) => {
           language: formValues.language || "",
           writingStyle: formValues.writingStyle || "",
           genre: formValues.genre || "",
-          chapterCount:formValues.chapterCount 
+          chapterCount: formValues.chapterCount,
         });
       }
     });
@@ -85,9 +85,7 @@ const StoryDetail: React.FC<StoryDetailProps> = ({ data, onChange }) => {
 
   // Form submission handler
   const onSubmit = (data: StoryFormValues) => {
-    
     console.log("Form submitted:", data);
-
   };
 
   const languageOptions = [
@@ -99,7 +97,6 @@ const StoryDetail: React.FC<StoryDetailProps> = ({ data, onChange }) => {
     { value: "chinese", label: "Chinese" },
     { value: "japanese", label: "Japanese" },
     { value: "Banglish", label: "Bangla" },
-
   ];
 
   const writingStyleOptions = [
@@ -170,7 +167,7 @@ const StoryDetail: React.FC<StoryDetailProps> = ({ data, onChange }) => {
 
                     <Input
                       placeholder="Enter your story title..."
-                      {...field} 
+                      {...field}
                       className="w-full px-3 py-6 border border-gray-300 rounded-md  focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                       type="text"
                       // autoComplete="off"
@@ -279,26 +276,23 @@ const StoryDetail: React.FC<StoryDetailProps> = ({ data, onChange }) => {
               name="chapterCount"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-sm leading-[150%]  font-medium text-[#2B2B2B]">
-                    Chapter(Optional)
+                  <FormLabel className="text-sm leading-[150%] font-medium text-[#2B2B2B]">
+                    Chapter <span className="text-gray-500">(Optional)</span>
                   </FormLabel>
-                  <FormControl>
-                    {/* <Input
-                      placeholder="Enter your story title..."
-                      {...field}
-                      className="w-full px-3 py-6 border border-gray-300 rounded-md  focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                      type="text"
-                      // value={field.value || ""}
-                    /> */}
 
+                  <FormControl>
                     <Input
-                      placeholder="Enter the how many Chapter You Want..."
-                      {...field} 
-                      className="w-full px-3 py-6 border border-gray-300 rounded-md  focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                      {...field}
                       type="number"
-                      // autoComplete="off"
+                      inputMode="numeric" 
+                      placeholder="Enter number"
+                      aria-required="false"
+                      className="w-full px-3 py-6  outline-none  rounded-md
+                      focus:ring-orange-500
+                    "
                     />
                   </FormControl>
+
                   <FormMessage />
                 </FormItem>
               )}
