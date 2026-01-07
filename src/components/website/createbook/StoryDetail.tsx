@@ -27,6 +27,7 @@ interface StoryFormValues {
   language: string;
   writingStyle: string;
   genre: string;
+  chapterCount:number;
 }
 
 // Define props interface
@@ -42,6 +43,7 @@ const StoryDetail: React.FC<StoryDetailProps> = ({ data, onChange }) => {
       language: "",
       writingStyle: "",
       genre: "",
+      chapterCount:undefined,
       ...data, // Spread existing data if any
     },
   });
@@ -61,6 +63,7 @@ const StoryDetail: React.FC<StoryDetailProps> = ({ data, onChange }) => {
           language: formValues.language || "",
           writingStyle: formValues.writingStyle || "",
           genre: formValues.genre || "",
+          chapterCount:formValues.chapterCount 
         });
       }
     });
@@ -75,6 +78,7 @@ const StoryDetail: React.FC<StoryDetailProps> = ({ data, onChange }) => {
         language: data.language || "",
         writingStyle: data.writingStyle || "",
         genre: data.genre || "",
+        chapterCount: data.chapterCount,
       });
     }
   }, [data, form]);
@@ -166,7 +170,7 @@ const StoryDetail: React.FC<StoryDetailProps> = ({ data, onChange }) => {
 
                     <Input
                       placeholder="Enter your story title..."
-                      {...field} // শুধু এইটাই যথেষ্ট
+                      {...field} 
                       className="w-full px-3 py-6 border border-gray-300 rounded-md  focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                       type="text"
                       // autoComplete="off"
@@ -270,6 +274,35 @@ const StoryDetail: React.FC<StoryDetailProps> = ({ data, onChange }) => {
                 )}
               />
             </div>
+            <FormField
+              control={form.control}
+              name="chapterCount"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-sm leading-[150%]  font-medium text-[#2B2B2B]">
+                    Chapter(Optional)
+                  </FormLabel>
+                  <FormControl>
+                    {/* <Input
+                      placeholder="Enter your story title..."
+                      {...field}
+                      className="w-full px-3 py-6 border border-gray-300 rounded-md  focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                      type="text"
+                      // value={field.value || ""}
+                    /> */}
+
+                    <Input
+                      placeholder="Enter the how many Chapter You Want..."
+                      {...field} 
+                      className="w-full px-3 py-6 border border-gray-300 rounded-md  focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                      type="number"
+                      // autoComplete="off"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
             {/* Required fields note */}
             {/* <div className="text-sm text-gray-500 mt-4">
